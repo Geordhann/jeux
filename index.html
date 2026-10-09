@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La Tournée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&display=swap">
+<style>
+/* Layout: une colonne de 480px max, comme un tapis de jeu ; les cartes sont des cartes à jouer en papier posées sur le feutre. */
+:root {
+  color-scheme: dark;
+  --felt: #10261e;
+  --felt-2: #183a2d;
+  --felt-line: #2b5544;
+  --paper: #f4ecdb;
+  --paper-edge: #d9ccb0;
+  --ink: #221c17;
+  --ink-soft: #6d6255;
+  --red: #c93a3f;
+  --gold: #e7b552;
+  --fg: #eef3ee;
+  --muted: #a3bcb0;
+  --font-display: "Bagel Fat One", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-card: "Fraunces", Georgia, "Times New Roman", serif;
+  --r: 14px;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--felt);
+  background-image: radial-gradient(120% 80% at 50% 0%, var(--felt-2), var(--felt) 70%);
+  background-attachment: fixed;
+  color: var(--fg);
+  font: 16px/1.5 var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+}
+#app { max-width: 480px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 40px; display: flex; flex-direction: column; gap: 18px; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+
+.topbar { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.topbar h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; letter-spacing: .01em; }
+.back { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--felt-line); font-size: 1.3rem; display: grid; place-items: center; flex: none; }
+
+.logo { font-family: var(--font-display); font-weight: 400; font-size: clamp(3rem, 15vw, 4.4rem); line-height: .95; color: var(--gold); padding-top: 12px; }
+.logo span { color: var(--paper); display: block; }
+.tag { color: var(--muted); max-width: 32ch; }
+
+.panel { border: 1px solid var(--felt-line); border-radius: var(--r); padding: 16px; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,.12); }
+.panel h3 { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); display: flex; justify-content: space-between; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; background: var(--paper); color: var(--ink); border-radius: 999px; padding: 6px 6px 6px 14px; font-weight: 600; }
+.chip button { width: 26px; height: 26px; border-radius: 50%; background: var(--paper-edge); color: var(--ink); font-size: .9rem; line-height: 1; }
+.hint { font-size: .85rem; color: var(--muted); }
+.add { display: flex; gap: 8px; }
+.add input { flex: 1; min-width: 0; font: inherit; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--felt-line); background: var(--felt); color: var(--fg); }
+
+.games { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.game { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; text-align: left; padding: 14px 16px; border-radius: var(--r); background: var(--paper); color: var(--ink); box-shadow: 0 2px 0 var(--paper-edge), 0 10px 24px rgba(0,0,0,.25); transition: transform .15s; }
+.game:active { transform: translateY(2px); }
+.game[disabled] { opacity: .45; cursor: not-allowed; }
+.game .suit { font-family: var(--font-display); font-size: 1.6rem; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; border: 2px solid currentColor; color: var(--red); }
+.game .suit.b { color: var(--ink); }
+.game b { display: block; font-size: 1.08rem; }
+.game small { color: var(--ink-soft); font-size: .86rem; line-height: 1.35; display: block; }
+.game .go { font-size: 1.3rem; color: var(--ink-soft); }
+.rule { font-size: .88rem; color: var(--muted); border-top: 1px dashed var(--felt-line); padding-top: 14px; }
+.rule strong { color: var(--gold); }
+
+.levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: rgba(0,0,0,.2); padding: 4px; border-radius: 12px; }
+.levels button { padding: 9px 4px; border-radius: 9px; font-weight: 600; font-size: .92rem; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--muted); }
+.levels button .pips { font-size: .6rem; letter-spacing: 2px; color: var(--red); }
+.levels button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+
+.turn { text-align: center; display: flex; flex-direction: column; gap: 2px; }
+.turn small { text-transform: uppercase; letter-spacing: .14em; font-size: .75rem; color: var(--muted); }
+.turn strong { font-family: var(--font-display); font-weight: 400; font-size: clamp(2rem, 10vw, 2.8rem); color: var(--gold); line-height: 1.1; overflow-wrap: anywhere; }
+
+.card { position: relative; background: var(--paper); color: var(--ink); border-radius: 18px; min-height: 300px; padding: 46px 28px; display: flex; flex-direction: column; justify-content: center; gap: 14px; box-shadow: 0 3px 0 var(--paper-edge), 0 18px 40px rgba(0,0,0,.35); animation: deal .35s cubic-bezier(.2,.9,.3,1.2); }
+.card .idx { position: absolute; display: flex; flex-direction: column; align-items: center; line-height: 1; font-family: var(--font-display); color: var(--red); }
+.card .idx b { font-size: 1.5rem; font-weight: 400; }
+.card .idx i { font-style: normal; font-size: .55rem; letter-spacing: 1px; margin-top: 4px; }
+.card .idx.tl { top: 14px; left: 16px; }
+.card .idx.br { bottom: 14px; right: 16px; transform: rotate(180deg); }
+.card .kind { text-transform: uppercase; letter-spacing: .16em; font-size: .78rem; font-weight: 800; color: var(--red); text-align: center; }
+.card .text { font-family: var(--font-card); font-size: clamp(1.35rem, 6vw, 1.7rem); line-height: 1.3; text-align: center; text-wrap: pretty; overflow-wrap: anywhere; }
+.card .text em { font-style: italic; color: var(--red); }
+.card.black .idx, .card.black .kind { color: var(--ink); }
+.card .or { font-family: var(--font-display); color: var(--red); text-align: center; font-size: 1.3rem; }
+.card .sub { text-align: center; color: var(--ink-soft); font-size: .9rem; }
+.card.back { background: var(--red); background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.12) 0 6px, transparent 6px 14px), repeating-linear-gradient(-45deg, rgba(255,255,255,.12) 0 6px, transparent 6px 14px); color: var(--paper); align-items: center; text-align: center; border: 8px solid var(--paper); }
+.card.back .text { color: var(--paper); }
+@keyframes deal { from { transform: translateY(18px) rotate(-3deg) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .card { animation: none; } .game { transition: none; } }
+
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > * { flex: 1 1 140px; }
+.btn { padding: 15px 18px; border-radius: 12px; font-weight: 800; font-size: 1.02rem; background: var(--gold); color: var(--ink); box-shadow: 0 3px 0 #a87d2c; }
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #a87d2c; }
+.btn.red { background: var(--red); color: var(--paper); box-shadow: 0 3px 0 #8a2229; }
+.btn.paper { background: var(--paper); color: var(--ink); box-shadow: 0 3px 0 var(--paper-edge); }
+.btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--felt-line); box-shadow: none; font-weight: 600; }
+.btn.big { font-size: 1.3rem; padding: 22px 18px; font-family: var(--font-display); font-weight: 400; letter-spacing: .02em; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+.howto { font-size: .92rem; color: var(--muted); text-align: center; max-width: 38ch; margin: 0 auto; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--paper); color: var(--ink); padding: 12px 18px; border-radius: 999px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,.4); max-width: calc(100% - 32px); text-align: center; }
+
+.stepper { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.stepper .ctl { display: flex; align-items: center; gap: 12px; }
+.stepper .ctl button { width: 40px; height: 40px; border-radius: 50%; background: var(--paper); color: var(--ink); font-size: 1.3rem; font-weight: 800; }
+.stepper .ctl button[disabled] { opacity: .35; }
+.stepper output { font-family: var(--font-display); font-size: 1.6rem; min-width: 1.5ch; text-align: center; font-variant-numeric: tabular-nums; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.toggle button { width: 58px; height: 32px; border-radius: 999px; background: var(--felt-line); position: relative; flex: none; }
+.toggle button::after { content: ""; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: var(--paper); transition: left .15s; }
+.toggle button[aria-pressed="true"] { background: var(--gold); }
+.toggle button[aria-pressed="true"]::after { left: 30px; }
+
+.order { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; counter-reset: o; }
+.order li { counter-increment: o; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: rgba(0,0,0,.18); border: 1px solid var(--felt-line); font-weight: 600; }
+.order li::before { content: counter(o); font-family: var(--font-display); color: var(--gold); width: 1.6ch; text-align: center; font-variant-numeric: tabular-nums; }
+.order li.dead { opacity: .4; text-decoration: line-through; }
+.vote { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+.vote button { padding: 16px 10px; border-radius: 12px; background: var(--paper); color: var(--ink); font-weight: 800; overflow-wrap: anywhere; box-shadow: 0 3px 0 var(--paper-edge); }
+.vote button[aria-pressed="true"] { background: var(--red); color: var(--paper); box-shadow: 0 3px 0 #8a2229; }
+.guess { display: flex; flex-direction: column; gap: 10px; }
+.guess input { font: inherit; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--paper-edge); background: #fff; color: var(--ink); }
+.roles { display: flex; flex-direction: column; gap: 6px; font-size: .95rem; }
+.roles div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--paper-edge); padding-bottom: 6px; }
+.roles span:last-child { color: var(--ink-soft); }
+.roles .imp span:last-child { color: var(--red); font-weight: 700; }
+.warn { font-size: .85rem; color: var(--gold); text-align: center; }
+</style>
+</head>
+<body>
+<div id="app" aria-live="polite"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ---------- Contenu ---------- */
+const LEVELS = [
+  { id: 'soft', label: 'Soft', pips: '●○○' },
+  { id: 'piquant', label: 'Piquant', pips: '●●○' },
+  { id: 'hot', label: 'Hot', pips: '●●●' },
+];
+
+// {x} = un·e autre joueur·se tiré·e au hasard
+const AOV = {
+  soft: {
+    verite: [
+      "Raconte ton pire date, sans rien cacher.",
+      "Quelle est la recherche la plus gênante de ton historique ?",
+      "Quel est le dernier mensonge que tu as dit ? À qui ?",
+      "Si tu devais échanger ta vie avec quelqu'un ici pendant une semaine, ce serait qui ?",
+      "Quelle est ta plus grosse honte en soirée ?",
+      "Tu as déjà stalké un·e ex ? Jusqu'où tu es allé·e ?",
+      "Quel est le message le plus gênant que tu aies envoyé à la mauvaise personne ?",
+      "Quelle est la qualité que tu préfères chez {x} ?",
+      "Qui ici a les pires goûts musicaux ?",
+      "Quel est ton plaisir coupable que personne ne connaît ?",
+      "Tu as déjà inventé une excuse pour éviter quelqu'un ici ?",
+      "Quelle est ta peur la plus irrationnelle ?",
+      "Quel est le pire cadeau que tu aies reçu, et de qui ?",
+      "Quel est le dernier truc que tu as cherché sur Google ?",
+      "Qui dans ce groupe tu appelles en premier si tu finis en garde à vue ?",
+      "Ta première impression de {x}, honnêtement ?",
+      "Tu as un compte secret sur un réseau social ?",
+      "Quel est ton pire râteau ?",
+      "Quel achat tu regrettes le plus ?",
+      "Qui ici est le/la plus susceptible de devenir célèbre, et pourquoi pas toi ?",
+      "Quelle rumeur sur toi était vraie ?",
+      "Tu as déjà lu les messages de quelqu'un en cachette ?",
+      "Quel défaut de {x} tu n'as jamais osé lui dire ?",
+      "Quel est le moment où tu as eu le plus honte devant tes parents ?",
+    ],
+    action: [
+      "Imite {x} jusqu'à ce que quelqu'un devine qui c'est.",
+      "Parle avec un accent au choix du groupe jusqu'à ton prochain tour.",
+      "Laisse {x} écrire ta prochaine story. Tu dois la poster.",
+      "Fais 15 squats en chantant l'hymne national.",
+      "Chante le refrain de la dernière chanson que tu as écoutée.",
+      "Montre la 7e photo de ta galerie, sans tricher.",
+      "Envoie « tu me manques » à la 3e conversation de ton téléphone.",
+      "Fais une déclaration d'amour dramatique à un objet de la pièce.",
+      "Laisse le groupe choisir ta photo de profil WhatsApp pour 24 h.",
+      "Danse 30 secondes sans musique.",
+      "Raconte une blague. Si personne ne rit, bois une gorgée.",
+      "Mime un film, le groupe a une minute pour trouver.",
+      "Fais un compliment sincère à chaque personne présente.",
+      "Parle de toi à la troisième personne jusqu'à ton prochain tour.",
+      "Lis à voix haute ton dernier message envoyé.",
+      "Fais une pub de 30 secondes pour {x} comme si c'était un produit.",
+      "Échange un vêtement avec {x} jusqu'à la fin de la partie.",
+      "Laisse le groupe lire tes 10 derniers emojis et interpréter ta vie.",
+      "Fais ta meilleure imitation d'influenceur qui déballe un colis.",
+      "Appelle quelqu'un et chante-lui joyeux anniversaire, même si ce n'est pas le sien.",
+      "Garde un glaçon dans la main jusqu'à ce qu'il fonde, ou bois 2 gorgées.",
+      "Laisse {x} te coiffer comme il ou elle veut.",
+      "Fais le tour de la pièce en marchant comme un mannequin.",
+      "Bois ton verre sans les mains.",
+    ],
+  },
+  piquant: {
+    verite: [
+      "Qui ici tu trouves le/la plus attirant·e ?",
+      "C'était quand ton dernier bisou ? Avec qui ?",
+      "Tu as déjà eu un crush sur quelqu'un de ce groupe ?",
+      "Quelle est la chose la plus folle que tu aies faite pour séduire quelqu'un ?",
+      "Ton pire date d'appli de rencontre, raconte tout.",
+      "Tu as déjà écrit à un·e ex à 3 h du matin ? Qu'est-ce que tu as mis ?",
+      "Qu'est-ce qui te fait craquer immédiatement chez quelqu'un ?",
+      "Qu'est-ce qui te refroidit direct ?",
+      "Avec qui ici tu partirais en vacances en tête-à-tête ?",
+      "Quel est ton plus gros red flag en couple ?",
+      "Tu as déjà embrassé quelqu'un pour rendre une autre personne jalouse ?",
+      "Combien de personnes as-tu embrassées cette année ?",
+      "Tu préfères faire le premier pas ou qu'on le fasse pour toi ?",
+      "Décris ta technique de drague. Le groupe note sur 10.",
+      "Tu as déjà craqué pour le/la partenaire d'un·e pote ?",
+      "Quel est le message le plus osé que tu aies envoyé ?",
+      "Si tu devais sortir avec quelqu'un ici, ce serait qui ?",
+      "Tu as déjà ghosté quelqu'un ? Pourquoi ?",
+      "Qui ici embrasse le mieux, à ton avis ?",
+      "Tu stalkes quelqu'un en ce moment ? Qui ?",
+      "Quel est le truc le plus romantique qu'on ait fait pour toi ?",
+      "Avec quelle célébrité tu tromperais ton/ta futur·e partenaire sans hésiter ?",
+      "Tu as déjà fait semblant d'être célibataire ?",
+      "Qu'est-ce que tu penses vraiment de l'ex de {x} ?",
+    ],
+    action: [
+      "Fais un bisou sur la joue de {x}.",
+      "Murmure un compliment à l'oreille de {x}.",
+      "Regarde {x} dans les yeux avec ton meilleur regard de séduction pendant 10 secondes, sans rire.",
+      "Montre ta dernière conversation avec ton crush, ou bois 3 gorgées.",
+      "Laisse {x} envoyer un message (raisonnable) à quelqu'un de tes contacts.",
+      "Fais une danse lascive de 20 secondes sur la chanson choisie par le groupe.",
+      "Assieds-toi sur les genoux de {x} jusqu'à ton prochain tour.",
+      "Dis à {x} ce que tu trouves le plus attirant chez cette personne.",
+      "Montre ta dernière conversation sur une appli de rencontre.",
+      "Fais un slow de 30 secondes avec {x}.",
+      "Laisse le groupe écrire ta bio d'appli de rencontre et lis-la à voix haute.",
+      "Masse les épaules de {x} pendant une minute.",
+      "Drague {x} avec ta pire phrase d'accroche, en y croyant à fond.",
+      "Tiens la main de {x} jusqu'à ton prochain tour.",
+      "Envoie un emoji 🔥 à la dernière personne avec qui tu as flirté.",
+      "Prends un selfie joue contre joue avec {x}.",
+      "Décris ton crush actuel sans dire son nom. Le groupe doit deviner.",
+      "Fais manger quelque chose à {x}, à la main.",
+      "Fais une demande en mariage à {x}, genou à terre.",
+      "Like une vieille photo d'un·e ex.",
+      "Fais un câlin de 20 secondes à {x}.",
+      "Mime ton premier baiser avec un coussin.",
+      "Laisse {x} choisir quelqu'un à qui tu dois faire un bisou sur la joue.",
+      "Écris un poème d'amour de 4 vers pour {x} et lis-le.",
+    ],
+  },
+  hot: {
+    verite: [
+      "Quel est ton fantasme le plus inavouable ? (version soft acceptée)",
+      "Quel est l'endroit le plus insolite où tu l'as fait ?",
+      "Ton coup d'un soir le plus mémorable, raconte.",
+      "C'est quoi ton body count ?",
+      "Ta position préférée ?",
+      "Avec qui ici tu passerais une nuit si personne ne le savait jamais ?",
+      "Tu as déjà envoyé des nudes ? À qui ?",
+      "C'est quoi ton plus gros turn-on ?",
+      "Tu t'es déjà fait surprendre en pleine action ?",
+      "Qu'est-ce que tu n'as jamais essayé mais que tu aimerais tester ?",
+      "Ton meilleur souvenir au lit, en une phrase.",
+      "Ton pire souvenir au lit, en une phrase.",
+      "Tu as déjà oublié le prénom de quelqu'un après une nuit ensemble ?",
+      "Matin, soir ou pause déj ?",
+      "Un plan à trois : déjà fait, déjà pensé, ou jamais ?",
+      "Quelle partie du corps te fait craquer en premier ?",
+      "Tu as déjà simulé ?",
+      "Note ta dernière fois sur 10.",
+      "Quel est le surnom le plus gênant qu'on t'ait donné au lit ?",
+      "Lumière allumée ou éteinte ? Justifie.",
+      "Ton record de fois dans une même nuit ?",
+      "Qui ici a l'air le plus sauvage au lit, d'après toi ?",
+      "Quel est le truc le plus osé que tu aies fait dans un lieu public ?",
+      "Tu as un jouet dans ta table de nuit ?",
+    ],
+    action: [
+      "Embrasse {x}. Sur la bouche ou la joue, {x} choisit.",
+      "Enlève un vêtement de ton choix.",
+      "Fais un bisou dans le cou de {x}.",
+      "Fais un lap dance de 30 secondes à {x}.",
+      "Fais passer un glaçon de ta bouche à celle de {x}.",
+      "Murmure à {x} ce que tu lui ferais si vous étiez seul·es.",
+      "Fais un body shot sur {x}, ou laisse {x} en faire un sur toi.",
+      "Embrasse la personne à ta gauche pendant 5 secondes.",
+      "Passe 2 minutes seul·e dans une autre pièce avec {x}.",
+      "Les yeux bandés, laisse {x} te faire un bisou où il ou elle veut sur le visage ou le cou.",
+      "Mime ta position préférée, habillé·e, avec un coussin.",
+      "Fais un strip-tease de 20 secondes. Tu peux t'arrêter avant d'enlever quoi que ce soit.",
+      "Mordille l'oreille de {x}.",
+      "Envoie un message ambigu à ton crush et montre la réponse au groupe.",
+      "Décris en détail la fin de soirée parfaite avec {x}.",
+      "Enlève un vêtement à {x}, s'il ou elle est d'accord.",
+      "Fais un bisou à {x} à l'endroit choisi par le groupe (dans la limite du raisonnable).",
+      "Fais un massage du dos de 1 minute à {x}.",
+      "Lis un passage hot trouvé en ligne avec ta voix la plus sensuelle.",
+      "Laisse {x} t'enlever un vêtement.",
+      "Reste en sous-vêtements jusqu'à ton prochain tour, ou bois 3 gorgées.",
+      "Fais un bisou sur le ventre de {x}.",
+      "Embrasse {x} pendant 10 secondes.",
+      "Choisis deux personnes qui doivent s'embrasser.",
+    ],
+  },
+};
+
+const NHIE = {
+  soft: [
+    "menti sur mon âge", "raté un avion ou un train", "dormi à la belle étoile",
+    "pleuré en écoutant une chanson", "fait semblant de connaître une chanson en soirée",
+    "oublié l'anniversaire d'un·e pote", "mangé un truc tombé par terre", "stalké un·e ex sur Insta",
+    "envoyé un message à la mauvaise personne", "chanté au karaoké", "cassé l'écran de mon téléphone",
+    "menti sur mon CV", "regardé une série entière en un week-end", "vomi en soirée",
+    "perdu mes clés en soirée", "eu une amende", "fait une nuit blanche pour réviser",
+    "pris un Uber pour moins de 1 km", "été viré·e d'un cours", "liké une photo par accident en stalkant",
+  ],
+  piquant: [
+    "embrassé quelqu'un de ce groupe", "eu un crush sur un·e prof", "ghosté quelqu'un",
+    "embrassé quelqu'un sans connaître son prénom", "eu un date avec quelqu'un rencontré sur une appli",
+    "recontacté un·e ex en étant bourré·e", "flirté pour avoir un verre gratuit",
+    "embrassé deux personnes dans la même soirée", "eu un crush sur un·e pote de mon ex",
+    "quitté un date en plein milieu", "fait semblant d'être célibataire", "dragué quelqu'un au boulot",
+    "embrassé quelqu'un du même sexe", "envoyé un vocal gênant à mon crush", "pleuré pour un·e ex en soirée",
+    "eu deux dates dans la même semaine", "embrassé quelqu'un pour un pari", "été en couple plus de deux ans",
+    "eu un crush sur quelqu'un en couple", "dit « je t'aime » sans le penser",
+  ],
+  hot: [
+    "fait l'amour dans une voiture", "envoyé un nude", "eu un coup d'un soir",
+    "recouché avec un·e ex après la rupture", "fait l'amour en plein air", "eu un sex friend",
+    "couché le premier soir", "utilisé un sextoy", "été surpris·e en pleine action",
+    "fait l'amour chez mes parents", "simulé", "fait un plan à trois", "couché avec un·e collègue",
+    "fait l'amour dans des toilettes", "fait un strip-tease", "regardé un porno à deux",
+    "couché avec quelqu'un rencontré le soir même", "eu une aventure de vacances",
+    "couché avec quelqu'un qui a plus de 10 ans d'écart avec moi", "fait l'amour dans un lieu public",
+  ],
+};
+
+const QUI = {
+  soft: [
+    "devenir célèbre", "finir en garde à vue", "oublier son téléphone au bar", "se marier en premier",
+    "devenir millionnaire", "partir vivre à l'autre bout du monde sur un coup de tête",
+    "survivre à une apocalypse zombie", "pleurer devant un Disney", "arriver en retard à son propre mariage",
+    "adopter cinq chats", "gagner Koh-Lanta", "rater son vol", "devenir président·e",
+    "ouvrir un bar", "devenir influenceur·se", "s'endormir en premier ce soir", "perdre sa carte bleue",
+    "appeler sa mère en pleine soirée", "se perdre même avec un GPS", "lancer une start-up qui coule",
+  ],
+  piquant: [
+    "se remettre avec son ex", "envoyer un message bourré·e ce soir", "avoir un crush secret dans le groupe",
+    "ghoster quelqu'un", "avoir le plus de matchs sur les applis", "finir la soirée avec quelqu'un",
+    "draguer le/la barman·aid", "tomber amoureux·se en vacances", "avoir un date ce week-end",
+    "avoir le plus d'ex", "mentir sur son body count", "tomber amoureux·se d'un·e pote",
+    "faire le premier pas", "épouser quelqu'un rencontré en soirée", "stalker un crush pendant deux heures",
+    "embrasser quelqu'un ce soir", "avoir un compte Insta secret", "flirter avec tout le monde",
+    "envoyer « tu dors ? » à 2 h du matin", "se faire draguer par quelqu'un de beaucoup plus âgé",
+  ],
+  hot: [
+    "avoir le plus gros body count", "avoir déjà fait un plan à trois", "avoir un sextoy dans sa table de nuit",
+    "envoyer un nude ce soir", "avoir un sex friend en ce moment", "l'avoir fait dans un lieu public",
+    "être le/la plus bruyant·e au lit", "coucher le premier soir", "avoir une vie sexuelle secrète",
+    "avoir déjà été surpris·e en pleine action", "aimer les jeux de rôle", "faire un strip-tease ce soir",
+    "recoucher avec un·e ex ce mois-ci", "avoir le fantasme le plus bizarre", "être le meilleur coup du groupe",
+    "avoir déjà simulé", "avoir déjà couché avec quelqu'un de ce groupe", "oser un body shot ce soir",
+    "avoir une appli de rencontre ouverte en ce moment", "ne pas dormir seul·e ce soir",
+  ],
+};
+
+const TP = {
+  soft: [
+    ["lire dans les pensées", "être invisible"],
+    ["ne plus jamais boire d'alcool", "ne plus jamais manger de fromage"],
+    ["vivre sans musique", "vivre sans films ni séries"],
+    ["toujours dire ce que tu penses", "ne plus jamais parler"],
+    ["perdre ton téléphone", "perdre ton portefeuille"],
+    ["voyager dans le passé", "voyager dans le futur"],
+    ["être drôle", "être canon"],
+    ["vivre à la mer", "vivre à la montagne"],
+    ["avoir 10 potes", "avoir 2 meilleur·es ami·es"],
+    ["être riche et seul·e", "fauché·e et bien entouré·e"],
+    ["plus d'internet pendant un mois", "plus d'eau chaude pendant un mois"],
+    ["manger pizza toute ta vie", "manger burger toute ta vie"],
+    ["avoir une gueule de bois tous les dimanches", "ne plus jamais sortir le samedi"],
+    ["que ta vie soit filmée en télé-réalité", "que ton journal intime soit publié"],
+    ["parler toutes les langues", "parler aux animaux"],
+  ],
+  piquant: [
+    ["que ton ex lise tous tes messages", "que tes parents lisent tous tes messages"],
+    ["sortir avec quelqu'un de très beau mais ennuyeux", "quelqu'un de banal mais hilarant"],
+    ["ne plus jamais embrasser", "ne plus jamais faire de câlin"],
+    ["que ton crush voie ton historique", "que ton crush voie ta galerie photo"],
+    ["sortir avec ton/ta meilleur·e ami·e", "sortir avec ton pire ennemi·e"],
+    ["un·e partenaire jaloux·se", "un·e partenaire totalement indifférent·e"],
+    ["tomber amoureux·se tous les mois", "ne jamais tomber amoureux·se"],
+    ["draguer", "être dragué·e"],
+    ["sortir avec l'ex d'un·e pote", "sortir avec le/la pote de ton ex"],
+    ["savoir ce que les gens pensent de ton physique", "de ta personnalité"],
+    ["un premier date au resto", "un premier date en soirée"],
+    ["que ton crush soit au courant", "qu'il ou elle ne le sache jamais"],
+    ["embrasser quelqu'un ici maintenant", "chanter seul·e devant tout le monde"],
+    ["une relation à distance", "une relation où vous vivez ensemble dès le début"],
+    ["revoir tous tes ex dans la même soirée", "rencontrer toute la famille de ton/ta partenaire"],
+  ],
+  hot: [
+    ["lumière allumée", "lumière éteinte"],
+    ["plus jamais de sexe", "plus jamais d'alcool"],
+    ["un coup d'un soir parfait", "une relation moyenne de cinq ans"],
+    ["que tes nudes fuitent", "que ton historique de recherche fuite"],
+    ["le matin", "le soir"],
+    ["être dominant·e", "être dominé·e"],
+    ["le faire sur la plage", "le faire dans un ascenseur"],
+    ["que les voisins t'entendent", "entendre tes voisins toutes les nuits"],
+    ["essayer un sextoy", "essayer un jeu de rôle"],
+    ["un·e inconnu·e canon", "ton/ta ex"],
+    ["être surpris·e par tes parents", "surprendre tes parents"],
+    ["plus jamais de préliminaires", "plus jamais de bisous"],
+    ["un plan à trois", "une nuit dans un club libertin"],
+    ["coucher avec ton/ta boss", "coucher avec ton/ta prof"],
+    ["une nuit sauvage", "un week-end entier au lit"],
+  ],
+};
+
+const UC_WORDS = [
+  ["Chat", "Chien"], ["Plage", "Piscine"], ["Pizza", "Burger"], ["Netflix", "YouTube"], ["Café", "Thé"],
+  ["Bière", "Vin"], ["Instagram", "TikTok"], ["Tinder", "Hinge"], ["Paris", "Londres"],
+  ["Harry Potter", "Le Seigneur des anneaux"], ["Ski", "Snowboard"], ["Croissant", "Pain au chocolat"],
+  ["Mojito", "Caïpirinha"], ["Vodka", "Tequila"], ["Concert", "Festival"], ["Avion", "Train"],
+  ["Douche", "Bain"], ["Sushi", "Ramen"], ["Batman", "Spider-Man"], ["Guitare", "Piano"],
+  ["Football", "Rugby"], ["Lune", "Soleil"], ["Vampire", "Zombie"], ["Ketchup", "Mayonnaise"],
+  ["Nutella", "Confiture"], ["Mariage", "Anniversaire"], ["Pompier", "Policier"], ["Coca", "Pepsi"],
+  ["iPhone", "Samsung"], ["Barbe", "Moustache"], ["Camping", "Hôtel"], ["Bisou", "Câlin"],
+  ["Ex", "Crush"], ["Tatouage", "Piercing"], ["Licorne", "Dragon"], ["Bowling", "Billard"],
+  ["Karaoké", "Boîte de nuit"], ["Raclette", "Fondue"], ["Chocolat", "Caramel"], ["Jean", "Jogging"],
+  ["Uber", "Taxi"], ["Spotify", "Deezer"], ["Pâtes", "Riz"], ["Mer", "Lac"], ["Ange", "Démon"],
+  ["Pirate", "Viking"], ["Gâteau", "Tarte"], ["Disney", "Pixar"], ["Selfie", "Photo de groupe"],
+  ["Apéro", "Brunch"], ["Premier date", "Entretien d'embauche"], ["Shot", "Cocktail"],
+  ["Baskets", "Talons"], ["Gueule de bois", "Fatigue"], ["Plan à trois", "Échangisme"],
+  ["Menottes", "Bandeau"], ["Préservatif", "Pilule"], ["Strip-tease", "Lap dance"],
+  ["Cinéma", "Théâtre"], ["Chips", "Pop-corn"], ["Bague", "Collier"], ["Glace", "Sorbet"],
+];
+
+const GAMES = [
+  { id: 'aov', name: 'Action ou Vérité', suit: '♥', desc: "Le classique. Chacun son tour, trois niveaux de chaleur.", min: 2 },
+  { id: 'uc', name: 'Undercover', suit: '♠', desc: "Un mot secret, des imposteurs, un vote. Démasquez-les.", min: 3 },
+  { id: 'nhie', name: "Je n'ai jamais", suit: '♦', desc: "Ceux qui l'ont déjà fait boivent.", min: 2 },
+  { id: 'qui', name: 'Qui pourrait…', suit: '♣', desc: "À 3, tout le monde pointe quelqu'un.", min: 3 },
+  { id: 'tp', name: 'Tu préfères', suit: '♦', desc: "Deux choix, le groupe vote, la minorité boit.", min: 2 },
+];
+
+/* ---------- État ---------- */
+const EXAMPLE_PLAYERS = ['Léa', 'Hugo', 'Inès', 'Tom'];
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('tournee.' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('tournee.' + k, JSON.stringify(v)); } catch (e) {} },
+};
+const S = {
+  players: store.get('players', null),
+  examples: false,
+  level: store.get('level', 'soft'),
+  screen: 'home',
+  aov: { turn: 0, card: null },
+  deck: { card: null },
+  uc: null,
+};
+if (!Array.isArray(S.players)) { S.players = EXAMPLE_PLAYERS.slice(); S.examples = true; }
+
+const app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rand = n => Math.floor(Math.random() * n);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+// Pioche sans répétition tant que le paquet n'est pas épuisé
+const used = {};
+function draw(key, arr) {
+  const u = used[key] || (used[key] = new Set());
+  if (u.size >= arr.length) u.clear();
+  let i; do { i = rand(arr.length); } while (u.has(i));
+  u.add(i);
+  return arr[i];
+}
+
+function fill(text, current) {
+  const others = S.players.filter(p => p !== current);
+  return esc(text).replace(/\{x\}/g, () => others.length ? `<em>${esc(others[rand(others.length)])}</em>` : 'quelqu\'un');
+}
+
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2200);
+}
+
+function savePlayers() { S.examples = false; store.set('players', S.players); }
+
+/* ---------- Écrans ---------- */
+const topbar = title => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button><h2>${title}</h2></div>`;
+const levelPicker = () => `<div class="levels" role="group" aria-label="Niveau">${LEVELS.map(l =>
+  `<button data-a="level" data-v="${l.id}" aria-pressed="${S.level === l.id}"><span>${l.label}</span><span class="pips" aria-hidden="true">${l.pips}</span></button>`).join('')}</div>`;
+const pipsOf = id => LEVELS.find(l => l.id === id).pips;
+const cardIdx = (letter, lvl) => `<span class="idx tl"><b>${letter}</b><i>${pipsOf(lvl)}</i></span><span class="idx br"><b>${letter}</b><i>${pipsOf(lvl)}</i></span>`;
+
+function home() {
+  const n = S.players.length;
+  return `
+  <h1 class="logo">La<span>Tournée</span></h1>
+  <p class="tag">Cinq jeux de soirée, un seul téléphone qui fait le tour de la table.</p>
+  <section class="panel">
+    <h3><span>Joueurs</span><span>${n}</span></h3>
+    ${S.examples ? `<p class="hint">Noms d'exemple : supprime-les et ajoute ta bande.</p>` : ''}
+    <div class="chips">${S.players.map((p, i) => `<span class="chip">${esc(p)}<button data-a="rm" data-v="${i}" aria-label="Retirer ${esc(p)}">✕</button></span>`).join('')}</div>
+    <form class="add" id="addForm"><input id="newPlayer" placeholder="Prénom" maxlength="20" autocomplete="off" aria-label="Prénom du joueur"><button class="btn" type="submit">Ajouter</button></form>
+  </section>
+  <section class="games">
+    ${GAMES.map(g => `<button class="game" data-a="open" data-v="${g.id}" ${n < g.min ? 'disabled' : ''}>
+      <span class="suit ${g.suit === '♠' || g.suit === '♣' ? 'b' : ''}" aria-hidden="true">${g.suit}</span>
+      <span><b>${g.name}</b><small>${n < g.min ? `Il faut au moins ${g.min} joueurs.` : g.desc}</small></span>
+      <span class="go" aria-hidden="true">›</span></button>`).join('')}
+  </section>
+  <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte 2 gorgées (ou un gage soft choisi par le groupe). Le niveau Hot est réservé aux majeurs consentants.</p>`;
+}
+
+function aov() {
+  const p = S.players[S.aov.turn % S.players.length];
+  const c = S.aov.card;
+  let body;
+  if (!c) {
+    body = `
+    <div class="card back"><p class="text">Action<br>ou<br>Vérité ?</p></div>
+    <div class="row"><button class="btn big red" data-a="aov-pick" data-v="action">Action</button><button class="btn big paper" data-a="aov-pick" data-v="verite">Vérité</button></div>
+    <button class="btn ghost" data-a="aov-pick" data-v="random">Laisser le hasard choisir</button>`;
+  } else {
+    const isA = c.kind === 'action';
+    body = `
+    <div class="card ${isA ? '' : 'black'}">${cardIdx(isA ? 'A' : 'V', c.level)}
+      <p class="kind">${isA ? 'Action' : 'Vérité'}</p>
+      <p class="text">${c.html}</p>
+    </div>
+    <div class="row"><button class="btn" data-a="aov-next">Fait, au suivant</button><button class="btn ghost" data-a="aov-joker">Joker</button></div>
+    <button class="btn ghost" data-a="aov-pick" data-v="${c.kind}">Autre carte</button>`;
+  }
+  return `${topbar('Action ou Vérité')}${levelPicker()}
+  <div class="turn"><small>C'est au tour de</small><strong>${esc(p)}</strong></div>${body}`;
+}
+
+const DECKS = {
+  nhie: { title: "Je n'ai jamais", how: "Lis la carte à voix haute. Ceux qui l'ont déjà fait boivent une gorgée, et racontent si le groupe insiste." },
+  qui: { title: 'Qui pourrait…', how: "Lis la carte, compte jusqu'à 3, et tout le monde pointe quelqu'un. La personne la plus désignée boit autant de gorgées que de doigts pointés vers elle." },
+  tp: { title: 'Tu préfères', how: "Chacun choisit en même temps (main gauche ou main droite). Le camp minoritaire boit." },
+};
+function deck(game) {
+  const d = DECKS[game], c = S.deck.card;
+  let face;
+  if (!c) face = `<div class="card back"><p class="text">${d.title}</p></div>`;
+  else if (game === 'tp') face = `<div class="card">${cardIdx('?', c.level)}<p class="kind">Tu préfères…</p><p class="text">${esc(c.v[0])}</p><p class="or">ou</p><p class="text">${esc(c.v[1])}</p></div>`;
+  else if (game === 'nhie') face = `<div class="card black">${cardIdx('J', c.level)}<p class="kind">Je n'ai jamais…</p><p class="text">${esc(c.v)}.</p></div>`;
+  else face = `<div class="card">${cardIdx('Q', c.level)}<p class="kind">Qui est le plus susceptible de…</p><p class="text">${esc(c.v)} ?</p></div>`;
+  return `${topbar(d.title)}${levelPicker()}${face}
+  <button class="btn big" data-a="deck-next">${c ? 'Carte suivante' : 'Tirer une carte'}</button>
+  <p class="howto">${d.how}</p>`;
+}
+
+/* ---------- Undercover ---------- */
+function ucMaxImp(n) { return Math.max(1, Math.ceil(n / 2) - 1); }
+function ucSetup() {
+  const n = S.players.length, cfg = S.ucCfg;
+  const max = ucMaxImp(n);
+  cfg.white = cfg.white && n >= 4;
+  const maxU = max - (cfg.white ? 1 : 0);
+  cfg.under = Math.min(Math.max(cfg.under, cfg.white ? 0 : 1), Math.max(maxU, 0));
+  const civ = n - cfg.under - (cfg.white ? 1 : 0);
+  return `${topbar('Undercover')}
+  <section class="panel">
+    <div class="stepper"><span><b>Undercover</b><br><span class="hint">Ont un mot proche de celui des civils</span></span>
+      <span class="ctl"><button data-a="uc-u" data-v="-1" aria-label="Moins" ${cfg.under <= (cfg.white ? 0 : 1) ? 'disabled' : ''}>−</button><output>${cfg.under}</output><button data-a="uc-u" data-v="1" aria-label="Plus" ${cfg.under >= maxU ? 'disabled' : ''}>+</button></span></div>
+    <div class="toggle"><span><b>Mr White</b><br><span class="hint">${n >= 4 ? "N'a aucun mot, doit bluffer" : 'À partir de 4 joueurs'}</span></span>
+      <button data-a="uc-w" aria-pressed="${cfg.white}" aria-label="Activer Mr White" ${n < 4 ? 'disabled' : ''}></button></div>
+    <p class="hint">${civ} civil${civ > 1 ? 's' : ''} · ${cfg.under} undercover${cfg.white ? ' · 1 Mr White' : ''}</p>
+  </section>
+  <section class="panel">
+    <h3><span>Comment on joue</span></h3>
+    <p class="hint">1. Le téléphone passe de main en main, chacun découvre son mot en secret.<br>
+    2. À chaque tour, chacun donne un indice en un mot, sans dévoiler le sien.<br>
+    3. On débat, puis on vote pour éliminer quelqu'un.<br>
+    4. Les civils gagnent s'ils éliminent tous les imposteurs. Les imposteurs gagnent s'il ne reste qu'un civil. Mr White éliminé peut tenter de deviner le mot des civils pour gagner.</p>
+  </section>
+  <button class="btn big" data-a="uc-start">Distribuer les mots</button>`;
+}
+
+function ucNew() {
+  const cfg = S.ucCfg;
+  let pair = draw('uc', UC_WORDS);
+  if (Math.random() < .5) pair = [pair[1], pair[0]];
+  const roles = shuffle([
+    ...Array(cfg.under).fill('under'),
+    ...(cfg.white ? ['white'] : []),
+    ...Array(S.players.length - cfg.under - (cfg.white ? 1 : 0)).fill('civil'),
+  ]);
+  S.uc = {
+    civil: pair[0], under: pair[1],
+    ps: S.players.map((name, i) => ({ name, role: roles[i], alive: true })),
+    step: 'pass', idx: 0, revealed: false, round: 1, order: [], sel: null, out: null, guess: null, winner: null,
+  };
+}
+function ucOrder() {
+  const alive = shuffle(S.uc.ps.filter(p => p.alive));
+  const k = alive.findIndex(p => p.role !== 'white');
+  S.uc.order = alive.slice(k).concat(alive.slice(0, k)).map(p => p.name);
+}
+const roleName = r => ({ civil: 'Civil', under: 'Undercover', white: 'Mr White' }[r]);
+function ucWin() {
+  const a = S.uc.ps.filter(p => p.alive);
+  const civ = a.filter(p => p.role === 'civil').length, imp = a.length - civ;
+  if (imp === 0) return 'civils';
+  if (civ <= 1) return 'imposteurs';
+  return null;
+}
+
+function uc() {
+  const u = S.uc;
+  if (u.step === 'pass') {
+    const p = u.ps[u.idx];
+    if (!u.revealed) return `${topbar('Undercover')}
+      <div class="turn"><small>Passe le téléphone à</small><strong>${esc(p.name)}</strong></div>
+      <div class="card back"><p class="text">Mot secret</p></div>
+      <button class="btn big" data-a="uc-reveal">Je suis ${esc(p.name)}, voir mon mot</button>
+      <p class="howto">${u.idx + 1} / ${u.ps.length}. Ne montre ton écran à personne.</p>`;
+    const word = p.role === 'white'
+      ? `<p class="kind">Mr White</p><p class="text">Tu n'as pas de mot.</p><p class="sub">Écoute les indices des autres et bluffe. Si tu es éliminé·e, tu pourras deviner le mot des civils.</p>`
+      : `<p class="kind">Ton mot</p><p class="text">${esc(p.role === 'civil' ? u.civil : u.under)}</p><p class="sub">Tu ne sais pas si tu es civil ou undercover.</p>`;
+    return `${topbar('Undercover')}<div class="turn"><small>Mot de</small><strong>${esc(p.name)}</strong></div>
+      <div class="card black">${cardIdx('♠', 'soft').replace(/<i>.*?<\/i>/g, '')}${word}</div>
+      <button class="btn big" data-a="uc-hide">${u.idx + 1 < u.ps.length ? 'Cacher et passer' : 'Cacher et commencer'}</button>`;
+  }
+  if (u.step === 'play') return `${topbar('Undercover')}
+    <div class="turn"><small>Tour</small><strong>${u.round}</strong></div>
+    <section class="panel"><h3><span>Ordre de parole</span></h3>
+      <p class="hint">Chacun donne un indice en un mot, dans cet ordre. Ensuite, débat libre.</p>
+      <ol class="order">${u.order.map(n => `<li>${esc(n)}</li>`).join('')}</ol></section>
+    <button class="btn big" data-a="uc-vote">Passer au vote</button>`;
+  if (u.step === 'vote') return `${topbar('Undercover')}
+    <div class="turn"><small>Tour ${u.round}</small><strong>Qui on élimine ?</strong></div>
+    <div class="vote">${u.ps.filter(p => p.alive).map(p => `<button data-a="uc-sel" data-v="${esc(p.name)}" aria-pressed="${u.sel === p.name}">${esc(p.name)}</button>`).join('')}</div>
+    ${u.sel ? `<button class="btn big red" data-a="uc-kill">Éliminer ${esc(u.sel)}</button>` : `<p class="howto">Touchez le nom du joueur qui a reçu le plus de votes.</p>`}
+    <button class="btn ghost" data-a="uc-back">Retour aux indices</button>`;
+  if (u.step === 'reveal') {
+    const p = u.ps.find(x => x.name === u.out);
+    let extra = '';
+    if (p.role === 'white' && u.guess === null) extra = `<form class="guess" id="guessForm"><label for="guessIn" class="sub">Mr White, devine le mot des civils :</label><input id="guessIn" autocomplete="off" placeholder="Ton mot"><div class="row"><button class="btn red" type="submit">Valider</button><button class="btn paper" type="button" data-a="uc-giveup">J'abandonne</button></div></form>`;
+    else if (p.role === 'white') extra = `<p class="sub">Réponse : « ${esc(u.guess)} ». ${u.winner === 'white' ? 'Bien vu !' : 'Raté.'}</p>`;
+    return `${topbar('Undercover')}
+      <div class="card ${p.role === 'civil' ? 'black' : ''}"><p class="kind">Éliminé·e</p><p class="text">${esc(p.name)}<br>était <em>${roleName(p.role)}</em></p>${extra}</div>
+      ${p.role === 'white' && u.guess === null ? '' : `<button class="btn big" data-a="uc-continue">Continuer</button>`}`;
+  }
+  // fin
+  const msg = { civils: 'Les civils gagnent !', imposteurs: 'Les imposteurs gagnent !', white: 'Mr White gagne !' }[u.winner];
+  return `${topbar('Undercover')}
+    <div class="turn"><small>Fin de partie</small><strong>${msg}</strong></div>
+    <div class="card"><p class="kind">Les mots</p><p class="text">Civils : ${esc(u.civil)}<br>Undercover : <em>${esc(u.under)}</em></p>
+      <div class="roles">${u.ps.map(p => `<div class="${p.role === 'civil' ? '' : 'imp'}"><span>${esc(p.name)}</span><span>${roleName(p.role)}</span></div>`).join('')}</div></div>
+    <p class="howto">Les perdants boivent une gorgée.</p>
+    <div class="row"><button class="btn" data-a="uc-again">Rejouer</button><button class="btn ghost" data-a="home">Menu</button></div>`;
+}
+
+/* ---------- Rendu & actions ---------- */
+function render() {
+  const s = S.screen;
+  app.innerHTML = s === 'home' ? home() : s === 'aov' ? aov() : s === 'ucsetup' ? ucSetup() : s === 'uc' ? uc() : deck(s);
+  window.scrollTo(0, 0);
+}
+
+function drawDeck() {
+  const g = S.screen, lvl = S.level;
+  const src = g === 'nhie' ? NHIE : g === 'qui' ? QUI : TP;
+  S.deck.card = { v: draw(g + lvl, src[lvl]), level: lvl };
+}
+
+const actions = {
+  home() { S.screen = 'home'; S.uc = null; render(); },
+  rm(v) { S.players.splice(+v, 1); savePlayers(); render(); },
+  level(v) {
+    S.level = v; store.set('level', v);
+    if (v === 'hot') toast('Niveau Hot : majeurs uniquement, et chacun peut refuser.');
+    if (S.screen === 'aov') S.aov.card = null;
+    else if (S.deck.card) drawDeck();
+    render();
+  },
+  open(v) {
+    if (v === 'uc') { S.ucCfg = S.ucCfg || { under: 1, white: false }; S.screen = 'ucsetup'; }
+    else { S.screen = v; S.aov.card = null; S.deck.card = null; S.aov.turn = rand(S.players.length); }
+    render();
+  },
+  'aov-pick'(v) {
+    const kind = v === 'random' ? (Math.random() < .5 ? 'action' : 'verite') : v;
+    const p = S.players[S.aov.turn % S.players.length];
+    S.aov.card = { kind, level: S.level, html: fill(draw('aov' + S.level + kind, AOV[S.level][kind]), p) };
+    render();
+  },
+  'aov-next'() { S.aov.turn++; S.aov.card = null; render(); },
+  'aov-joker'() { toast('Joker ! 2 gorgées.'); actions['aov-next'](); },
+  'deck-next'() { drawDeck(); render(); },
+  'uc-u'(v) { S.ucCfg.under += +v; render(); },
+  'uc-w'() { S.ucCfg.white = !S.ucCfg.white; render(); },
+  'uc-start'() { ucNew(); S.screen = 'uc'; render(); },
+  'uc-reveal'() { S.uc.revealed = true; render(); },
+  'uc-hide'() {
+    const u = S.uc; u.revealed = false;
+    if (++u.idx >= u.ps.length) { u.step = 'play'; ucOrder(); }
+    render();
+  },
+  'uc-vote'() { S.uc.step = 'vote'; S.uc.sel = null; render(); },
+  'uc-back'() { S.uc.step = 'play'; render(); },
+  'uc-sel'(v) { S.uc.sel = v; render(); },
+  'uc-kill'() {
+    const u = S.uc; u.ps.find(p => p.name === u.sel).alive = false;
+    u.out = u.sel; u.guess = null; u.step = 'reveal'; render();
+  },
+  'uc-giveup'() { S.uc.guess = '…'; render(); },
+  'uc-continue'() {
+    const u = S.uc;
+    const w = u.winner || ucWin();
+    if (w) { u.winner = w; u.step = 'end'; }
+    else { u.round++; ucOrder(); u.step = 'play'; }
+    render();
+  },
+  'uc-again'() { ucNew(); render(); },
+};
+
+app.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]');
+  if (!b || b.disabled) return;
+  actions[b.dataset.a](b.dataset.v);
+});
+app.addEventListener('submit', e => {
+  e.preventDefault();
+  if (e.target.id === 'addForm') {
+    const inp = document.getElementById('newPlayer');
+    const name = inp.value.trim();
+    if (!name) return;
+    if (S.players.some(p => p.toLowerCase() === name.toLowerCase())) { toast(`${name} est déjà dans la partie.`); return; }
+    S.players.push(name); savePlayers(); render();
+    document.getElementById('newPlayer').focus();
+  } else if (e.target.id === 'guessForm') {
+    const g = document.getElementById('guessIn').value.trim();
+    if (!g) return;
+    S.uc.guess = g;
+    if (norm(g) === norm(S.uc.civil)) S.uc.winner = 'white';
+    render();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
