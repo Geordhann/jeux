@@ -103,8 +103,8 @@ p { margin: 0; }
 .card.black .idx, .card.black .kind { color: var(--ink); }
 .card .or { font-family: var(--font-display); color: var(--red); text-align: center; font-size: 1.3rem; }
 .card .sub { text-align: center; color: var(--ink-soft); font-size: .9rem; }
-.card.back { background: var(--red); background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.12) 0 6px, transparent 6px 14px), repeating-linear-gradient(-45deg, rgba(255,255,255,.12) 0 6px, transparent 6px 14px); color: var(--paper); align-items: center; text-align: center; border: 8px solid var(--paper); }
-.card.back .text { color: var(--paper); }
+.card.verso { background: var(--red); background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.12) 0 6px, transparent 6px 14px), repeating-linear-gradient(-45deg, rgba(255,255,255,.12) 0 6px, transparent 6px 14px); color: var(--paper); align-items: center; text-align: center; border: 8px solid var(--paper); }
+.card.verso .text { color: var(--paper); }
 @keyframes deal { from { transform: translateY(18px) rotate(-3deg) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .card { animation: none; } .game { transition: none; } }
 
@@ -986,7 +986,7 @@ function aov() {
   let body;
   if (!c) {
     body = `
-    <div class="card back"><p class="text">Action<br>ou<br>Vérité ?</p></div>
+    <div class="card verso"><p class="text">Action<br>ou<br>Vérité ?</p></div>
     <div class="row"><button class="btn big red" data-a="aov-pick" data-v="action">Action</button><button class="btn big paper" data-a="aov-pick" data-v="verite">Vérité</button></div>
     <button class="btn ghost" data-a="aov-pick" data-v="random">Laisser le hasard choisir</button>`;
   } else {
@@ -1038,7 +1038,7 @@ const DECKS = {
 function deck(game) {
   const d = DECKS[game], c = S.deck.card;
   let face;
-  if (!c) face = `<div class="card back"><p class="text">${d.title}</p></div>`;
+  if (!c) face = `<div class="card verso"><p class="text">${d.title}</p></div>`;
   else if (game === 'tp') face = `<div class="card">${cardIdx('?', c.level)}<p class="kind">Tu préfères…</p><p class="text">${esc(c.v[0])}</p><p class="or">ou</p><p class="text">${esc(c.v[1])}</p></div>`;
   else if (game === 'nhie') face = `<div class="card black">${cardIdx('J', c.level)}<p class="kind">Je n'ai jamais…</p><p class="text">${esc(c.v.replace(/[.\s]+$/, ''))}.</p></div>`;
   else face = `<div class="card">${cardIdx('Q', c.level)}<p class="kind">Qui est le plus susceptible de…</p><p class="text">${esc(c.v.replace(/[?\s]+$/, ''))} ?</p></div>`;
@@ -1104,7 +1104,7 @@ function sd() {
     const who = s.voters[s.v];
     if (!s.revealed) return `${topbar('Speed Dating')}
       <div class="turn"><small>Passe le téléphone à</small><strong>${esc(who)}</strong></div>
-      <div class="card back"><p class="text">Vote secret</p></div>
+      <div class="card verso"><p class="text">Vote secret</p></div>
       <button class="btn big" data-a="sd-reveal">Je suis ${esc(who)}, voter</button>
       <p class="howto">${s.v + 1} / ${s.voters.length}. Personne ne regarde l'écran.</p>`;
     return `${topbar('Speed Dating')}
@@ -1190,7 +1190,7 @@ function uc() {
     const p = u.ps[u.idx];
     if (!u.revealed) return `${topbar('Undercover')}
       <div class="turn"><small>Passe le téléphone à</small><strong>${esc(p.name)}</strong></div>
-      <div class="card back"><p class="text">Mot secret</p></div>
+      <div class="card verso"><p class="text">Mot secret</p></div>
       <button class="btn big" data-a="uc-reveal">Je suis ${esc(p.name)}, voir mon mot</button>
       <p class="howto">${u.idx + 1} / ${u.ps.length}. Ne montre ton écran à personne.</p>`;
     const word = p.role === 'white'
