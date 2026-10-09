@@ -146,6 +146,53 @@ p { margin: 0; }
 .roles span:last-child { color: var(--ink-soft); }
 .roles .imp span:last-child { color: var(--red); font-weight: 700; }
 .warn { font-size: .85rem; color: var(--gold); text-align: center; }
+.levels.three { grid-template-columns: repeat(3, 1fr); }
+.chip.tap { padding: 8px 14px; border: 0; }
+.chip .n { font-variant-numeric: tabular-nums; color: var(--red); font-weight: 800; margin-left: 4px; }
+.chip .heart, .pairs .heart { color: var(--red); }
+.tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.tool { text-align: left; padding: 14px; border-radius: var(--r); border: 1px solid var(--felt-line); background: rgba(0,0,0,.18); display: flex; flex-direction: column; gap: 2px; }
+.tool small { color: var(--muted); font-size: .82rem; }
+.sips { display: flex; flex-direction: column; gap: 10px; }
+.sips h3 { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.sips h3 .hint { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.timer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 10px 10px 18px; border-radius: 12px; background: var(--gold); color: var(--ink); }
+.timer strong { font-family: var(--font-display); font-weight: 400; font-size: 2.2rem; font-variant-numeric: tabular-nums; }
+.timer .btn.ghost { color: var(--ink); border-color: var(--ink); flex: none; }
+.table-ring { position: relative; width: min(100%, 340px); aspect-ratio: 1; max-width: 100%; margin: 0 auto; border-radius: 50%; border: 2px dashed var(--felt-line); background: radial-gradient(circle, var(--felt-2), transparent 70%); }
+.seat { position: absolute; transform: translate(-50%, -50%); background: var(--felt); border: 1px solid var(--felt-line); color: var(--fg); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: .85rem; white-space: nowrap; max-width: 34%; overflow: hidden; text-overflow: ellipsis; }
+.seat.me { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+.seat.hit { background: var(--red); color: var(--paper); border-color: var(--red); }
+.bottle { position: absolute; left: 50%; top: 50%; width: 34px; height: 136px; margin: -68px 0 0 -17px; transform-origin: 50% 50%; filter: drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
+.pairs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.pairs li { display: grid; grid-template-columns: 1fr auto 1fr auto; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; background: var(--paper); color: var(--ink); font-weight: 700; }
+.pairs li span:first-child { text-align: right; }
+.pairs.big li { font-size: 1.2rem; padding: 14px; }
+.x { width: 30px; height: 30px; border-radius: 50%; background: var(--paper-edge); color: var(--ink); flex: none; }
+.pick { display: flex; align-items: center; gap: 8px; }
+.pick select { flex: 1; min-width: 0; }
+select, textarea, #customForm input { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--felt-line); background: var(--felt); color: var(--fg); }
+textarea { resize: vertical; }
+.prefs { display: flex; flex-direction: column; gap: 10px; }
+.pref { display: flex; flex-direction: column; gap: 6px; }
+.mine { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mine li { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(0,0,0,.18); }
+.mine li span { min-width: 0; overflow-wrap: anywhere; }
+.mine small { display: block; color: var(--gold); font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; }
+.titles { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; }
+.titles b { font-size: 1.1rem; }
+.titles div { background: var(--paper); color: var(--ink); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; }
+.titles small { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); font-weight: 800; }
+.titles b { font-family: var(--font-display); font-weight: 400; font-size: 1.3rem; overflow-wrap: anywhere; }
+.titles span { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+table.score { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.score th, .score td { padding: 10px 6px; border-bottom: 1px solid var(--felt-line); text-align: center; }
+.score th[scope="row"], .score thead th:first-child { text-align: left; }
+.score thead th { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.adj { display: inline-flex; align-items: center; gap: 8px; }
+.adj button { width: 30px; height: 30px; border-radius: 50%; background: var(--paper); color: var(--ink); font-weight: 800; }
+.adj b { min-width: 2ch; }
 </style>
 </head>
 <body>
@@ -592,30 +639,153 @@ const TP = {
 };
 
 const UC_WORDS = [
-  ["Chat", "Chien"], ["Plage", "Piscine"], ["Pizza", "Burger"], ["Netflix", "YouTube"], ["Café", "Thé"],
-  ["Bière", "Vin"], ["Instagram", "TikTok"], ["Tinder", "Hinge"], ["Paris", "Londres"],
-  ["Harry Potter", "Le Seigneur des anneaux"], ["Ski", "Snowboard"], ["Croissant", "Pain au chocolat"],
-  ["Mojito", "Caïpirinha"], ["Vodka", "Tequila"], ["Concert", "Festival"], ["Avion", "Train"],
-  ["Douche", "Bain"], ["Sushi", "Ramen"], ["Batman", "Spider-Man"], ["Guitare", "Piano"],
-  ["Football", "Rugby"], ["Lune", "Soleil"], ["Vampire", "Zombie"], ["Ketchup", "Mayonnaise"],
-  ["Nutella", "Confiture"], ["Mariage", "Anniversaire"], ["Pompier", "Policier"], ["Coca", "Pepsi"],
-  ["iPhone", "Samsung"], ["Barbe", "Moustache"], ["Camping", "Hôtel"], ["Bisou", "Câlin"],
-  ["Ex", "Crush"], ["Tatouage", "Piercing"], ["Licorne", "Dragon"], ["Bowling", "Billard"],
-  ["Karaoké", "Boîte de nuit"], ["Raclette", "Fondue"], ["Chocolat", "Caramel"], ["Jean", "Jogging"],
-  ["Uber", "Taxi"], ["Spotify", "Deezer"], ["Pâtes", "Riz"], ["Mer", "Lac"], ["Ange", "Démon"],
-  ["Pirate", "Viking"], ["Gâteau", "Tarte"], ["Disney", "Pixar"], ["Selfie", "Photo de groupe"],
-  ["Apéro", "Brunch"], ["Premier date", "Entretien d'embauche"], ["Shot", "Cocktail"],
-  ["Baskets", "Talons"], ["Gueule de bois", "Fatigue"], ["Plan à trois", "Échangisme"],
-  ["Menottes", "Bandeau"], ["Préservatif", "Pilule"], ["Strip-tease", "Lap dance"],
-  ["Cinéma", "Théâtre"], ["Chips", "Pop-corn"], ["Bague", "Collier"], ["Glace", "Sorbet"],
+  ["Gel douche", "Shampoing"], ["Fromage", "Yaourt"], ["Vin", "Champagne"], ["Chat", "Chien"], ["Plage", "Piscine"],
+  ["Pizza", "Burger"], ["Netflix", "YouTube"], ["Café", "Thé"], ["Bière", "Cidre"], ["Instagram", "TikTok"],
+  ["Paris", "Londres"], ["Harry Potter", "Le Seigneur des anneaux"], ["Ski", "Snowboard"], ["Croissant", "Pain au chocolat"],
+  ["Mojito", "Caïpirinha"], ["Vodka", "Tequila"], ["Concert", "Festival"], ["Avion", "Train"], ["Douche", "Bain"],
+  ["Sushi", "Ramen"], ["Batman", "Spider-Man"], ["Guitare", "Piano"], ["Football", "Rugby"], ["Lune", "Soleil"],
+  ["Vampire", "Zombie"], ["Ketchup", "Mayonnaise"], ["Nutella", "Confiture"], ["Mariage", "Anniversaire"],
+  ["Pompier", "Policier"], ["Coca", "Pepsi"], ["iPhone", "Samsung"], ["Barbe", "Moustache"], ["Camping", "Hôtel"],
+  ["Tatouage", "Piercing"], ["Licorne", "Dragon"], ["Bowling", "Billard"], ["Karaoké", "Boîte de nuit"],
+  ["Raclette", "Fondue"], ["Chocolat", "Caramel"], ["Jean", "Jogging"], ["Uber", "Taxi"], ["Spotify", "Deezer"],
+  ["Pâtes", "Riz"], ["Mer", "Lac"], ["Ange", "Démon"], ["Pirate", "Viking"], ["Gâteau", "Tarte"], ["Disney", "Pixar"],
+  ["Selfie", "Photo de groupe"], ["Apéro", "Brunch"], ["Premier date", "Entretien d'embauche"], ["Shot", "Cocktail"],
+  ["Baskets", "Talons"], ["Gueule de bois", "Fatigue"], ["Cinéma", "Théâtre"], ["Chips", "Pop-corn"], ["Bague", "Collier"],
+  ["Glace", "Sorbet"], ["Fourchette", "Cuillère"], ["Oreiller", "Couette"], ["Canapé", "Fauteuil"], ["Frigo", "Congélateur"],
+  ["Micro-ondes", "Four"], ["Parapluie", "Imperméable"], ["Lunettes", "Lentilles"], ["Chaussettes", "Collants"],
+  ["Brosse à dents", "Fil dentaire"], ["Savon", "Gel hydroalcoolique"], ["Lessive", "Adoucissant"], ["Balai", "Aspirateur"],
+  ["Bougie", "Lampe"], ["Clé", "Badge"], ["Sac à dos", "Valise"], ["Montre", "Bracelet"], ["Écharpe", "Bonnet"],
+  ["Vélo", "Trottinette"], ["Bus", "Métro"], ["Voiture", "Moto"], ["Supermarché", "Marché"], ["Boulangerie", "Pâtisserie"],
+  ["Pharmacie", "Hôpital"], ["École", "Université"], ["Bibliothèque", "Librairie"], ["Restaurant", "Cantine"],
+  ["Pomme", "Poire"], ["Fraise", "Framboise"], ["Citron", "Orange"], ["Banane", "Mangue"], ["Tomate", "Poivron"],
+  ["Carotte", "Radis"], ["Frites", "Potatoes"], ["Crêpe", "Gaufre"], ["Pain", "Brioche"], ["Jambon", "Saucisson"],
+  ["Poulet", "Dinde"], ["Saumon", "Thon"], ["Huître", "Moule"], ["Lait", "Crème"], ["Miel", "Sirop d'érable"],
+  ["Sel", "Poivre"], ["Moutarde", "Wasabi"], ["Soupe", "Smoothie"], ["Jus d'orange", "Limonade"], ["Eau gazeuse", "Eau plate"],
+  ["Whisky", "Rhum"], ["Lion", "Tigre"], ["Loup", "Renard"], ["Dauphin", "Requin"], ["Abeille", "Guêpe"],
+  ["Papillon", "Libellule"], ["Cheval", "Âne"], ["Poule", "Canard"], ["Souris", "Hamster"], ["Serpent", "Lézard"],
+  ["Pingouin", "Ours polaire"], ["Hiver", "Automne"], ["Pluie", "Neige"], ["Forêt", "Jungle"], ["Volcan", "Montagne"],
+  ["Rivière", "Cascade"], ["Médecin", "Infirmier"], ["Avocat", "Juge"], ["Facteur", "Livreur"], ["Coiffeur", "Barbier"],
+  ["Dentiste", "Orthodontiste"], ["Peintre", "Sculpteur"], ["Chanteur", "Rappeur"], ["Tennis", "Badminton"],
+  ["Basket", "Volley"], ["Boxe", "Judo"], ["Yoga", "Pilates"], ["Échecs", "Dames"], ["Monopoly", "Uno"],
+  ["PlayStation", "Xbox"], ["Mario", "Sonic"], ["WhatsApp", "Messenger"], ["SMS", "Mail"], ["Ordinateur", "Tablette"],
+  ["Écouteurs", "Casque"], ["Télévision", "Projecteur"], ["Radio", "Podcast"], ["Livre", "Magazine"], ["BD", "Manga"],
+  ["Noël", "Nouvel An"], ["Halloween", "Carnaval"], ["Bébé", "Enfant"], ["Grand-mère", "Tante"], ["Frère", "Cousin"],
+  ["Voisin", "Colocataire"], ["Tente", "Cabane"], ["Château", "Palais"], ["Musée", "Galerie d'art"], ["Zoo", "Aquarium"],
+  ["Cirque", "Fête foraine"], ["Magicien", "Clown"], ["Sorcière", "Fée"], ["Robot", "Extraterrestre"], ["Fantôme", "Squelette"],
+  ["Roi", "Prince"], ["Superman", "Iron Man"], ["Shrek", "Le Roi Lion"], ["Titanic", "Avatar"], ["Les Simpson", "South Park"],
+  ["Friends", "How I Met Your Mother"], ["Beyoncé", "Rihanna"], ["Messi", "Ronaldo"], ["Tour Eiffel", "Arc de Triomphe"],
+  ["Italie", "Espagne"], ["New York", "Los Angeles"], ["Marseille", "Nice"], ["Tinder", "Hinge"], ["Ex", "Crush"],
 ];
+// Activées par l'option « Mots coquins »
+const UC_WORDS_HOT = [
+  ["Bisou", "Câlin"], ["Plan à trois", "Échangisme"], ["Menottes", "Bandeau"], ["Préservatif", "Pilule"],
+  ["Strip-tease", "Lap dance"], ["Suçon", "Morsure"], ["Lingerie", "Pyjama"], ["Coup d'un soir", "Sex friend"],
+  ["Massage", "Caresse"], ["Jacuzzi", "Sauna"], ["Nudes", "Selfie"], ["Body shot", "Shot"],
+];
+
+// Bouteille : défis à deux. « tu » = qui a fait tourner, {x} = la personne désignée
+const BOTTLE = {
+  soft: [
+    "Fais un compliment sincère à {x}.",
+    "Inventez un check secret, {x} et toi.",
+    "Regardez-vous dans les yeux 20 secondes. Le premier qui rit boit.",
+    "Échange un vêtement avec {x} jusqu'au prochain tour.",
+    "Imite {x}. Le groupe note sur 10.",
+    "Fais un selfie grimace avec {x}.",
+    "Pose une question indiscrète à {x}. {il} doit répondre.",
+    "Fais un câlin de 10 secondes à {x}.",
+    "Chante une chanson d'amour à {x}.",
+    "Fais un duel de pierre-feuille-ciseaux avec {x}. Le perdant boit 2 gorgées.",
+  ],
+  piquant: [
+    "Fais un bisou sur la joue de {x}.",
+    "Fais un slow de 30 secondes avec {x}.",
+    "Murmure un compliment à l'oreille de {x}.",
+    "Tenez-vous la main jusqu'au prochain tour.",
+    "Assieds-toi sur les genoux de {x} jusqu'au prochain tour.",
+    "Masse les épaules de {x} pendant une minute.",
+    "Fais ton regard de séduction à {x} pendant 10 secondes, sans rire.",
+    "Fais un selfie joue contre joue avec {x}.",
+    "Drague {x} avec ta meilleure phrase d'accroche.",
+    "Dis à {x} ce que tu as remarqué en premier chez {lui}.",
+  ],
+  hot: [
+    "Embrasse {x}. Sur la joue ou la bouche, {x} choisit.",
+    "Fais un bisou dans le cou de {x}.",
+    "Fais un lap dance de 30 secondes à {x}.",
+    "Fais un body shot sur {x}.",
+    "Fais passer un glaçon de ta bouche à celle de {x}.",
+    "Murmure à {x} ce que tu lui ferais si vous étiez seul·es.",
+    "Mordille l'oreille de {x}.",
+    "Laisse {x} t'enlever un vêtement.",
+  ],
+  intense: [
+    "Embrasse {x} sur la bouche pendant 5 secondes.",
+    "Danse collé-serré avec {x} pendant une minute.",
+    "Passe 3 minutes dans une autre pièce avec {x}.",
+    "Enlève un vêtement à {x} avec les dents.",
+    "Fais un suçon à {x}, là où {il} veut.",
+    "Assieds-toi à califourchon sur {x} pendant une minute.",
+    "Fais un body shot dans le cou de {x}.",
+    "Embrasse {x} dans le cou pendant 10 secondes.",
+  ],
+  sanslimite: [
+    "Roule une pelle à {x} pendant 10 secondes.",
+    "Passe 7 minutes au paradis avec {x}.",
+    "Fais un lap dance en sous-vêtements à {x}.",
+    "Déshabille {x} jusqu'aux sous-vêtements, avec son accord.",
+    "Couvre le visage et le cou de {x} de bisous pendant 30 secondes.",
+    "Mange un fruit sur le ventre de {x}, sans les mains.",
+    "Allonge-toi sur {x} pendant 30 secondes.",
+    "Roule une pelle de 20 secondes à {x}, les yeux bandés.",
+  ],
+};
+
+const SD_QUESTIONS = {
+  soft: [
+    "Ton voyage de rêve ?", "Ta plus grosse honte à l'école ?", "Ton talent caché ?",
+    "Le plat que tu cuisines pour impressionner ?", "Tu gagnes au loto demain : tu fais quoi ?",
+    "Ton film doudou ?", "Ton dimanche idéal ?", "La dernière chose qui t'a fait pleurer de rire ?",
+  ],
+  piquant: [
+    "Ton premier date idéal ?", "Qu'est-ce qui te fait craquer en premier chez quelqu'un ?",
+    "Ton pire date, raconte.", "Ton plus gros red flag ?", "Ta technique de drague ?",
+    "Le compliment que tu aimerais qu'on te fasse plus souvent ?", "Premier pas : toi ou l'autre ?",
+    "Qu'as-tu remarqué en premier chez la personne en face ?",
+  ],
+  hot: [
+    "Ton type physique, en détail ?", "Le baiser le plus mémorable de ta vie ?",
+    "Ce qui t'attire chez la personne en face, en trois mots ?", "Ton turn-on numéro un ?",
+    "Lumière allumée ou éteinte ?", "L'endroit le plus fou où tu as embrassé quelqu'un ?",
+    "Matin ou soir ?", "Ton fantasme de premier rendez-vous ?",
+  ],
+  intense: [
+    "Ton fantasme le moins avouable ?", "Le truc qui te rend fou ou folle au lit ?",
+    "Ce que tu ferais si vous étiez seul·es, là, maintenant ?", "Ta meilleure nuit, en une phrase ?",
+    "Ce que tu refuses au lit ?", "Un endroit où tu rêves de le faire ?",
+    "Dominer ou être dominé·e ?", "Tes trois zones sensibles ?",
+  ],
+  sanslimite: [
+    "Avec qui ici tu finirais la nuit, à part la personne en face ?", "Ton fantasme le plus tabou ?",
+    "Raconte ta nuit la plus folle.", "Qu'est-ce que tu aimerais tester avec la personne en face ?",
+    "Plan à trois : oui, non, déjà fait ?", "Ce que tu aimes qu'on te fasse ?",
+    "Ton record en une nuit ?", "Tu embrasserais la personne en face, là, maintenant ?",
+  ],
+};
 
 const GAMES = [
   { id: 'aov', name: 'Action ou Vérité', suit: '♥', desc: "Le classique. Chacun son tour, du Soft au Sans limite.", min: 2 },
+  { id: 'bottle', name: 'La Bouteille', suit: '♣', desc: "Fais tourner : elle choisit ton duo et votre défi.", min: 2 },
+  { id: 'sd', name: 'Speed Dating', suit: '♥', desc: "Tête-à-tête chronométrés, vote secret, matchs révélés à la fin.", min: 2, mixed: true },
   { id: 'uc', name: 'Undercover', suit: '♠', desc: "Un mot secret, des imposteurs, un vote. Démasquez-les.", min: 3 },
   { id: 'nhie', name: "Je n'ai jamais", suit: '♦', desc: "Ceux qui l'ont déjà fait boivent.", min: 2 },
   { id: 'qui', name: 'Qui pourrait…', suit: '♣', desc: "À 3, tout le monde pointe quelqu'un.", min: 3 },
   { id: 'tp', name: 'Tu préfères', suit: '♦', desc: "Deux choix, le groupe vote, la minorité boit.", min: 2 },
+];
+
+const CUSTOM_GAMES = [
+  { id: 'action', label: 'Action' }, { id: 'verite', label: 'Vérité' }, { id: 'bottle', label: 'Bouteille' },
+  { id: 'nhie', label: "Je n'ai jamais" }, { id: 'qui', label: 'Qui pourrait' }, { id: 'tp', label: 'Tu préfères' },
 ];
 
 /* ---------- État ---------- */
@@ -629,12 +799,18 @@ const S = {
   examples: false,
   level: store.get('level', 'soft'),
   target: store.get('target', 'oppose'), // 'oppose' | 'tous'
+  black: store.get('black', []),          // "a>b" : a ne veut pas de défi avec b
+  couples: store.get('couples', []),      // [[a, b]]
+  coupleMode: store.get('coupleMode', true),
+  custom: store.get('custom', []),        // { game, level, text, text2 }
+  stats: store.get('stats', {}),          // nom -> { sips, jokers, done }
   adultOk: false,
   gate: null,
   screen: 'home',
   aov: { turn: 0, card: null },
   deck: { card: null },
-  uc: null,
+  uc: null, ucCfg: null, bottle: null, sd: null, sdCfg: { secs: 120 },
+  timer: null, edit: null, confirm: null,
 };
 if (!Array.isArray(S.players)) { S.players = EXAMPLE_PLAYERS.map(p => ({ ...p })); S.examples = true; }
 S.players = S.players.map(p => typeof p === 'string' ? { name: p, g: 'h' } : p); // anciennes listes sans sexe
@@ -646,6 +822,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;'
 const rand = n => Math.floor(Math.random() * n);
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const byName = n => S.players.find(p => p.name === n);
 
 // Pioche sans répétition tant que le paquet n'est pas épuisé
 const used = {};
@@ -657,19 +834,65 @@ function draw(key, arr) {
   return arr[i];
 }
 
-// Une seule cible par carte ; sexe opposé à partir de Piquant si l'option est active
-function fill(text, current, level) {
-  const others = S.players.filter(p => p !== current);
-  let pool = others;
-  if (S.target === 'oppose' && level !== 'soft') {
-    const opp = others.filter(p => p.g !== current.g);
+// Paquet de base + cartes perso du même jeu et du même niveau
+function cards(game, level) {
+  const base = game === 'action' || game === 'verite' ? AOV[level][game]
+    : game === 'bottle' ? BOTTLE[level] : game === 'nhie' ? NHIE[level] : game === 'qui' ? QUI[level] : TP[level];
+  const mine = S.custom.filter(c => c.game === game && c.level === level).map(c => game === 'tp' ? [c.text, c.text2] : c.text);
+  return base.concat(mine);
+}
+
+/* ---------- Couples & liste noire ---------- */
+const blocked = (a, b) => S.black.includes(a + '>' + b) || S.black.includes(b + '>' + a);
+const partnerOf = n => { const c = S.couples.find(c => c.includes(n)); return c ? (c[0] === n ? c[1] : c[0]) : null; };
+const partnerHere = n => { const p = partnerOf(n); return p && byName(p) ? p : null; };
+
+// Qui peut être visé par un défi de `cur` à ce niveau
+function targets(cur, level) {
+  let pool = S.players.filter(p => p !== cur && !blocked(p.name, cur.name));
+  if (level === 'soft') return pool;
+  if (S.coupleMode) {
+    const part = partnerHere(cur.name);
+    if (part) return pool.filter(p => p.name === part);
+    pool = pool.filter(p => !partnerHere(p.name));
+  }
+  if (S.target === 'oppose' && !cur.pref) {
+    const opp = pool.filter(p => p.g !== cur.g);
     if (opp.length) pool = opp;
   }
-  const x = pool.length ? pool[rand(pool.length)] : null;
+  return pool;
+}
+
+// Avec une préférence, ~4 défis sur 5 tombent sur le sexe préféré
+function pickTarget(cur, level) {
+  const pool = targets(cur, level);
+  if (!pool.length) return null;
+  if (level !== 'soft' && cur.pref) {
+    const yes = pool.filter(p => p.g === cur.pref), no = pool.filter(p => p.g !== cur.pref);
+    const from = yes.length && (!no.length || Math.random() < .8) ? yes : no;
+    return from[rand(from.length)];
+  }
+  return pool[rand(pool.length)];
+}
+// Hors préférences (dans un sens ou dans l'autre), le défi ne dépasse pas Piquant
+const LEVEL_IDX = id => LEVELS.findIndex(l => l.id === id);
+function capLevel(cur, x, level) {
+  if (!x || LEVEL_IDX(level) <= LEVEL_IDX('piquant')) return level;
+  const off = (cur.pref && x.g !== cur.pref) || (x.pref && cur.g !== x.pref);
+  return off ? 'piquant' : level;
+}
+const softNote = c => c.capped ? `<p class="sub">Défi adouci : hors préférences.</p>` : '';
+
+function fill(text, x) {
   return esc(text)
-    .replace(/\{x\}/g, x ? `<em>${esc(x.name)}</em>` : "quelqu'un")
+    .replace(/\{x\}/g, x ? `<em>${esc(x.name)}</em>` : "quelqu'un de ton choix")
+    .replace(/\{lui\}/g, x && x.g === 'f' ? 'elle' : 'lui')
     .replace(/\{il\}/g, x && x.g === 'f' ? 'elle' : 'il');
 }
+
+/* ---------- Compteurs ---------- */
+const stat = n => S.stats[n] || (S.stats[n] = { sips: 0, jokers: 0, done: 0 });
+function bump(n, field, k = 1) { const s = stat(n); s[field] = Math.max(0, s[field] + k); store.set('stats', S.stats); }
 
 let toastTimer;
 function toast(msg) {
@@ -680,37 +903,83 @@ function toast(msg) {
 
 function savePlayers() { S.examples = false; store.set('players', S.players); }
 
-/* ---------- Écrans ---------- */
+/* ---------- Minuteur ---------- */
+let audioCtx = null, wakeLock = null;
+const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+function secondsIn(text) {
+  const m = text.match(/(\d+)\s*(secondes?|minutes?)/i);
+  if (m) return +m[1] * (/^m/i.test(m[2]) ? 60 : 1);
+  if (/une minute/i.test(text)) return 60;
+  return 0;
+}
+const timeLeft = () => Math.max(0, Math.ceil((S.timer.end - Date.now()) / 1000));
+function timerBlock(sec) {
+  if (S.timer) return `<div class="timer" role="timer"><strong id="timerTxt">${fmt(timeLeft())}</strong><button class="btn ghost" data-a="timer-stop">Arrêter</button></div>`;
+  return sec ? `<button class="btn paper" data-a="timer-go" data-v="${sec}">Lancer le chrono · ${fmt(sec)}</button>` : '';
+}
+function ring() {
+  try {
+    if (audioCtx) [0, .35, .7].forEach(d => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.frequency.value = 880; o.connect(g); g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(.25, audioCtx.currentTime + d); g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + d + .3);
+      o.start(audioCtx.currentTime + d); o.stop(audioCtx.currentTime + d + .3);
+    });
+    navigator.vibrate && navigator.vibrate([300, 120, 300]);
+  } catch (e) {}
+}
+function stopTimer() {
+  S.timer = null;
+  if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+}
+setInterval(() => {
+  if (!S.timer) return;
+  const left = timeLeft(), el = document.getElementById('timerTxt');
+  if (el) el.textContent = fmt(left);
+  if (left <= 0) { stopTimer(); ring(); toast('Temps écoulé !'); render(false); }
+}, 250);
+
+/* ---------- Écrans communs ---------- */
 const topbar = title => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button><h2>${title}</h2></div>`;
 const levelPicker = () => `<div class="levels" role="group" aria-label="Niveau">${LEVELS.map(l =>
   `<button data-a="level" data-v="${l.id}" aria-pressed="${S.level === l.id}"><span>${l.label}</span><span class="pips" aria-hidden="true">${l.pips}</span></button>`).join('')}</div>`;
+const targetPicker = () => `<div class="levels two" role="group" aria-label="Défis avec">
+  <button data-a="target" data-v="oppose" aria-pressed="${S.target === 'oppose'}">Défis avec le sexe opposé</button>
+  <button data-a="target" data-v="tous" aria-pressed="${S.target === 'tous'}">Défis avec tout le monde</button></div>`;
 const pipsOf = id => LEVELS.find(l => l.id === id).pips;
-const cardIdx = (letter, lvl) => `<span class="idx tl"><b>${letter}</b><i>${pipsOf(lvl)}</i></span><span class="idx br"><b>${letter}</b><i>${pipsOf(lvl)}</i></span>`;
+const cardIdx = (letter, lvl) => `<span class="idx tl"><b>${letter}</b><i>${lvl ? pipsOf(lvl) : ''}</i></span><span class="idx br"><b>${letter}</b><i>${lvl ? pipsOf(lvl) : ''}</i></span>`;
+const sipRow = () => `<section class="sips"><h3>Qui boit ? <span class="hint">Touche un nom pour +1 gorgée</span></h3>
+  <div class="chips">${S.players.map(p => `<button class="chip tap" data-a="sip" data-v="${esc(p.name)}">${esc(p.name)} <span class="n">${stat(p.name).sips}</span></button>`).join('')}</div></section>`;
 
 function home() {
   const n = S.players.length;
+  const hasH = S.players.some(p => p.g === 'h'), hasF = S.players.some(p => p.g === 'f');
+  const why = g => n < g.min ? `Il faut au moins ${g.min} joueurs.` : g.mixed && !(hasH && hasF) ? 'Il faut au moins un H et une F.' : '';
   return `
   <h1 class="logo">La<span>Tournée</span></h1>
-  <p class="tag">Cinq jeux de soirée, un seul téléphone qui fait le tour de la table.</p>
+  <p class="tag">Sept jeux de soirée, un seul téléphone qui fait le tour de la table.</p>
   <section class="panel">
     <h3><span>Joueurs</span><span>${n}</span></h3>
     ${S.examples ? `<p class="hint">Noms d'exemple : supprime-les et ajoute ta bande.</p>` : ''}
-    <div class="chips">${S.players.map((p, i) => `<span class="chip"><button class="sex ${p.g}" data-a="sex" data-v="${i}" aria-label="${esc(p.name)} : ${p.g === 'f' ? 'femme' : 'homme'}, toucher pour changer">${p.g === 'f' ? 'F' : 'H'}</button>${esc(p.name)}<button data-a="rm" data-v="${i}" aria-label="Retirer ${esc(p.name)}">✕</button></span>`).join('')}</div>
+    <div class="chips">${S.players.map((p, i) => `<span class="chip"><button class="sex ${p.g}" data-a="sex" data-v="${i}" aria-label="${esc(p.name)} : ${p.g === 'f' ? 'femme' : 'homme'}, toucher pour changer">${p.g === 'f' ? 'F' : 'H'}</button>${esc(p.name)}${partnerHere(p.name) ? ' <span class="heart" aria-label="en couple">♥</span>' : ''}<button data-a="rm" data-v="${i}" aria-label="Retirer ${esc(p.name)}">✕</button></span>`).join('')}</div>
     <form class="add" id="addForm"><input id="newPlayer" placeholder="Prénom" maxlength="20" autocomplete="off" aria-label="Prénom du joueur"><button class="btn sexbtn" type="submit" value="h" aria-label="Ajouter un homme">+ H</button><button class="btn red sexbtn" type="submit" value="f" aria-label="Ajouter une femme">+ F</button></form>
     <p class="hint">Touche le H ou le F d'un joueur pour le changer.</p>
   </section>
   <section class="games">
-    ${GAMES.map(g => `<button class="game" data-a="open" data-v="${g.id}" ${n < g.min ? 'disabled' : ''}>
+    ${GAMES.map(g => { const w = why(g); return `<button class="game" data-a="open" data-v="${g.id}" ${w ? 'disabled' : ''}>
       <span class="suit ${g.suit === '♠' || g.suit === '♣' ? 'b' : ''}" aria-hidden="true">${g.suit}</span>
-      <span><b>${g.name}</b><small>${n < g.min ? `Il faut au moins ${g.min} joueurs.` : g.desc}</small></span>
-      <span class="go" aria-hidden="true">›</span></button>`).join('')}
+      <span><b>${g.name}</b><small>${w || g.desc}</small></span>
+      <span class="go" aria-hidden="true">›</span></button>`; }).join('')}
+  </section>
+  <section class="tools">
+    <button class="tool" data-a="open" data-v="rel"><b>Affinités</b><small>Préférences, couples, liste noire</small></button>
+    <button class="tool" data-a="open" data-v="custom"><b>Cartes perso</b><small>${S.custom.length} carte${S.custom.length > 1 ? 's' : ''} ajoutée${S.custom.length > 1 ? 's' : ''}</small></button>
+    <button class="tool" data-a="open" data-v="score"><b>Classement</b><small>Gorgées, jokers, défis</small></button>
   </section>
   <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte 2 gorgées (ou un gage soft choisi par le groupe). Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>`;
 }
 
-const targetPicker = () => `<div class="levels two" role="group" aria-label="Défis avec">
-  <button data-a="target" data-v="oppose" aria-pressed="${S.target === 'oppose'}">Défis avec le sexe opposé</button>
-  <button data-a="target" data-v="tous" aria-pressed="${S.target === 'tous'}">Défis avec tout le monde</button></div>`;
+/* ---------- Action ou Vérité ---------- */
 function aov() {
   const p = S.players[S.aov.turn % S.players.length];
   const c = S.aov.card;
@@ -725,15 +994,42 @@ function aov() {
     body = `
     <div class="card ${isA ? '' : 'black'}">${cardIdx(isA ? 'A' : 'V', c.level)}
       <p class="kind">${isA ? 'Action' : 'Vérité'}</p>
-      <p class="text">${c.html}</p>
+      <p class="text">${c.html}</p>${softNote(c)}
     </div>
-    <div class="row"><button class="btn" data-a="aov-next">Fait, au suivant</button><button class="btn ghost" data-a="aov-joker">Joker</button></div>
+    ${timerBlock(c.secs)}
+    <div class="row"><button class="btn" data-a="aov-next">Fait, au suivant</button><button class="btn ghost" data-a="aov-joker">Joker (2 gorgées)</button></div>
     <button class="btn ghost" data-a="aov-pick" data-v="${c.kind}">Autre carte</button>`;
   }
   return `${topbar('Action ou Vérité')}${levelPicker()}${targetPicker()}
   <div class="turn"><small>C'est au tour de</small><strong>${esc(p.name)}</strong></div>${body}`;
 }
 
+/* ---------- La Bouteille ---------- */
+function bottle() {
+  const b = S.bottle, n = S.players.length;
+  const cur = S.players[b.turn % n];
+  const seats = S.players.map((p, i) => {
+    const a = i / n * 2 * Math.PI;
+    const cls = p === cur ? 'me' : b.target === p.name && !b.spinning ? 'hit' : '';
+    return `<span class="seat ${cls}" style="left:${50 + 41 * Math.sin(a)}%;top:${50 - 41 * Math.cos(a)}%">${esc(p.name)}</span>`;
+  }).join('');
+  const c = b.card;
+  return `${topbar('La Bouteille')}${levelPicker()}${targetPicker()}
+  <div class="turn"><small>${c ? 'Défi pour' : 'Fais tourner'}</small><strong>${c ? `${esc(cur.name)} & ${esc(b.target)}` : esc(cur.name)}</strong></div>
+  <div class="table-ring">${seats}
+    <svg class="bottle" id="bottle" viewBox="0 0 40 160" aria-hidden="true" style="transform:rotate(${b.from}deg)">
+      <rect x="15" y="2" width="10" height="12" rx="2" style="fill:var(--red)"/>
+      <path d="M15 14h10v26c0 8 11 14 11 28v78c0 6-4 10-10 10H14c-6 0-10-4-10-10V68c0-14 11-20 11-28z" style="fill:var(--paper);stroke:var(--paper-edge);stroke-width:2"/>
+      <rect x="7" y="84" width="26" height="34" rx="3" style="fill:var(--red)"/>
+    </svg>
+  </div>
+  ${c ? `<div class="card">${cardIdx('♣', c.level)}<p class="kind">Défi à deux</p><p class="text">${c.html}</p>${softNote(c)}</div>
+    ${timerBlock(c.secs)}
+    <div class="row"><button class="btn" data-a="b-done">Fait, ${esc(b.target)} tourne</button><button class="btn ghost" data-a="b-joker">Joker (2 gorgées)</button></div>`
+  : `<button class="btn big" data-a="b-spin" ${b.spinning ? 'disabled' : ''}>${b.spinning ? 'Ça tourne…' : 'Faire tourner la bouteille'}</button>`}`;
+}
+
+/* ---------- Cartes simples ---------- */
 const DECKS = {
   nhie: { title: "Je n'ai jamais", how: "Lis la carte à voix haute. Ceux qui l'ont déjà fait boivent une gorgée, et racontent si le groupe insiste." },
   qui: { title: 'Qui pourrait…', how: "Lis la carte, compte jusqu'à 3, et tout le monde pointe quelqu'un. La personne la plus désignée boit autant de gorgées que de doigts pointés vers elle." },
@@ -744,11 +1040,92 @@ function deck(game) {
   let face;
   if (!c) face = `<div class="card back"><p class="text">${d.title}</p></div>`;
   else if (game === 'tp') face = `<div class="card">${cardIdx('?', c.level)}<p class="kind">Tu préfères…</p><p class="text">${esc(c.v[0])}</p><p class="or">ou</p><p class="text">${esc(c.v[1])}</p></div>`;
-  else if (game === 'nhie') face = `<div class="card black">${cardIdx('J', c.level)}<p class="kind">Je n'ai jamais…</p><p class="text">${esc(c.v)}.</p></div>`;
-  else face = `<div class="card">${cardIdx('Q', c.level)}<p class="kind">Qui est le plus susceptible de…</p><p class="text">${esc(c.v)} ?</p></div>`;
+  else if (game === 'nhie') face = `<div class="card black">${cardIdx('J', c.level)}<p class="kind">Je n'ai jamais…</p><p class="text">${esc(c.v.replace(/[.\s]+$/, ''))}.</p></div>`;
+  else face = `<div class="card">${cardIdx('Q', c.level)}<p class="kind">Qui est le plus susceptible de…</p><p class="text">${esc(c.v.replace(/[?\s]+$/, ''))} ?</p></div>`;
   return `${topbar(d.title)}${levelPicker()}${face}
   <button class="btn big" data-a="deck-next">${c ? 'Carte suivante' : 'Tirer une carte'}</button>
-  <p class="howto">${d.how}</p>`;
+  <p class="howto">${d.how}</p>${sipRow()}`;
+}
+
+/* ---------- Speed Dating ---------- */
+function sdSetup() {
+  const h = S.players.filter(p => p.g === 'h').length, f = S.players.length - h;
+  return `${topbar('Speed Dating')}${levelPicker()}
+  <section class="panel">
+    <h3><span>Durée d'un tête-à-tête</span></h3>
+    <div class="levels three" role="group" aria-label="Durée">${[60, 120, 180].map(s => `<button data-a="sd-secs" data-v="${s}" aria-pressed="${S.sdCfg.secs === s}">${s / 60} min</button>`).join('')}</div>
+    <p class="hint">${h} H · ${f} F · ${Math.max(h, f)} tête-à-tête. ${h !== f ? "Comme les équipes ne sont pas égales, quelqu'un fait une pause à chaque tour." : ''}</p>
+  </section>
+  <section class="panel">
+    <h3><span>Comment on joue</span></h3>
+    <p class="hint">1. L'appli forme des duos H/F et donne une question au niveau choisi.<br>
+    2. Chaque duo discute pendant le chrono, puis on tourne.<br>
+    3. À la fin, le téléphone passe de main en main : chacun coche en secret les personnes qui lui ont plu.<br>
+    4. Seuls les matchs réciproques sont révélés. Les crushes à sens unique restent secrets.</p>
+    ${S.coupleMode && S.couples.some(c => byName(c[0]) && byName(c[1])) ? `<p class="hint">Les couples discutent mais ne votent pas (réglage « couples entre eux »).</p>` : ''}
+  </section>
+  <button class="btn big" data-a="sd-start">Lancer les tête-à-tête</button>`;
+}
+function sdNew() {
+  const H = shuffle(S.players.filter(p => p.g === 'h').map(p => p.name));
+  const F = shuffle(S.players.filter(p => p.g === 'f').map(p => p.name));
+  const n = Math.max(H.length, F.length);
+  while (H.length < n) H.push(null);
+  while (F.length < n) F.push(null);
+  const rounds = [];
+  for (let r = 0; r < n; r++) {
+    const pairs = [], pause = [];
+    for (let i = 0; i < n; i++) {
+      const h = H[i], f = F[(i + r) % n];
+      if (h && f && !blocked(h, f)) pairs.push([h, f]);
+      else { if (h) pause.push(h); if (f) pause.push(f); }
+    }
+    rounds.push({ pairs, pause, q: draw('sd' + S.level, SD_QUESTIONS[S.level]) });
+  }
+  const met = {};
+  rounds.forEach(r => r.pairs.forEach(([a, b]) => { (met[a] = met[a] || []).push(b); (met[b] = met[b] || []).push(a); }));
+  const canVote = n => !(S.coupleMode && partnerHere(n));
+  Object.keys(met).forEach(k => { met[k] = met[k].filter(canVote); if (!canVote(k) || !met[k].length) delete met[k]; });
+  S.sd = { rounds, r: 0, level: S.level, step: 'round', met, voters: shuffle(Object.keys(met)), v: 0, revealed: false, sel: [], votes: {} };
+}
+function sd() {
+  const s = S.sd;
+  if (s.step === 'round') {
+    const rd = s.rounds[s.r], last = s.r + 1 >= s.rounds.length;
+    return `${topbar('Speed Dating')}
+    <div class="turn"><small>Tête-à-tête</small><strong>${s.r + 1} / ${s.rounds.length}</strong></div>
+    <ul class="pairs">${rd.pairs.map(([a, b]) => `<li><span>${esc(a)}</span><span class="heart" aria-label="avec">♥</span><span>${esc(b)}</span></li>`).join('')}</ul>
+    ${rd.pause.length ? `<p class="howto">En pause : ${rd.pause.map(esc).join(', ')}. Profitez-en pour remplir les verres.</p>` : ''}
+    <div class="card">${cardIdx('♥', s.level)}<p class="kind">Question du tour</p><p class="text">${esc(rd.q)}</p><p class="sub">Chacun répond, puis la conversation est libre.</p></div>
+    ${timerBlock(S.sdCfg.secs)}
+    <button class="btn big ${last ? 'red' : ''}" data-a="sd-next">${last ? 'Passer au vote secret' : 'On tourne'}</button>`;
+  }
+  if (s.step === 'vote') {
+    const who = s.voters[s.v];
+    if (!s.revealed) return `${topbar('Speed Dating')}
+      <div class="turn"><small>Passe le téléphone à</small><strong>${esc(who)}</strong></div>
+      <div class="card back"><p class="text">Vote secret</p></div>
+      <button class="btn big" data-a="sd-reveal">Je suis ${esc(who)}, voter</button>
+      <p class="howto">${s.v + 1} / ${s.voters.length}. Personne ne regarde l'écran.</p>`;
+    return `${topbar('Speed Dating')}
+      <div class="turn"><small>${esc(who)}, qui t'a plu ?</small><strong>Coche en secret</strong></div>
+      <div class="vote">${s.met[who].map(n => `<button data-a="sd-sel" data-v="${esc(n)}" aria-pressed="${s.sel.includes(n)}">${esc(n)}</button>`).join('')}</div>
+      <p class="howto">Tu peux cocher plusieurs personnes, ou personne.</p>
+      <button class="btn big" data-a="sd-cast">Valider et cacher</button>`;
+  }
+  const matches = [], seen = new Set();
+  let oneWay = 0;
+  Object.entries(s.votes).forEach(([a, list]) => list.forEach(b => {
+    if ((s.votes[b] || []).includes(a)) { const k = [a, b].sort().join('|'); if (!seen.has(k)) { seen.add(k); matches.push([a, b]); } }
+    else oneWay++;
+  }));
+  return `${topbar('Speed Dating')}
+    <div class="turn"><small>Résultats</small><strong>${matches.length ? `${matches.length} match${matches.length > 1 ? 's' : ''} !` : 'Aucun match'}</strong></div>
+    ${matches.length ? `<ul class="pairs big">${matches.map(([a, b]) => `<li><span>${esc(a)}</span><span class="heart" aria-label="et">♥</span><span>${esc(b)}</span></li>`).join('')}</ul>
+      <p class="howto">Chaque match trinque ensemble. Le reste de la soirée vous appartient.</p>`
+    : `<p class="howto">Personne ne s'est choisi mutuellement… La soirée est encore longue.</p>`}
+    <p class="howto">${oneWay} crush${oneWay > 1 ? 's' : ''} à sens unique, qui ${oneWay > 1 ? 'resteront' : 'restera'} secret${oneWay > 1 ? 's' : ''}.</p>
+    <div class="row"><button class="btn" data-a="sd-start">Rejouer</button><button class="btn ghost" data-a="home">Menu</button></div>`;
 }
 
 /* ---------- Undercover ---------- */
@@ -766,7 +1143,9 @@ function ucSetup() {
       <span class="ctl"><button data-a="uc-u" data-v="-1" aria-label="Moins" ${cfg.under <= (cfg.white ? 0 : 1) ? 'disabled' : ''}>−</button><output>${cfg.under}</output><button data-a="uc-u" data-v="1" aria-label="Plus" ${cfg.under >= maxU ? 'disabled' : ''}>+</button></span></div>
     <div class="toggle"><span><b>Mr White</b><br><span class="hint">${n >= 4 ? "N'a aucun mot, doit bluffer" : 'À partir de 4 joueurs'}</span></span>
       <button data-a="uc-w" aria-pressed="${cfg.white}" aria-label="Activer Mr White" ${n < 4 ? 'disabled' : ''}></button></div>
-    <p class="hint">${civ} civil${civ > 1 ? 's' : ''} · ${cfg.under} undercover${cfg.white ? ' · 1 Mr White' : ''}</p>
+    <div class="toggle"><span><b>Mots coquins</b><br><span class="hint">Ajoute quelques paires osées aux mots du quotidien</span></span>
+      <button data-a="uc-hot" aria-pressed="${!!cfg.hot}" aria-label="Inclure des mots coquins"></button></div>
+    <p class="hint">${civ} civil${civ > 1 ? 's' : ''} · ${cfg.under} undercover${cfg.white ? ' · 1 Mr White' : ''} · ${UC_WORDS.length + (cfg.hot ? UC_WORDS_HOT.length : 0)} paires de mots</p>
   </section>
   <section class="panel">
     <h3><span>Comment on joue</span></h3>
@@ -777,10 +1156,9 @@ function ucSetup() {
   </section>
   <button class="btn big" data-a="uc-start">Distribuer les mots</button>`;
 }
-
 function ucNew() {
   const cfg = S.ucCfg;
-  let pair = draw('uc', UC_WORDS);
+  let pair = draw('uc' + !!cfg.hot, cfg.hot ? UC_WORDS.concat(UC_WORDS_HOT) : UC_WORDS);
   if (Math.random() < .5) pair = [pair[1], pair[0]];
   const roles = shuffle([
     ...Array(cfg.under).fill('under'),
@@ -806,7 +1184,6 @@ function ucWin() {
   if (civ <= 1) return 'imposteurs';
   return null;
 }
-
 function uc() {
   const u = S.uc;
   if (u.step === 'pass') {
@@ -820,7 +1197,7 @@ function uc() {
       ? `<p class="kind">Mr White</p><p class="text">Tu n'as pas de mot.</p><p class="sub">Écoute les indices des autres et bluffe. Si tu es éliminé·e, tu pourras deviner le mot des civils.</p>`
       : `<p class="kind">Ton mot</p><p class="text">${esc(p.role === 'civil' ? u.civil : u.under)}</p><p class="sub">Tu ne sais pas si tu es civil ou undercover.</p>`;
     return `${topbar('Undercover')}<div class="turn"><small>Mot de</small><strong>${esc(p.name)}</strong></div>
-      <div class="card black">${cardIdx('♠', 'soft').replace(/<i>.*?<\/i>/g, '')}${word}</div>
+      <div class="card black">${cardIdx('♠')}${word}</div>
       <button class="btn big" data-a="uc-hide">${u.idx + 1 < u.ps.length ? 'Cacher et passer' : 'Cacher et commencer'}</button>`;
   }
   if (u.step === 'play') return `${topbar('Undercover')}
@@ -843,17 +1220,95 @@ function uc() {
       <div class="card ${p.role === 'civil' ? 'black' : ''}"><p class="kind">Éliminé·e</p><p class="text">${esc(p.name)}<br>était <em>${roleName(p.role)}</em></p>${extra}</div>
       ${p.role === 'white' && u.guess === null ? '' : `<button class="btn big" data-a="uc-continue">Continuer</button>`}`;
   }
-  // fin
   const msg = { civils: 'Les civils gagnent !', imposteurs: 'Les imposteurs gagnent !', white: 'Mr White gagne !' }[u.winner];
   return `${topbar('Undercover')}
     <div class="turn"><small>Fin de partie</small><strong>${msg}</strong></div>
     <div class="card"><p class="kind">Les mots</p><p class="text">Civils : ${esc(u.civil)}<br>Undercover : <em>${esc(u.under)}</em></p>
       <div class="roles">${u.ps.map(p => `<div class="${p.role === 'civil' ? '' : 'imp'}"><span>${esc(p.name)}</span><span>${roleName(p.role)}</span></div>`).join('')}</div></div>
-    <p class="howto">Les perdants boivent une gorgée.</p>
+    <p class="howto">Les perdants boivent une gorgée (déjà comptée dans le classement).</p>
     <div class="row"><button class="btn" data-a="uc-again">Rejouer</button><button class="btn ghost" data-a="home">Menu</button></div>`;
 }
 
-/* ---------- Rendu & actions ---------- */
+/* ---------- Couples & liste noire ---------- */
+function rel() {
+  const free = S.players.filter(p => !partnerHere(p.name));
+  const opts = free.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+  const shown = S.couples.filter(c => byName(c[0]) && byName(c[1]));
+  if (S.edit) {
+    const me = S.edit;
+    return `${topbar('Liste noire')}
+    <div class="turn"><small>Liste secrète de</small><strong>${esc(me)}</strong></div>
+    <p class="howto">Coche les personnes avec qui tu ne veux aucun défi. Ça marche dans les deux sens, et personne ne voit ta liste.</p>
+    <div class="vote">${S.players.filter(p => p.name !== me).map(p => `<button data-a="bl-toggle" data-v="${esc(p.name)}" aria-pressed="${S.black.includes(me + '>' + p.name)}">${esc(p.name)}</button>`).join('')}</div>
+    <button class="btn big" data-a="bl-done">Valider et cacher</button>`;
+  }
+  const prefBtn = (i, p, v, label) => `<button data-a="pref" data-v="${i}:${v}" aria-pressed="${(p.pref || '-') === v}">${label}</button>`;
+  return `${topbar('Affinités')}
+  <section class="panel">
+    <h3><span>Préférences</span></h3>
+    <p class="hint">Avec qui chacun préfère les défis chauds. À partir de Piquant, environ 4 défis sur 5 tombent sur le sexe préféré. Les autres sont adoucis et restent au niveau Piquant maximum.</p>
+    <div class="prefs">${S.players.map((p, i) => `<div class="pref"><b>${esc(p.name)}</b><div class="levels three" role="group" aria-label="Préférence de ${esc(p.name)}">${prefBtn(i, p, '-', 'Peu importe')}${prefBtn(i, p, 'f', 'Plutôt filles')}${prefBtn(i, p, 'h', 'Plutôt mecs')}</div></div>`).join('')}</div>
+  </section>
+  <section class="panel">
+    <h3><span>Couples</span><span>${shown.length}</span></h3>
+    ${shown.length ? `<ul class="pairs">${shown.map(c => `<li><span>${esc(c[0])}</span><span class="heart" aria-label="et">♥</span><span>${esc(c[1])}</span><button class="x" data-a="cp-rm" data-v="${esc(c[0])}" aria-label="Séparer ${esc(c[0])} et ${esc(c[1])}">✕</button></li>`).join('')}</ul>` : `<p class="hint">Aucun couple déclaré.</p>`}
+    ${free.length >= 2 ? `<div class="pick"><select id="cp1" aria-label="Première personne">${opts}</select><span class="heart" aria-hidden="true">♥</span><select id="cp2" aria-label="Deuxième personne">${free.map((p, i) => `<option value="${esc(p.name)}" ${i === 1 ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>
+    <button class="btn paper" data-a="cp-add">Ajouter ce couple</button>` : ''}
+    <div class="toggle"><span><b>Les couples restent entre eux</b><br><span class="hint">À partir de Piquant, une personne en couple ne fait les défis qu'avec son/sa partenaire, et personne d'autre ne la vise.</span></span>
+      <button data-a="cp-mode" aria-pressed="${S.coupleMode}" aria-label="Les couples restent entre eux"></button></div>
+  </section>
+  <section class="panel">
+    <h3><span>Liste noire secrète</span></h3>
+    <p class="hint">Chacun peut exclure en secret des personnes (ex, frère ou sœur, pote en couple…). Aucun défi ne vous mettra ensemble. Passe le téléphone à la personne, elle touche son nom.</p>
+    <div class="chips">${S.players.map(p => `<button class="chip tap" data-a="bl-edit" data-v="${esc(p.name)}">${esc(p.name)}</button>`).join('')}</div>
+  </section>`;
+}
+
+/* ---------- Cartes perso ---------- */
+function custom() {
+  const gl = id => CUSTOM_GAMES.find(g => g.id === id).label;
+  const ll = id => LEVELS.find(l => l.id === id).label;
+  return `${topbar('Cartes perso')}
+  <form class="panel" id="customForm">
+    <h3><span>Nouvelle carte</span></h3>
+    <div class="pick"><select id="cGame" aria-label="Jeu">${CUSTOM_GAMES.map(g => `<option value="${g.id}">${g.label}</option>`).join('')}</select>
+      <select id="cLevel" aria-label="Niveau">${LEVELS.map(l => `<option value="${l.id}" ${l.id === S.level ? 'selected' : ''}>${l.label}</option>`).join('')}</select></div>
+    <textarea id="cText" rows="3" maxlength="200" placeholder="Ex : Fais un bisou à {x} sur le front." aria-label="Texte de la carte"></textarea>
+    <input id="cText2" maxlength="120" placeholder="Deuxième choix" aria-label="Deuxième choix" hidden>
+    <p class="hint" id="cHint">Écris {x} pour un autre joueur tiré au hasard (il respecte les couples et la liste noire).</p>
+    <button class="btn" type="submit">Ajouter la carte</button>
+  </form>
+  <section class="panel">
+    <h3><span>Vos cartes</span><span>${S.custom.length}</span></h3>
+    ${S.custom.length ? `<ul class="mine">${S.custom.map((c, i) => `<li><span><small>${gl(c.game)} · ${ll(c.level)}</small>${esc(c.text)}${c.text2 ? ` <i>ou</i> ${esc(c.text2)}` : ''}</span><button class="x" data-a="c-rm" data-v="${i}" aria-label="Supprimer la carte">✕</button></li>`).join('')}</ul>` : `<p class="hint">Pas encore de carte. Vos private jokes ont leur place ici : elles se mélangent au paquet du jeu et du niveau choisis.</p>`}
+  </section>`;
+}
+const CUSTOM_HINTS = {
+  action: 'Écris {x} pour un autre joueur tiré au hasard (il respecte les couples et la liste noire).',
+  verite: 'Écris {x} pour un autre joueur tiré au hasard.',
+  bottle: 'Écris {x} pour la personne désignée par la bouteille.',
+  nhie: 'Écris la fin de la phrase : « Je n\'ai jamais… »',
+  qui: 'Écris la fin de la phrase : « Qui est le plus susceptible de… »',
+  tp: 'Écris les deux choix : « Tu préfères… ou… »',
+};
+
+/* ---------- Classement ---------- */
+function score() {
+  const rows = S.players.map(p => ({ n: p.name, ...stat(p.name) }));
+  const best = (f, label) => { const top = rows.slice().sort((a, b) => b[f] - a[f])[0]; return top && top[f] > 0 ? `<div><small>${label}</small><b>${esc(top.n)}</b><span>${top[f]}</span></div>` : ''; };
+  const titles = best('sips', 'Plus grosse descente') + best('done', 'Le plus courageux') + best('jokers', 'Roi du joker');
+  return `${topbar('Classement')}
+  ${titles ? `<section class="titles">${titles}</section>` : `<p class="howto">Les compteurs se remplissent tout seuls quand vous jouez : défis faits, jokers, gorgées.</p>`}
+  <div class="scroll"><table class="score">
+    <thead><tr><th scope="col">Joueur</th><th scope="col">Gorgées</th><th scope="col">Jokers</th><th scope="col">Défis</th></tr></thead>
+    <tbody>${rows.sort((a, b) => b.sips - a.sips).map(r => `<tr><th scope="row">${esc(r.n)}</th>
+      <td><span class="adj"><button data-a="sip-minus" data-v="${esc(r.n)}" aria-label="Retirer une gorgée à ${esc(r.n)}">−</button><b>${r.sips}</b><button data-a="sip" data-v="${esc(r.n)}" aria-label="Ajouter une gorgée à ${esc(r.n)}">+</button></span></td>
+      <td>${r.jokers}</td><td>${r.done}</td></tr>`).join('')}</tbody>
+  </table></div>
+  ${S.confirm === 'reset' ? `<div class="row"><button class="btn red" data-a="reset-ok">Oui, tout remettre à zéro</button><button class="btn ghost" data-a="reset-no">Annuler</button></div>`
+    : `<button class="btn ghost" data-a="reset">Remettre les compteurs à zéro</button>`}`;
+}
+
 function gate() {
   const l = LEVELS.find(x => x.id === S.gate);
   return `<div class="turn"><small>Niveau</small><strong>${l.label}</strong></div>
@@ -864,50 +1319,151 @@ function gate() {
   <button class="btn ghost" data-a="gate-no">Rester au niveau actuel</button>`;
 }
 
-function render() {
+/* ---------- Rendu ---------- */
+const SCREENS = { home, aov, bottle, ucsetup: ucSetup, uc, sdsetup: sdSetup, sd, rel, custom, score };
+let lastScreen = null;
+function render(scroll = true) {
   const s = S.screen;
-  if (S.gate) { app.innerHTML = gate(); window.scrollTo(0, 0); return; }
-  app.innerHTML = s === 'home' ? home() : s === 'aov' ? aov() : s === 'ucsetup' ? ucSetup() : s === 'uc' ? uc() : deck(s);
-  window.scrollTo(0, 0);
+  app.innerHTML = S.gate ? gate() : SCREENS[s] ? SCREENS[s]() : deck(s);
+  const key = S.gate || s;
+  if (scroll && key !== lastScreen) window.scrollTo(0, 0);
+  lastScreen = key;
+  if (s === 'bottle' && S.bottle.spinning && !S.gate) spinBottle();
+}
+
+function spinBottle() {
+  const el = document.getElementById('bottle');
+  if (!el) return;
+  const fast = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.getBoundingClientRect();
+  el.style.transition = `transform ${fast ? .3 : 2.6}s cubic-bezier(.15,.75,.2,1)`;
+  el.style.transform = `rotate(${S.bottle.to}deg)`;
+  setTimeout(() => {
+    const b = S.bottle;
+    if (!b || !b.spinning) return;
+    b.spinning = false; b.from = b.to;
+    const cur = S.players[b.turn % S.players.length], x = byName(b.target);
+    const lvl = capLevel(cur, x, S.level);
+    const raw = draw('bottle' + lvl, cards('bottle', lvl));
+    b.card = { level: lvl, capped: lvl !== S.level, html: fill(raw, x), secs: secondsIn(raw) };
+    render(false);
+  }, fast ? 350 : 2700);
 }
 
 function drawDeck() {
   const g = S.screen, lvl = S.level;
-  const src = g === 'nhie' ? NHIE : g === 'qui' ? QUI : TP;
-  S.deck.card = { v: draw(g + lvl, src[lvl]), level: lvl };
+  S.deck.card = { v: draw(g + lvl, cards(g, lvl)), level: lvl };
 }
 
+/* ---------- Actions ---------- */
 const actions = {
-  home() { S.screen = 'home'; S.uc = null; render(); },
-  rm(v) { S.players.splice(+v, 1); savePlayers(); render(); },
+  home() { S.screen = 'home'; S.uc = null; S.sd = null; S.bottle = null; S.edit = null; S.confirm = null; render(); },
+  rm(v) {
+    const name = S.players[+v].name;
+    S.players.splice(+v, 1); savePlayers();
+    S.couples = S.couples.filter(c => !c.includes(name)); store.set('couples', S.couples);
+    render();
+  },
   sex(v) { const p = S.players[+v]; p.g = p.g === 'f' ? 'h' : 'f'; savePlayers(); render(); },
-  target(v) { S.target = v; store.set('target', v); if (S.aov.card) S.aov.card = null; render(); },
-  'gate-ok'() { S.adultOk = true; const v = S.gate; S.gate = null; actions.level(v); },
-  'gate-no'() { S.gate = null; render(); },
+  target(v) { S.target = v; store.set('target', v); S.aov.card = null; render(); },
   level(v) {
     if (LEVELS.find(l => l.id === v).adult && !S.adultOk) { S.gate = v; render(); return; }
     S.level = v; store.set('level', v);
     if (v === 'hot') toast('Niveau Hot : majeurs uniquement, et chacun peut refuser.');
     if (S.screen === 'aov') S.aov.card = null;
-    else if (S.deck.card) drawDeck();
+    else if (S.screen === 'bottle') { if (!S.bottle.spinning) S.bottle.card = null; }
+    else if (DECKS[S.screen] && S.deck.card) drawDeck();
     render();
   },
+  'gate-ok'() { S.adultOk = true; const v = S.gate; S.gate = null; actions.level(v); },
+  'gate-no'() { S.gate = null; render(); },
   open(v) {
     if (v === 'uc') { S.ucCfg = S.ucCfg || { under: 1, white: false }; S.screen = 'ucsetup'; }
+    else if (v === 'sd') S.screen = 'sdsetup';
+    else if (v === 'bottle') { S.screen = 'bottle'; S.bottle = { turn: rand(S.players.length), from: 0, to: 0, target: null, card: null, spinning: false }; }
     else { S.screen = v; S.aov.card = null; S.deck.card = null; S.aov.turn = rand(S.players.length); }
     render();
   },
+
+  // Action ou Vérité
   'aov-pick'(v) {
     const kind = v === 'random' ? (Math.random() < .5 ? 'action' : 'verite') : v;
     const p = S.players[S.aov.turn % S.players.length];
-    S.aov.card = { kind, level: S.level, html: fill(draw('aov' + S.level + kind, AOV[S.level][kind]), p, S.level) };
+    const x = pickTarget(p, S.level);
+    const lvl = kind === 'action' ? capLevel(p, x, S.level) : S.level;
+    const raw = draw('aov' + lvl + kind, cards(kind, lvl));
+    S.aov.card = { kind, level: lvl, capped: lvl !== S.level, html: fill(raw, x), secs: kind === 'action' ? secondsIn(raw) : 0 };
+    render(false);
+  },
+  'aov-next'() { bump(S.players[S.aov.turn % S.players.length].name, 'done'); S.aov.turn++; S.aov.card = null; render(false); },
+  'aov-joker'() {
+    const n = S.players[S.aov.turn % S.players.length].name;
+    bump(n, 'jokers'); bump(n, 'sips', 2); toast(`Joker ! 2 gorgées pour ${n}.`);
+    S.aov.turn++; S.aov.card = null; render(false);
+  },
+
+  // Bouteille
+  'b-spin'() {
+    const b = S.bottle, n = S.players.length, cur = S.players[b.turn % n];
+    const t = pickTarget(cur, S.level);
+    if (!t) { toast(`Personne de disponible pour ${cur.name} avec ces réglages.`); return; }
+    const i = S.players.indexOf(t);
+    const goal = i / n * 360, now = ((b.from % 360) + 360) % 360;
+    b.to = b.from + 360 * 4 + ((goal - now + 360) % 360);
+    b.target = t.name; b.card = null; b.spinning = true;
+    render(false);
+  },
+  'b-done'() {
+    const b = S.bottle, cur = S.players[b.turn % S.players.length];
+    bump(cur.name, 'done'); bump(b.target, 'done');
+    b.turn = S.players.findIndex(p => p.name === b.target); b.card = null;
+    render(false);
+  },
+  'b-joker'() {
+    const b = S.bottle, cur = S.players[b.turn % S.players.length];
+    bump(cur.name, 'jokers'); bump(cur.name, 'sips', 2); toast(`Joker ! 2 gorgées pour ${cur.name}.`);
+    b.turn = S.players.findIndex(p => p.name === b.target); b.card = null;
+    render(false);
+  },
+
+  // Cartes simples
+  'deck-next'() { drawDeck(); render(false); },
+  sip(v) { bump(v, 'sips'); if (S.screen !== 'score') toast(`${v} : ${stat(v).sips} gorgée${stat(v).sips > 1 ? 's' : ''}`); render(false); },
+  'sip-minus'(v) { bump(v, 'sips', -1); render(false); },
+  reset() { S.confirm = 'reset'; render(false); },
+  'reset-no'() { S.confirm = null; render(false); },
+  'reset-ok'() { S.stats = {}; store.set('stats', S.stats); S.confirm = null; toast('Compteurs remis à zéro.'); render(false); },
+
+  // Minuteur
+  'timer-go'(v) {
+    try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch (e) {}
+    try { navigator.wakeLock && navigator.wakeLock.request('screen').then(l => { wakeLock = l; }).catch(() => {}); } catch (e) {}
+    S.timer = { end: Date.now() + v * 1000 };
+    render(false);
+  },
+  'timer-stop'() { stopTimer(); render(false); },
+
+  // Speed Dating
+  'sd-secs'(v) { S.sdCfg.secs = +v; render(false); },
+  'sd-start'() { sdNew(); S.screen = 'sd'; render(); },
+  'sd-next'() {
+    const s = S.sd;
+    if (s.r + 1 < s.rounds.length) { s.r++; render(); return; }
+    if (!s.voters.length) { s.step = 'result'; render(); return; }
+    s.step = 'vote'; s.v = 0; s.revealed = false; render();
+  },
+  'sd-reveal'() { S.sd.revealed = true; S.sd.sel = []; render(false); },
+  'sd-sel'(v) { const s = S.sd; s.sel = s.sel.includes(v) ? s.sel.filter(x => x !== v) : s.sel.concat(v); render(false); },
+  'sd-cast'() {
+    const s = S.sd; s.votes[s.voters[s.v]] = s.sel; s.sel = []; s.revealed = false;
+    if (++s.v >= s.voters.length) s.step = 'result';
     render();
   },
-  'aov-next'() { S.aov.turn++; S.aov.card = null; render(); },
-  'aov-joker'() { toast('Joker ! 2 gorgées.'); actions['aov-next'](); },
-  'deck-next'() { drawDeck(); render(); },
-  'uc-u'(v) { S.ucCfg.under += +v; render(); },
-  'uc-w'() { S.ucCfg.white = !S.ucCfg.white; render(); },
+
+  // Undercover
+  'uc-u'(v) { S.ucCfg.under += +v; render(false); },
+  'uc-hot'() { S.ucCfg.hot = !S.ucCfg.hot; render(false); },
+  'uc-w'() { S.ucCfg.white = !S.ucCfg.white; render(false); },
   'uc-start'() { ucNew(); S.screen = 'uc'; render(); },
   'uc-reveal'() { S.uc.revealed = true; render(); },
   'uc-hide'() {
@@ -917,42 +1473,83 @@ const actions = {
   },
   'uc-vote'() { S.uc.step = 'vote'; S.uc.sel = null; render(); },
   'uc-back'() { S.uc.step = 'play'; render(); },
-  'uc-sel'(v) { S.uc.sel = v; render(); },
+  'uc-sel'(v) { S.uc.sel = v; render(false); },
   'uc-kill'() {
     const u = S.uc; u.ps.find(p => p.name === u.sel).alive = false;
     u.out = u.sel; u.guess = null; u.step = 'reveal'; render();
   },
-  'uc-giveup'() { S.uc.guess = '…'; render(); },
+  'uc-giveup'() { S.uc.guess = '…'; render(false); },
   'uc-continue'() {
     const u = S.uc;
     const w = u.winner || ucWin();
-    if (w) { u.winner = w; u.step = 'end'; }
-    else { u.round++; ucOrder(); u.step = 'play'; }
+    if (w) {
+      u.winner = w; u.step = 'end';
+      const civilsWon = w === 'civils';
+      u.ps.forEach(p => { if ((p.role === 'civil') !== civilsWon) bump(p.name, 'sips'); });
+    } else { u.round++; ucOrder(); u.step = 'play'; }
     render();
   },
   'uc-again'() { ucNew(); render(); },
+
+  // Couples & liste noire
+  'cp-add'() {
+    const a = document.getElementById('cp1').value, b = document.getElementById('cp2').value;
+    if (!a || !b || a === b) { toast('Choisis deux personnes différentes.'); return; }
+    S.couples = S.couples.filter(c => !c.includes(a) && !c.includes(b)).concat([[a, b]]);
+    store.set('couples', S.couples); render(false);
+  },
+  'cp-rm'(v) { S.couples = S.couples.filter(c => !c.includes(v)); store.set('couples', S.couples); render(false); },
+  pref(v) { const [i, g] = v.split(':'); const p = S.players[+i]; if (g === '-') delete p.pref; else p.pref = g; savePlayers(); render(false); },
+  'cp-mode'() { S.coupleMode = !S.coupleMode; store.set('coupleMode', S.coupleMode); render(false); },
+  'bl-edit'(v) { S.edit = v; render(); },
+  'bl-toggle'(v) {
+    const k = S.edit + '>' + v;
+    S.black = S.black.includes(k) ? S.black.filter(x => x !== k) : S.black.concat(k);
+    store.set('black', S.black); render(false);
+  },
+  'bl-done'() { S.edit = null; toast('Liste enregistrée et cachée.'); render(); },
+
+  // Cartes perso
+  'c-rm'(v) { S.custom.splice(+v, 1); store.set('custom', S.custom); render(false); },
 };
 
+// Tout autre geste arrête le chrono (on a changé de carte ou d'écran)
+const KEEP_TIMER = new Set(['timer-go', 'sip', 'sip-minus', 'target']);
 app.addEventListener('click', e => {
   const b = e.target.closest('[data-a]');
   if (!b || b.disabled) return;
+  if (S.timer && !KEEP_TIMER.has(b.dataset.a)) stopTimer();
   actions[b.dataset.a](b.dataset.v);
+});
+app.addEventListener('change', e => {
+  if (e.target.id !== 'cGame') return;
+  const g = e.target.value;
+  document.getElementById('cText2').hidden = g !== 'tp';
+  document.getElementById('cText').placeholder = { action: 'Ex : Fais un bisou à {x} sur le front.', verite: 'Ex : Qu\'est-ce que tu penses vraiment de {x} ?', bottle: 'Ex : Faites un tango, {x} et toi.', nhie: 'Ex : volé un panneau de signalisation', qui: 'Ex : finir marié·e à Las Vegas', tp: 'Premier choix' }[g];
+  document.getElementById('cHint').textContent = CUSTOM_HINTS[g];
 });
 app.addEventListener('submit', e => {
   e.preventDefault();
-  if (e.target.id === 'addForm') {
+  const id = e.target.id;
+  if (id === 'addForm') {
     const inp = document.getElementById('newPlayer');
     const name = inp.value.trim();
     if (!name) return;
     if (S.players.some(p => p.name.toLowerCase() === name.toLowerCase())) { toast(`${name} est déjà dans la partie.`); return; }
-    S.players.push({ name, g: e.submitter && e.submitter.value === 'f' ? 'f' : 'h' }); savePlayers(); render();
+    S.players.push({ name, g: e.submitter && e.submitter.value === 'f' ? 'f' : 'h' }); savePlayers(); render(false);
     document.getElementById('newPlayer').focus();
-  } else if (e.target.id === 'guessForm') {
+  } else if (id === 'guessForm') {
     const g = document.getElementById('guessIn').value.trim();
     if (!g) return;
     S.uc.guess = g;
     if (norm(g) === norm(S.uc.civil)) S.uc.winner = 'white';
-    render();
+    render(false);
+  } else if (id === 'customForm') {
+    const game = document.getElementById('cGame').value, level = document.getElementById('cLevel').value;
+    const text = document.getElementById('cText').value.trim(), text2 = document.getElementById('cText2').value.trim();
+    if (!text || (game === 'tp' && !text2)) { toast(game === 'tp' ? 'Remplis les deux choix.' : 'Écris le texte de la carte.'); return; }
+    S.custom.unshift(game === 'tp' ? { game, level, text, text2 } : { game, level, text });
+    store.set('custom', S.custom); toast('Carte ajoutée au paquet.'); render(false);
   }
 });
 
