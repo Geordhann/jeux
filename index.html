@@ -160,11 +160,11 @@ p { margin: 0; }
 .timer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 10px 10px 18px; border-radius: 12px; background: var(--gold); color: var(--ink); }
 .timer strong { font-family: var(--font-display); font-weight: 400; font-size: 2.2rem; font-variant-numeric: tabular-nums; }
 .timer .btn.ghost { color: var(--ink); border-color: var(--ink); flex: none; }
-.table-ring { position: relative; width: min(100%, 340px); aspect-ratio: 1; max-width: 100%; margin: 0 auto; border-radius: 50%; border: 2px dashed var(--felt-line); background: radial-gradient(circle, var(--felt-2), transparent 70%); }
+.table-ring { flex: none; position: relative; width: min(100%, 340px); aspect-ratio: 1; max-width: 100%; margin: 0 auto; border-radius: 50%; border: 2px dashed var(--felt-line); background: radial-gradient(circle, var(--felt-2), transparent 70%); }
 .seat { position: absolute; transform: translate(-50%, -50%); background: var(--felt); border: 1px solid var(--felt-line); color: var(--fg); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: .85rem; white-space: nowrap; max-width: 34%; overflow: hidden; text-overflow: ellipsis; }
 .seat.me { background: var(--gold); color: var(--ink); border-color: var(--gold); }
 .seat.hit { background: var(--red); color: var(--paper); border-color: var(--red); }
-.bottle { position: absolute; left: 50%; top: 50%; width: 34px; height: 136px; margin: -68px 0 0 -17px; transform-origin: 50% 50%; filter: drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
+.bottle { pointer-events: none; position: absolute; left: 50%; top: 50%; width: 34px; height: 136px; margin: -68px 0 0 -17px; transform-origin: 50% 50%; filter: drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
 .pairs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .pairs li { display: grid; grid-template-columns: 1fr auto 1fr auto; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; background: var(--paper); color: var(--ink); font-weight: 700; }
 .pairs li span:first-child { text-align: right; }
@@ -206,6 +206,13 @@ table.score { width: 100%; border-collapse: collapse; font-variant-numeric: tabu
 .legal p { color: var(--muted); line-height: 1.55; overflow-wrap: anywhere; }
 .foot { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; color: var(--muted); font-size: .85rem; padding-top: 6px; }
 .link { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; font-size: .95rem; padding: 4px 8px; }
+.wheel-box { flex: none; position: relative; width: min(100%, 330px); aspect-ratio: 1; max-width: 100%; margin: 6px auto 0; }
+.wheel { pointer-events: none; width: 100%; height: 100%; display: block; border-radius: 50%; box-shadow: 0 0 0 6px var(--paper), 0 16px 36px rgba(0,0,0,.45); }
+.pointer { position: absolute; left: 50%; top: -14px; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 30px solid var(--gold); z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,.4)); }
+.chips.qs { justify-content: center; }
+.chip.tap.on { background: var(--gold); }
+.turn strong.q { font-size: clamp(1.4rem, 7vw, 1.9rem); }
+.card .text.big-result { font-family: var(--font-display); font-size: clamp(2rem, 11vw, 3rem); color: var(--red); }
 </style>
 </head>
 <body>
@@ -1014,6 +1021,80 @@ const W = () => S.alcohol
   ? { sip: 'gorgée', sips: 'Gorgées', who: 'Qui boit ?', plus: '+1 gorgée', joker: 'Joker (2 gorgées)', top: 'Plus grosse descente' }
   : { sip: 'point', sips: 'Points de gage', who: 'Qui prend un point ?', plus: '+1 point de gage', joker: 'Joker (gage)', top: 'Roi des gages' };
 
+// La Roue : libellé court sur la roue, gage complet sur la carte
+const WHEEL = {
+  soft: [
+    {label: "Pompes", text: "Fais 10 pompes (ou 15 squats)."},
+    {label: "Chanson", text: "Chante le refrain choisi par le groupe."},
+    {label: "Accent", text: "Parle avec un accent choisi par le groupe jusqu'à ton prochain tour."},
+    {label: "Story", text: "Laisse le groupe poster une story sur ton compte."},
+    {label: "Imitation", text: "Imite quelqu'un du groupe, les autres devinent qui."},
+    {label: "Yeux fermés", text: "Garde les yeux fermés jusqu'à ton prochain tour."},
+    {label: "Compliments", text: "Fais un compliment sincère à chaque joueur."},
+    {label: "Photo profil", text: "Laisse le groupe choisir ta photo de profil pour 24 h."},
+    {label: "Rimes", text: "Parle en rimes jusqu'à ton prochain tour."},
+    {label: "Vocal", text: "Envoie à un·e pote un vocal de 10 secondes dicté par le groupe."},
+    {label: "Galerie", text: "Montre la 10e photo de ta galerie."},
+    {label: "Joker gratuit", text: "Rien ! Tu gagnes un joker gratuit pour plus tard."},
+    {label: "Double gage", text: "Pas de bol : relance la roue, et tu feras les deux gages."},
+    {label: "Distribue", text: "Distribue 3 gorgées à qui tu veux.", alcohol: true},
+    {label: "Tournée", text: "Tout le monde boit une gorgée, sauf toi.", alcohol: true},
+    {label: "Cul sec", text: "Finis ton verre (ou bois 3 gorgées).", alcohol: true},
+  ],
+  piquant: [
+    {label: "Bisou joue", text: "Fais un bisou sur la joue de {x}."},
+    {label: "Compliment", text: "Fais un compliment physique à {x}, les yeux dans les yeux."},
+    {label: "Genoux", text: "Assieds-toi sur les genoux de {x} jusqu'à ton prochain tour."},
+    {label: "Main", text: "Tiens la main de {x} jusqu'à ton prochain tour."},
+    {label: "Crush", text: "Montre ta dernière conversation avec ton crush, ou relance la roue."},
+    {label: "Drague", text: "Drague {x} avec ta meilleure phrase d'accroche."},
+    {label: "Massage", text: "Masse les épaules de {x} pendant une minute."},
+    {label: "Bio Tinder", text: "Le groupe écrit ta bio d'appli de rencontre, tu la lis à voix haute."},
+    {label: "Slow", text: "Fais un slow de 30 secondes avec {x}."},
+    {label: "Flamme", text: "Envoie 🔥 à la dernière personne avec qui tu as flirté."},
+    {label: "Esquimau", text: "Fais un bisou esquimau à {x}."},
+    {label: "Joker gratuit", text: "Rien ! Tu gagnes un joker gratuit pour plus tard."},
+  ],
+  hot: [
+    {label: "Smack", text: "Fais un smack à {x}."},
+    {label: "Cou", text: "Fais un bisou dans le cou de {x}."},
+    {label: "Vêtement", text: "Enlève un vêtement de ton choix (chaussures et chaussettes ne comptent pas)."},
+    {label: "Lap dance", text: "Fais un lap dance de 30 secondes à {x}."},
+    {label: "Oreille", text: "Mordille l'oreille de {x}."},
+    {label: "Murmure", text: "Murmure à {x} ce que tu lui ferais si vous étiez seul·es."},
+    {label: "Body shot", text: "Fais un body shot dans le cou de {x}.", alcohol: true},
+    {label: "Glaçon", text: "Fais passer un glaçon de ta bouche à celle de {x}."},
+    {label: "Clavicule", text: "Fais un bisou sur la clavicule de {x}."},
+    {label: "Face à face", text: "Assieds-toi face à face sur les genoux de {x} pendant 30 secondes."},
+  ],
+  intense: [
+    {label: "Pelle", text: "Roule une pelle de 5 secondes à {x}."},
+    {label: "Haut", text: "Enlève ton haut jusqu'à ton prochain tour."},
+    {label: "2 vêtements", text: "Enlève deux vêtements de ton choix."},
+    {label: "Suçon", text: "Fais un suçon à {x}, là où {il} veut."},
+    {label: "Califourchon", text: "Assieds-toi à califourchon sur {x} pendant 30 secondes."},
+    {label: "3 minutes", text: "Passe 3 minutes dans une autre pièce avec {x}."},
+    {label: "Cou 15 s", text: "Embrasse {x} dans le cou pendant 15 secondes."},
+    {label: "Dents", text: "Enlève un vêtement à {x} avec les dents."},
+    {label: "Ventre", text: "Bois un body shot sur le ventre de {x}.", alcohol: true},
+    {label: "Lèvre", text: "Mordille la lèvre de {x}."},
+  ],
+  sanslimite: [
+    {label: "Pelle 20 s", text: "Roule une pelle à {x} pendant 20 secondes."},
+    {label: "Sous-vêt'", text: "Reste en sous-vêtements jusqu'à ton prochain tour (seulement si personne ne peut vous voir de dehors)."},
+    {label: "Paradis", text: "Passe 7 minutes au paradis avec {x}."},
+    {label: "Chemin", text: "Trace un chemin de bisous sur {x}, du cou jusqu'au nombril."},
+    {label: "Lap dance", text: "Fais un lap dance en sous-vêtements à {x}."},
+    {label: "Déshabille", text: "Déshabille {x} jusqu'aux sous-vêtements, avec son accord."},
+    {label: "Chantilly", text: "Lèche de la chantilly sur le ventre de {x}."},
+    {label: "Douche", text: "Prends une douche de 5 minutes avec {x}, en sous-vêtements."},
+    {label: "Cuisse", text: "Embrasse {x} sur la cuisse ou le ventre, {il} choisit."},
+    {label: "Double pelle", text: "Roule une pelle à deux personnes du groupe, au choix."},
+  ],
+};
+const WHEEL_QUESTIONS = ['Qui paie la tournée ?', 'Qui choisit la musique ?', 'Qui commence ?', 'Qui va chercher à manger ?', 'Qui prend le prochain gage ?', 'Qui raconte une anecdote ?'];
+const WHEEL_COLORS = [['--red', '--paper'], ['--paper', '--ink'], ['--gold', '--ink'], ['--felt-2', '--fg']];
+
 const GAMES = [
   { id: 'aov', name: 'Action ou Vérité', suit: '♥', desc: "Le classique. Chacun son tour, du Soft au Sans limite.", min: 2 },
   { id: 'bottle', name: 'La Bouteille', suit: '♣', desc: "Fais tourner : elle choisit ton duo et votre défi.", min: 2 },
@@ -1022,6 +1103,7 @@ const GAMES = [
   { id: 'nhie', name: "Je n'ai jamais", suit: '♦', desc: "Ceux qui l'ont déjà fait boivent ou baissent un doigt.", min: 2 },
   { id: 'qui', name: 'Qui pourrait…', suit: '♣', desc: "À 3, tout le monde pointe quelqu'un.", min: 3 },
   { id: 'tp', name: 'Tu préfères', suit: '♦', desc: "Deux choix, le groupe vote, la minorité prend.", min: 2 },
+  { id: 'wheel', name: 'La Roue', suit: '♠', desc: "Roue des gages, « qui paie la tournée ? » ou ta propre roue.", min: 2 },
 ];
 
 const CUSTOM_GAMES = [
@@ -1052,7 +1134,7 @@ const S = {
   screen: 'home',
   aov: { turn: 0, card: null },
   deck: { card: null },
-  uc: null, ucCfg: null, bottle: null, sd: null, sdCfg: { secs: 120 },
+  uc: null, ucCfg: null, bottle: null, wheel: null, wheelPerso: store.get('wheelPerso', ['Vérité', 'Action', 'Gage', 'Joker', 'Relance', 'Bisou']), sd: null, sdCfg: { secs: 120 },
   timer: null, edit: null, confirm: null,
 };
 if (!Array.isArray(S.players)) { S.players = EXAMPLE_PLAYERS.map(p => ({ ...p })); S.examples = true; }
@@ -1285,6 +1367,92 @@ function bottle() {
     ${timerBlock(c.secs)}
     <div class="row"><button class="btn" data-a="b-done">Fait, ${esc(b.target)} tourne</button><button class="btn ghost" data-a="b-joker">${W().joker}</button></div>`
   : `<button class="btn big" data-a="b-spin" ${b.spinning ? 'disabled' : ''}>${b.spinning ? 'Ça tourne…' : 'Faire tourner la bouteille'}</button>`}`;
+}
+
+/* ---------- La Roue ---------- */
+const wheelCur = () => S.players[S.wheel.turn % S.players.length];
+// 8 gages faisables ici, complétés par les niveaux inférieurs si besoin
+function wheelGages() {
+  const ok = it => okHere(it.text) && (S.alcohol || !it.alcohol);
+  const idx = LEVEL_IDX(S.level);
+  let pool = shuffle(WHEEL[S.level].filter(ok));
+  for (let i = idx - 1; pool.length < 8 && i >= 0; i--) pool = pool.concat(shuffle(WHEEL[LEVELS[i].id].filter(ok)));
+  return pool.slice(0, 8);
+}
+function wheelSegs() {
+  const w = S.wheel;
+  if (w.mode === 'qui') return S.players.map(p => ({ label: p.name }));
+  if (w.mode === 'perso') return S.wheelPerso.map(t => ({ label: t }));
+  return w.gages;
+}
+function wheelSvg(segs, angle) {
+  const n = segs.length, seg = 360 / n, R = 96, C = 100;
+  const pt = a => [C + R * Math.cos((a - 90) * Math.PI / 180), C + R * Math.sin((a - 90) * Math.PI / 180)];
+  const fs = n <= 6 ? 10 : n <= 10 ? 8.5 : 7;
+  const parts = segs.map((sg, i) => {
+    const [bg, fg] = WHEEL_COLORS[i % WHEEL_COLORS.length === 0 && i === n - 1 && n % 4 === 1 ? 1 : i % WHEEL_COLORS.length];
+    const [x0, y0] = pt(i * seg), [x1, y1] = pt((i + 1) * seg);
+    const label = sg.label.length > 13 ? sg.label.slice(0, 12) + '…' : sg.label;
+    const mid = i * seg + seg / 2;
+    return `<path d="M${C} ${C}L${x0.toFixed(2)} ${y0.toFixed(2)}A${R} ${R} 0 ${seg > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}Z" style="fill:var(${bg});stroke:var(--felt);stroke-width:1"/>
+      <text x="${C + R - 8}" y="${C}" transform="rotate(${mid - 90} ${C} ${C})" text-anchor="end" dominant-baseline="middle" style="fill:var(${fg});font:800 ${fs}px var(--font-body)">${esc(label)}</text>`;
+  }).join('');
+  return `<div class="wheel-box"><span class="pointer" aria-hidden="true"></span>
+    <svg class="wheel" id="wheel" viewBox="0 0 200 200" role="img" aria-label="Roue" style="transform:rotate(${angle}deg)">${parts}
+      <circle cx="100" cy="100" r="14" style="fill:var(--paper);stroke:var(--red);stroke-width:3"/></svg></div>`;
+}
+function wheel() {
+  const w = S.wheel, segs = wheelSegs(), cur = wheelCur();
+  const modes = `<div class="levels three" role="group" aria-label="Mode de la roue">${[['gage', 'Gages'], ['qui', 'Qui ?'], ['perso', 'Perso']].map(([id, l]) =>
+    `<button data-a="w-mode" data-v="${id}" aria-pressed="${w.mode === id}">${l}</button>`).join('')}</div>`;
+  let head = '', extra = '';
+  if (w.mode === 'gage') {
+    head = `${levelPicker()}<div class="turn"><small>Gage pour</small><strong>${esc(cur.name)}</strong></div>`;
+  } else if (w.mode === 'qui') {
+    head = `<div class="chips qs">${WHEEL_QUESTIONS.map(q => `<button class="chip tap ${w.q === q ? 'on' : ''}" data-a="w-q" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>
+      <div class="turn"><small>La roue décide</small><strong class="q">${esc(w.q)}</strong></div>`;
+  } else {
+    extra = `<form class="panel" id="persoForm"><h3><span>Ta roue</span><span>${S.wheelPerso.length} cases</span></h3>
+      <textarea id="persoText" rows="5" aria-label="Cases de la roue, une par ligne">${esc(S.wheelPerso.join('\n'))}</textarea>
+      <p class="hint">Une case par ligne, de 2 à 16 cases.</p><button class="btn paper" type="submit">Mettre à jour la roue</button></form>`;
+  }
+  const r = w.result;
+  let res = '';
+  if (r && !w.spinning) {
+    if (w.mode === 'gage') res = `<div class="card">${cardIdx('♠', r.level)}<p class="kind">${esc(r.label)}</p><p class="text">${r.html}</p>${softNote(r)}</div>
+      ${timerBlock(r.secs)}
+      <div class="row"><button class="btn" data-a="w-done">Fait, au suivant</button><button class="btn ghost" data-a="w-joker">${W().joker}</button></div>`;
+    else res = `<div class="card"><p class="kind">${w.mode === 'qui' ? esc(w.q) : 'La roue a choisi'}</p><p class="text big-result">${esc(r.label)}</p></div>`;
+  }
+  return `${topbar('La Roue', 'wheel')}${modes}${head}${wheelSvg(segs, w.from)}
+    <button class="btn big" data-a="w-spin" ${w.spinning || segs.length < 2 ? 'disabled' : ''}>${w.spinning ? 'Ça tourne…' : r ? 'Relancer la roue' : 'Lancer la roue'}</button>
+    ${res}${extra}`;
+}
+function spinWheel() {
+  const el = document.getElementById('wheel');
+  if (!el) return;
+  const fast = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.getBoundingClientRect();
+  el.style.transition = `transform ${fast ? .3 : 3.4}s cubic-bezier(.12,.7,.15,1)`;
+  el.style.transform = `rotate(${S.wheel.to}deg)`;
+  setTimeout(() => {
+    const w = S.wheel;
+    if (!w || !w.spinning) return;
+    w.spinning = false; w.from = w.to;
+    const sg = wheelSegs()[w.hit];
+    if (w.mode === 'gage') {
+      const cur = wheelCur();
+      let text = sg.text, level = S.level, x = null;
+      if (text.includes('{x}')) {
+        x = pickTarget(cur, S.level);
+        const lvl = capLevel(cur, x, S.level);
+        if (lvl !== S.level) { level = lvl; text = draw('wcap', WHEEL[lvl].filter(it => it.text.includes('{x}'))).text; }
+      }
+      w.result = { label: sg.label, level, capped: level !== S.level, html: fill(text, x), secs: secondsIn(text) };
+    } else w.result = { label: sg.label };
+    ring();
+    render(false);
+  }, fast ? 350 : 3500);
 }
 
 /* ---------- Cartes simples ---------- */
@@ -1617,6 +1785,12 @@ const RULES = {
     S.alcohol ? "La personne la plus désignée boit une gorgée par doigt pointé vers elle." : "La personne la plus désignée prend un point de gage par doigt pointé vers elle.",
     "Elle peut se justifier… ou pas.",
   ], tips: ["Il faut au moins 3 joueurs."] }),
+  wheel: () => ({ title: 'La Roue', steps: [
+    "Choisis le mode en haut : Gages, Qui ? ou Perso.",
+    "Gages : la roue tire un gage pour le joueur affiché, selon le niveau, le lieu et l'alcool. Fais-le, ou prends le joker, puis on passe au suivant.",
+    "Qui ? : choisis une question (qui paie la tournée, qui choisit la musique…) et la roue désigne quelqu'un parmi les joueurs.",
+    "Perso : écris tes propres cases, une par ligne, et lance la roue.",
+  ], tips: ["Les gages avec un autre joueur respectent les préférences, les couples et la liste noire.", "Chaque lancer tire de nouveaux gages au hasard."] }),
   tp: () => ({ title: 'Tu préfères', steps: [
     "Lis les deux choix à voix haute.",
     "Tout le monde choisit en même temps : main gauche pour le premier, main droite pour le second.",
@@ -1678,7 +1852,7 @@ function gate() {
 }
 
 /* ---------- Rendu ---------- */
-const SCREENS = { home, aov, bottle, ucsetup: ucSetup, uc, sdsetup: sdSetup, sd, rel, custom, score, legal };
+const SCREENS = { home, aov, bottle, wheel, ucsetup: ucSetup, uc, sdsetup: sdSetup, sd, rel, custom, score, legal };
 let lastScreen = null;
 function render(scroll = true) {
   const s = S.screen;
@@ -1687,6 +1861,7 @@ function render(scroll = true) {
   if (scroll && key !== lastScreen) window.scrollTo(0, 0);
   lastScreen = key;
   if (s === 'bottle' && S.bottle.spinning && !S.gate && !S.info) spinBottle();
+  if (s === 'wheel' && S.wheel.spinning && !S.gate && !S.info) spinWheel();
 }
 
 function spinBottle() {
@@ -1739,6 +1914,7 @@ const actions = {
     if (v === 'hot') toast('Niveau Hot : majeurs uniquement, et chacun peut refuser.');
     if (S.screen === 'aov') S.aov.card = null;
     else if (S.screen === 'bottle') { if (!S.bottle.spinning) S.bottle.card = null; }
+    else if (S.screen === 'wheel') { if (!S.wheel.spinning) { S.wheel.result = null; S.wheel.gages = wheelGages(); } }
     else if (DECKS[S.screen] && S.deck.card) drawDeck();
     render();
   },
@@ -1755,6 +1931,7 @@ const actions = {
   open(v) {
     if (v === 'uc') { S.ucCfg = S.ucCfg || { under: 1, white: false }; S.screen = 'ucsetup'; }
     else if (v === 'sd') S.screen = 'sdsetup';
+    else if (v === 'wheel') { S.screen = 'wheel'; S.wheel = { mode: 'gage', turn: rand(S.players.length), from: 0, to: 0, spinning: false, result: null, hit: 0, q: WHEEL_QUESTIONS[0], gages: wheelGages() }; }
     else if (v === 'bottle') { S.screen = 'bottle'; S.bottle = { turn: rand(S.players.length), from: 0, to: 0, target: null, card: null, spinning: false }; }
     else { S.screen = v; S.aov.card = null; S.deck.card = null; S.aov.turn = rand(S.players.length); }
     render();
@@ -1778,6 +1955,23 @@ const actions = {
   },
 
   // Bouteille
+  'w-mode'(v) { const w = S.wheel; w.mode = v; w.result = null; if (v === 'gage') w.gages = wheelGages(); render(false); },
+  'w-q'(v) { S.wheel.q = v; S.wheel.result = null; render(false); },
+  'w-spin'() {
+    const w = S.wheel;
+    try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch (e) {}
+    if (w.mode === 'gage' && w.result) w.gages = wheelGages();
+    const n = wheelSegs().length;
+    if (n < 2) return;
+    w.hit = rand(n);
+    const seg = 360 / n, center = w.hit * seg + seg / 2 + (Math.random() - .5) * seg * .6;
+    const now = ((w.from % 360) + 360) % 360;
+    w.to = w.from + 360 * 5 + (((360 - center) - now + 720) % 360);
+    w.result = null; w.spinning = true;
+    render(false);
+  },
+  'w-done'() { const w = S.wheel; bump(wheelCur().name, 'done'); w.turn++; w.result = null; w.gages = wheelGages(); render(false); },
+  'w-joker'() { const w = S.wheel; joker(wheelCur().name); w.turn++; w.result = null; w.gages = wheelGages(); render(false); },
   'b-spin'() {
     const b = S.bottle, n = S.players.length, cur = S.players[b.turn % n];
     const t = pickTarget(cur, S.level);
@@ -1921,6 +2115,10 @@ app.addEventListener('submit', e => {
     S.uc.guess = g;
     if (norm(g) === norm(S.uc.civil)) S.uc.winner = 'white';
     render(false);
+  } else if (id === 'persoForm') {
+    const list = document.getElementById('persoText').value.split('\n').map(t => t.trim()).filter(Boolean).slice(0, 16);
+    if (list.length < 2) { toast('Il faut au moins 2 cases.'); return; }
+    S.wheelPerso = list; store.set('wheelPerso', list); S.wheel.result = null; toast('Roue mise à jour.'); render(false);
   } else if (id === 'customForm') {
     const game = document.getElementById('cGame').value, level = document.getElementById('cLevel').value;
     const text = document.getElementById('cText').value.trim(), text2 = document.getElementById('cText2').value.trim();
