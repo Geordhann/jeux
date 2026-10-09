@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10261e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="La Tournée">
 <title>La Tournée</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,6 +59,10 @@ p { margin: 0; }
 .panel h3 { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); display: flex; justify-content: space-between; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--paper); color: var(--ink); border-radius: 999px; padding: 6px 6px 6px 14px; font-weight: 600; }
+.chip { padding-left: 5px; }
+.chip button.sex { font-weight: 800; font-size: .75rem; color: var(--paper); background: var(--ink); }
+.chip button.sex.f { background: var(--red); }
+.add .sexbtn { padding-inline: 14px; flex: none; }
 .chip button { width: 26px; height: 26px; border-radius: 50%; background: var(--paper-edge); color: var(--ink); font-size: .9rem; line-height: 1; }
 .hint { font-size: .85rem; color: var(--muted); }
 .add { display: flex; gap: 8px; }
@@ -72,19 +80,21 @@ p { margin: 0; }
 .rule { font-size: .88rem; color: var(--muted); border-top: 1px dashed var(--felt-line); padding-top: 14px; }
 .rule strong { color: var(--gold); }
 
-.levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: rgba(0,0,0,.2); padding: 4px; border-radius: 12px; }
-.levels button { padding: 9px 4px; border-radius: 9px; font-weight: 600; font-size: .92rem; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--muted); }
-.levels button .pips { font-size: .6rem; letter-spacing: 2px; color: var(--red); }
+.levels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; background: rgba(0,0,0,.2); padding: 4px; border-radius: 12px; }
+.levels button { padding: 9px 2px; border-radius: 9px; font-weight: 600; font-size: .8rem; line-height: 1.15; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--muted); }
+.levels button .pips { font-size: .5rem; letter-spacing: 1px; color: var(--red); }
+.levels.two { grid-template-columns: 1fr 1fr; }
+.levels.two button { font-size: .82rem; padding: 10px 6px; }
 .levels button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
 
 .turn { text-align: center; display: flex; flex-direction: column; gap: 2px; }
 .turn small { text-transform: uppercase; letter-spacing: .14em; font-size: .75rem; color: var(--muted); }
 .turn strong { font-family: var(--font-display); font-weight: 400; font-size: clamp(2rem, 10vw, 2.8rem); color: var(--gold); line-height: 1.1; overflow-wrap: anywhere; }
 
-.card { position: relative; background: var(--paper); color: var(--ink); border-radius: 18px; min-height: 300px; padding: 46px 28px; display: flex; flex-direction: column; justify-content: center; gap: 14px; box-shadow: 0 3px 0 var(--paper-edge), 0 18px 40px rgba(0,0,0,.35); animation: deal .35s cubic-bezier(.2,.9,.3,1.2); }
+.card { position: relative; background: var(--paper); color: var(--ink); border-radius: 18px; min-height: min(300px, 36vh); padding: 40px 26px; display: flex; flex-direction: column; justify-content: center; gap: 14px; box-shadow: 0 3px 0 var(--paper-edge), 0 18px 40px rgba(0,0,0,.35); animation: deal .35s cubic-bezier(.2,.9,.3,1.2); }
 .card .idx { position: absolute; display: flex; flex-direction: column; align-items: center; line-height: 1; font-family: var(--font-display); color: var(--red); }
 .card .idx b { font-size: 1.5rem; font-weight: 400; }
-.card .idx i { font-style: normal; font-size: .55rem; letter-spacing: 1px; margin-top: 4px; }
+.card .idx i { font-style: normal; font-size: .5rem; letter-spacing: 1px; margin-top: 4px; }
 .card .idx.tl { top: 14px; left: 16px; }
 .card .idx.br { bottom: 14px; right: 16px; transform: rotate(180deg); }
 .card .kind { text-transform: uppercase; letter-spacing: .16em; font-size: .78rem; font-weight: 800; color: var(--red); text-align: center; }
@@ -145,12 +155,14 @@ p { margin: 0; }
 <script>
 /* ---------- Contenu ---------- */
 const LEVELS = [
-  { id: 'soft', label: 'Soft', pips: '●○○' },
-  { id: 'piquant', label: 'Piquant', pips: '●●○' },
+  { id: 'soft', label: 'Soft', pips: '●' },
+  { id: 'piquant', label: 'Piquant', pips: '●●' },
   { id: 'hot', label: 'Hot', pips: '●●●' },
+  { id: 'intense', label: 'Intense', pips: '●●●●', adult: true },
+  { id: 'sanslimite', label: 'Sans limite', pips: '●●●●●', adult: true },
 ];
 
-// {x} = un·e autre joueur·se tiré·e au hasard
+// {x} = un·e autre joueur·se tiré·e au hasard (sexe opposé si l'option est active), {il} = il/elle selon {x}
 const AOV = {
   soft: {
     verite: [
@@ -201,7 +213,7 @@ const AOV = {
       "Fais ta meilleure imitation d'influenceur qui déballe un colis.",
       "Appelle quelqu'un et chante-lui joyeux anniversaire, même si ce n'est pas le sien.",
       "Garde un glaçon dans la main jusqu'à ce qu'il fonde, ou bois 2 gorgées.",
-      "Laisse {x} te coiffer comme il ou elle veut.",
+      "Laisse {x} te coiffer comme {il} veut.",
       "Fais le tour de la pièce en marchant comme un mannequin.",
       "Bois ton verre sans les mains.",
     ],
@@ -297,13 +309,13 @@ const AOV = {
       "Fais un body shot sur {x}, ou laisse {x} en faire un sur toi.",
       "Embrasse la personne à ta gauche pendant 5 secondes.",
       "Passe 2 minutes seul·e dans une autre pièce avec {x}.",
-      "Les yeux bandés, laisse {x} te faire un bisou où il ou elle veut sur le visage ou le cou.",
+      "Les yeux bandés, laisse {x} te faire un bisou où {il} veut sur le visage ou le cou.",
       "Mime ta position préférée, habillé·e, avec un coussin.",
       "Fais un strip-tease de 20 secondes. Tu peux t'arrêter avant d'enlever quoi que ce soit.",
       "Mordille l'oreille de {x}.",
       "Envoie un message ambigu à ton crush et montre la réponse au groupe.",
       "Décris en détail la fin de soirée parfaite avec {x}.",
-      "Enlève un vêtement à {x}, s'il ou elle est d'accord.",
+      "Enlève un vêtement à {x}, avec son accord.",
       "Fais un bisou à {x} à l'endroit choisi par le groupe (dans la limite du raisonnable).",
       "Fais un massage du dos de 1 minute à {x}.",
       "Lis un passage hot trouvé en ligne avec ta voix la plus sensuelle.",
@@ -312,6 +324,94 @@ const AOV = {
       "Fais un bisou sur le ventre de {x}.",
       "Embrasse {x} pendant 10 secondes.",
       "Choisis deux personnes qui doivent s'embrasser.",
+    ],
+  },
+  intense: {
+    verite: [
+      "Raconte ta nuit la plus folle, avec tous les détails que tu oses.",
+      "Qui ici as-tu déjà imaginé·e sans vêtements ?",
+      "Décris ton fantasme avec quelqu'un de ce groupe sans dire son nom. Le groupe devine.",
+      "Où as-tu failli te faire prendre en pleine action ?",
+      "Si tu devais coucher avec quelqu'un ici, qui, et pourquoi ?",
+      "Qu'est-ce qu'un·e partenaire t'a déjà demandé et que tu as refusé ?",
+      "Quel est le message le plus coquin que tu aies envoyé ?",
+      "Ton pire moment de honte au lit ?",
+      "Le fantasme que tu n'as jamais avoué à un·e partenaire ?",
+      "La personne la plus inattendue avec qui tu as couché ?",
+      "Qu'est-ce qui t'attire le plus physiquement chez {x} ?",
+      "Tu as déjà couché avec quelqu'un pour te venger ?",
+      "Tu préfères qu'on te déshabille ou te déshabiller toi-même ?",
+      "Ton record de partenaires en un mois ?",
+      "Le compliment au lit qui t'a le plus marqué·e ?",
+      "Tu as déjà trompé quelqu'un, ou failli le faire ?",
+      "Ton plus gros regret côté sexe ?",
+      "Quelle tenue te fait le plus d'effet sur quelqu'un ?",
+      "Note sur 10 ton attirance pour {x}.",
+      "Quel est ton point sensible, celui qui te fait craquer à coup sûr ?",
+    ],
+    action: [
+      "Embrasse {x} sur la bouche pendant 5 secondes.",
+      "Enlève deux vêtements de ton choix.",
+      "Fais un lap dance d'une minute à {x} sur la musique choisie par le groupe.",
+      "Fais un body shot sur le ventre de {x}.",
+      "Assieds-toi à califourchon sur {x} jusqu'à ton prochain tour.",
+      "Embrasse {x} dans le cou pendant 10 secondes.",
+      "Les yeux bandés, devine qui t'embrasse sur la joue. Si tu te trompes, enlève un vêtement.",
+      "Fais passer une carte de ta bouche à celle de {x}, en aspirant. Si elle tombe, recommence.",
+      "Fais un strip-tease de 30 secondes et enlève au moins un vêtement.",
+      "Passe 3 minutes dans une autre pièce avec {x}. Ce qui s'y passe y reste.",
+      "Enlève ton haut et garde-le enlevé jusqu'à ton prochain tour.",
+      "Murmure à l'oreille de {x} ton fantasme le plus fou.",
+      "Masse {x} pendant une minute, dos ou torse, {il} choisit.",
+      "Mets du sel dans le cou de {x} et fais-lui un body shot à la tequila.",
+      "Échange ton haut avec {x}, sur place, devant tout le monde.",
+      "Danse collé-serré avec {x} pendant toute une chanson.",
+      "Rejoue avec {x} une scène de film romantique, baiser compris.",
+      "Enlève un vêtement à {x} avec les dents.",
+      "Fais un suçon à {x}, à l'endroit que {il} choisit.",
+      "Embrasse {x} sur la bouche, puis {x} choisit qui tu embrasses ensuite.",
+    ],
+  },
+  sanslimite: {
+    verite: [
+      "Raconte ta meilleure nuit, du début à la fin.",
+      "Avec qui ici tu coucherais ce soir, sans hésiter ?",
+      "Le truc le plus inavouable que tu aies fait au lit ?",
+      "Décris ton/ta partenaire idéal·e au lit en trois détails précis.",
+      "Qui ici est déjà apparu dans tes rêves érotiques ?",
+      "Tu as déjà couché avec quelqu'un de ce groupe d'amis ? Qui ?",
+      "Ton fantasme le plus tabou, sans filtre.",
+      "Qu'est-ce que tu refuses absolument au lit ?",
+      "Qu'est-ce que tu ferais à {x} si vous étiez seul·es ce soir ?",
+      "Tu as déjà fait un plan à plusieurs ? Raconte.",
+      "Tu as déjà eu une expérience avec quelqu'un du même sexe ?",
+      "Le meilleur coup de ta vie : qu'est-ce qui l'a rendu si bien ?",
+      "Ta dernière fois : quand, où, avec qui ?",
+      "Qui ici te ferait le plus d'effet en sous-vêtements ?",
+      "Montre ta conversation la plus coquine, ou bois 4 gorgées.",
+      "Qu'est-ce que tu rêves d'essayer avant tes 30 ans ?",
+      "Ton record de durée pour une seule nuit ?",
+      "Qu'est-ce qui te fait le plus d'effet chez {x}, physiquement et pas que ?",
+    ],
+    action: [
+      "Roule une pelle à {x} pendant 10 secondes.",
+      "Reste en sous-vêtements jusqu'à la fin de la partie, ou bois 5 gorgées.",
+      "Embrasse {x} à l'endroit choisi par le groupe, sous-vêtements exclus.",
+      "Fais un body shot sur {x}, à l'endroit que {il} choisit.",
+      "Passe 7 minutes au paradis avec {x} dans une autre pièce.",
+      "Fais un lap dance en sous-vêtements à {x}.",
+      "Déshabille {x} jusqu'aux sous-vêtements, avec son accord.",
+      "Embrasse sur la bouche deux personnes du groupe, au choix.",
+      "Les yeux bandés, laisse {x} te faire ce qu'{il} veut pendant 30 secondes : bisous et caresses, rien sous les sous-vêtements.",
+      "Mange un fruit sur le ventre de {x}, sans les mains.",
+      "Allonge-toi sur {x} pendant 30 secondes, sans rire.",
+      "Couvre le visage et le cou de {x} de bisous pendant 20 secondes.",
+      "Choisis deux personnes qui doivent se rouler une pelle.",
+      "Fais un strip-tease jusqu'aux sous-vêtements.",
+      "Enlève un vêtement à {x} avec la bouche, puis {il} t'en enlève un.",
+      "Assieds {x} sur une chaise et danse pour {x} pendant une minute, sans les mains.",
+      "Mime avec {x} ta position préférée, habillé·es.",
+      "Roule une pelle à {x}, puis {x} en roule une à la personne de son choix.",
     ],
   },
 };
@@ -345,6 +445,23 @@ const NHIE = {
     "couché avec quelqu'un rencontré le soir même", "eu une aventure de vacances",
     "couché avec quelqu'un qui a plus de 10 ans d'écart avec moi", "fait l'amour dans un lieu public",
   ],
+  intense: [
+    "fait l'amour dans un endroit où on aurait pu nous voir", "envoyé une vidéo coquine",
+    "couché avec deux personnes dans la même semaine", "fantasmé sur quelqu'un de ce groupe",
+    "fait l'amour plus de trois fois dans la même nuit", "été attaché·e", "fait un strip-tease à quelqu'un",
+    "trompé quelqu'un", "fait l'amour au travail", "fait un suçon bien visible",
+    "été surpris·e par un·e coloc", "couché avec l'ex d'un·e pote", "fait l'amour dans la mer",
+    "fait un body shot", "envoyé un message coquin à la mauvaise personne", "joué à un strip poker",
+  ],
+  sanslimite: [
+    "couché avec quelqu'un de ce groupe", "eu une expérience avec quelqu'un du même sexe",
+    "fait un plan à plusieurs", "mis les pieds dans un club libertin", "filmé une vidéo coquine à deux",
+    "fait l'amour dans un avion ou un train", "eu deux partenaires le même jour",
+    "couché avec quelqu'un qui était en couple", "utilisé des menottes", "été nu·e devant des inconnus",
+    "joué à un jeu de rôle coquin", "fait l'amour chez un·e pote pendant une soirée",
+    "couché avec un·e pote puis fait comme si de rien n'était", "fait l'amour sur une plage en plein jour",
+    "embrassé plus de cinq personnes dans la même soirée", "dit oui à un plan à trois",
+  ],
 };
 
 const QUI = {
@@ -373,6 +490,23 @@ const QUI = {
     "recoucher avec un·e ex ce mois-ci", "avoir le fantasme le plus bizarre", "être le meilleur coup du groupe",
     "avoir déjà simulé", "avoir déjà couché avec quelqu'un de ce groupe", "oser un body shot ce soir",
     "avoir une appli de rencontre ouverte en ce moment", "ne pas dormir seul·e ce soir",
+  ],
+  intense: [
+    "avoir déjà couché dans les toilettes d'une boîte", "finir en sous-vêtements ce soir",
+    "avoir le plus de fantasmes", "draguer deux personnes du groupe dans la même soirée",
+    "avoir déjà été pris·e en flagrant délit", "envoyer une photo coquine ce soir", "être le/la plus kinky",
+    "proposer un strip poker", "finir la nuit avec quelqu'un d'ici", "avoir déjà été attaché·e",
+    "avoir eu le plus de partenaires ce mois-ci", "dire oui à un plan à trois ce soir",
+    "avoir des menottes chez soi", "faire un suçon à quelqu'un ce soir", "embrasser trois personnes ce soir",
+  ],
+  sanslimite: [
+    "coucher avec quelqu'un d'ici ce soir", "avoir déjà fait un plan à plusieurs", "aller dans un club libertin",
+    "avoir déjà filmé une vidéo coquine", "finir en sous-vêtements avant minuit",
+    "avoir eu une expérience avec quelqu'un du même sexe", "avoir le fantasme le plus tabou",
+    "rouler une pelle à tout le groupe", "avoir couché avec quelqu'un qui était en couple",
+    "faire un strip-tease pour un pari", "être le/la plus endurant·e",
+    "avoir déjà couché avec deux personnes du groupe", "l'avoir déjà fait dans un lieu public en plein jour",
+    "être le meilleur coup de la soirée", "ne rien porter sous ses vêtements ce soir",
   ],
 };
 
@@ -428,6 +562,33 @@ const TP = {
     ["coucher avec ton/ta boss", "coucher avec ton/ta prof"],
     ["une nuit sauvage", "un week-end entier au lit"],
   ],
+  intense: [
+    ["embrasser tout le monde ici sur la joue", "embrasser une seule personne sur la bouche"],
+    ["finir la soirée en sous-vêtements", "boire 5 shots"],
+    ["un·e partenaire très expérimenté·e", "un·e partenaire complètement débutant·e"],
+    ["attacher", "être attaché·e"],
+    ["le faire sous la douche", "le faire sur la table de la cuisine"],
+    ["recevoir un strip-tease", "faire un strip-tease"],
+    ["que ton crush lise tes messages coquins", "que ta mère les lise"],
+    ["une nuit avec ton crush puis plus jamais", "rester ami·es pour toujours"],
+    ["parler crûment au lit", "rester silencieux·se"],
+    ["être réveillé·e par des bisous partout", "par un petit-déj au lit"],
+    ["un plan à trois avec deux inconnu·es", "avec deux personnes d'ici"],
+    ["un body shot sur le ventre", "un body shot dans le cou"],
+  ],
+  sanslimite: [
+    ["coucher avec quelqu'un d'ici ce soir", "plus rien pendant un an"],
+    ["un plan à plusieurs", "une soirée en club libertin"],
+    ["la lumière allumée et un miroir", "le noir complet"],
+    ["ton/ta meilleur·e ami·e", "ton/ta pire ex"],
+    ["une nuit avec une star", "une semaine avec ton crush"],
+    ["toujours dominer", "toujours être dominé·e"],
+    ["rouler une pelle à la personne à ta droite", "à la personne à ta gauche"],
+    ["te mettre en sous-vêtements maintenant", "boire 6 gorgées"],
+    ["que tes ex se comparent entre eux", "que tes potes notent tes performances"],
+    ["une seule personne pour le reste de ta vie", "jamais deux fois la même personne"],
+    ["7 minutes au paradis avec la personne de ton choix", "avec la personne choisie par le groupe"],
+  ],
 };
 
 const UC_WORDS = [
@@ -450,7 +611,7 @@ const UC_WORDS = [
 ];
 
 const GAMES = [
-  { id: 'aov', name: 'Action ou Vérité', suit: '♥', desc: "Le classique. Chacun son tour, trois niveaux de chaleur.", min: 2 },
+  { id: 'aov', name: 'Action ou Vérité', suit: '♥', desc: "Le classique. Chacun son tour, du Soft au Sans limite.", min: 2 },
   { id: 'uc', name: 'Undercover', suit: '♠', desc: "Un mot secret, des imposteurs, un vote. Démasquez-les.", min: 3 },
   { id: 'nhie', name: "Je n'ai jamais", suit: '♦', desc: "Ceux qui l'ont déjà fait boivent.", min: 2 },
   { id: 'qui', name: 'Qui pourrait…', suit: '♣', desc: "À 3, tout le monde pointe quelqu'un.", min: 3 },
@@ -458,7 +619,7 @@ const GAMES = [
 ];
 
 /* ---------- État ---------- */
-const EXAMPLE_PLAYERS = ['Léa', 'Hugo', 'Inès', 'Tom'];
+const EXAMPLE_PLAYERS = [{ name: 'Léa', g: 'f' }, { name: 'Hugo', g: 'h' }, { name: 'Inès', g: 'f' }, { name: 'Tom', g: 'h' }];
 const store = {
   get(k, d) { try { const v = localStorage.getItem('tournee.' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('tournee.' + k, JSON.stringify(v)); } catch (e) {} },
@@ -467,12 +628,18 @@ const S = {
   players: store.get('players', null),
   examples: false,
   level: store.get('level', 'soft'),
+  target: store.get('target', 'oppose'), // 'oppose' | 'tous'
+  adultOk: false,
+  gate: null,
   screen: 'home',
   aov: { turn: 0, card: null },
   deck: { card: null },
   uc: null,
 };
-if (!Array.isArray(S.players)) { S.players = EXAMPLE_PLAYERS.slice(); S.examples = true; }
+if (!Array.isArray(S.players)) { S.players = EXAMPLE_PLAYERS.map(p => ({ ...p })); S.examples = true; }
+S.players = S.players.map(p => typeof p === 'string' ? { name: p, g: 'h' } : p); // anciennes listes sans sexe
+// Les niveaux 18+ redemandent la confirmation à chaque ouverture
+if (!LEVELS.some(l => l.id === S.level && !l.adult)) S.level = 'soft';
 
 const app = document.getElementById('app');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -490,9 +657,18 @@ function draw(key, arr) {
   return arr[i];
 }
 
-function fill(text, current) {
+// Une seule cible par carte ; sexe opposé à partir de Piquant si l'option est active
+function fill(text, current, level) {
   const others = S.players.filter(p => p !== current);
-  return esc(text).replace(/\{x\}/g, () => others.length ? `<em>${esc(others[rand(others.length)])}</em>` : 'quelqu\'un');
+  let pool = others;
+  if (S.target === 'oppose' && level !== 'soft') {
+    const opp = others.filter(p => p.g !== current.g);
+    if (opp.length) pool = opp;
+  }
+  const x = pool.length ? pool[rand(pool.length)] : null;
+  return esc(text)
+    .replace(/\{x\}/g, x ? `<em>${esc(x.name)}</em>` : "quelqu'un")
+    .replace(/\{il\}/g, x && x.g === 'f' ? 'elle' : 'il');
 }
 
 let toastTimer;
@@ -519,8 +695,9 @@ function home() {
   <section class="panel">
     <h3><span>Joueurs</span><span>${n}</span></h3>
     ${S.examples ? `<p class="hint">Noms d'exemple : supprime-les et ajoute ta bande.</p>` : ''}
-    <div class="chips">${S.players.map((p, i) => `<span class="chip">${esc(p)}<button data-a="rm" data-v="${i}" aria-label="Retirer ${esc(p)}">✕</button></span>`).join('')}</div>
-    <form class="add" id="addForm"><input id="newPlayer" placeholder="Prénom" maxlength="20" autocomplete="off" aria-label="Prénom du joueur"><button class="btn" type="submit">Ajouter</button></form>
+    <div class="chips">${S.players.map((p, i) => `<span class="chip"><button class="sex ${p.g}" data-a="sex" data-v="${i}" aria-label="${esc(p.name)} : ${p.g === 'f' ? 'femme' : 'homme'}, toucher pour changer">${p.g === 'f' ? 'F' : 'H'}</button>${esc(p.name)}<button data-a="rm" data-v="${i}" aria-label="Retirer ${esc(p.name)}">✕</button></span>`).join('')}</div>
+    <form class="add" id="addForm"><input id="newPlayer" placeholder="Prénom" maxlength="20" autocomplete="off" aria-label="Prénom du joueur"><button class="btn sexbtn" type="submit" value="h" aria-label="Ajouter un homme">+ H</button><button class="btn red sexbtn" type="submit" value="f" aria-label="Ajouter une femme">+ F</button></form>
+    <p class="hint">Touche le H ou le F d'un joueur pour le changer.</p>
   </section>
   <section class="games">
     ${GAMES.map(g => `<button class="game" data-a="open" data-v="${g.id}" ${n < g.min ? 'disabled' : ''}>
@@ -528,9 +705,12 @@ function home() {
       <span><b>${g.name}</b><small>${n < g.min ? `Il faut au moins ${g.min} joueurs.` : g.desc}</small></span>
       <span class="go" aria-hidden="true">›</span></button>`).join('')}
   </section>
-  <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte 2 gorgées (ou un gage soft choisi par le groupe). Le niveau Hot est réservé aux majeurs consentants.</p>`;
+  <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte 2 gorgées (ou un gage soft choisi par le groupe). Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>`;
 }
 
+const targetPicker = () => `<div class="levels two" role="group" aria-label="Défis avec">
+  <button data-a="target" data-v="oppose" aria-pressed="${S.target === 'oppose'}">Défis avec le sexe opposé</button>
+  <button data-a="target" data-v="tous" aria-pressed="${S.target === 'tous'}">Défis avec tout le monde</button></div>`;
 function aov() {
   const p = S.players[S.aov.turn % S.players.length];
   const c = S.aov.card;
@@ -550,8 +730,8 @@ function aov() {
     <div class="row"><button class="btn" data-a="aov-next">Fait, au suivant</button><button class="btn ghost" data-a="aov-joker">Joker</button></div>
     <button class="btn ghost" data-a="aov-pick" data-v="${c.kind}">Autre carte</button>`;
   }
-  return `${topbar('Action ou Vérité')}${levelPicker()}
-  <div class="turn"><small>C'est au tour de</small><strong>${esc(p)}</strong></div>${body}`;
+  return `${topbar('Action ou Vérité')}${levelPicker()}${targetPicker()}
+  <div class="turn"><small>C'est au tour de</small><strong>${esc(p.name)}</strong></div>${body}`;
 }
 
 const DECKS = {
@@ -609,7 +789,7 @@ function ucNew() {
   ]);
   S.uc = {
     civil: pair[0], under: pair[1],
-    ps: S.players.map((name, i) => ({ name, role: roles[i], alive: true })),
+    ps: S.players.map((p, i) => ({ name: p.name, role: roles[i], alive: true })),
     step: 'pass', idx: 0, revealed: false, round: 1, order: [], sel: null, out: null, guess: null, winner: null,
   };
 }
@@ -674,8 +854,19 @@ function uc() {
 }
 
 /* ---------- Rendu & actions ---------- */
+function gate() {
+  const l = LEVELS.find(x => x.id === S.gate);
+  return `<div class="turn"><small>Niveau</small><strong>${l.label}</strong></div>
+  <div class="card"><p class="kind">Avant de continuer</p>
+    <p class="text">Tout le monde autour de la table est majeur et partant ?</p>
+    <p class="sub">Les défis vont jusqu'aux sous-vêtements, aux bisous et aux pelles, jamais plus loin. Chacun peut refuser à tout moment avec le joker, sans se justifier.</p></div>
+  <button class="btn big red" data-a="gate-ok">On est tous majeurs et d'accord</button>
+  <button class="btn ghost" data-a="gate-no">Rester au niveau actuel</button>`;
+}
+
 function render() {
   const s = S.screen;
+  if (S.gate) { app.innerHTML = gate(); window.scrollTo(0, 0); return; }
   app.innerHTML = s === 'home' ? home() : s === 'aov' ? aov() : s === 'ucsetup' ? ucSetup() : s === 'uc' ? uc() : deck(s);
   window.scrollTo(0, 0);
 }
@@ -689,7 +880,12 @@ function drawDeck() {
 const actions = {
   home() { S.screen = 'home'; S.uc = null; render(); },
   rm(v) { S.players.splice(+v, 1); savePlayers(); render(); },
+  sex(v) { const p = S.players[+v]; p.g = p.g === 'f' ? 'h' : 'f'; savePlayers(); render(); },
+  target(v) { S.target = v; store.set('target', v); if (S.aov.card) S.aov.card = null; render(); },
+  'gate-ok'() { S.adultOk = true; const v = S.gate; S.gate = null; actions.level(v); },
+  'gate-no'() { S.gate = null; render(); },
   level(v) {
+    if (LEVELS.find(l => l.id === v).adult && !S.adultOk) { S.gate = v; render(); return; }
     S.level = v; store.set('level', v);
     if (v === 'hot') toast('Niveau Hot : majeurs uniquement, et chacun peut refuser.');
     if (S.screen === 'aov') S.aov.card = null;
@@ -704,7 +900,7 @@ const actions = {
   'aov-pick'(v) {
     const kind = v === 'random' ? (Math.random() < .5 ? 'action' : 'verite') : v;
     const p = S.players[S.aov.turn % S.players.length];
-    S.aov.card = { kind, level: S.level, html: fill(draw('aov' + S.level + kind, AOV[S.level][kind]), p) };
+    S.aov.card = { kind, level: S.level, html: fill(draw('aov' + S.level + kind, AOV[S.level][kind]), p, S.level) };
     render();
   },
   'aov-next'() { S.aov.turn++; S.aov.card = null; render(); },
@@ -748,8 +944,8 @@ app.addEventListener('submit', e => {
     const inp = document.getElementById('newPlayer');
     const name = inp.value.trim();
     if (!name) return;
-    if (S.players.some(p => p.toLowerCase() === name.toLowerCase())) { toast(`${name} est déjà dans la partie.`); return; }
-    S.players.push(name); savePlayers(); render();
+    if (S.players.some(p => p.name.toLowerCase() === name.toLowerCase())) { toast(`${name} est déjà dans la partie.`); return; }
+    S.players.push({ name, g: e.submitter && e.submitter.value === 'f' ? 'f' : 'h' }); savePlayers(); render();
     document.getElementById('newPlayer').focus();
   } else if (e.target.id === 'guessForm') {
     const g = document.getElementById('guessIn').value.trim();
