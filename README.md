@@ -22,4 +22,12 @@ Jeux de soirée sur un seul téléphone qui fait le tour de la table. Ouvre `ind
 
 Les niveaux Intense et Sans limite demandent une confirmation (tout le monde majeur et d'accord) : c'est osé, jamais porno.
 
-Sur mobile : ouvre la page dans le navigateur du téléphone, puis « Ajouter à l'écran d'accueil ».
+## Appli Android (hors ligne)
+
+Chaque modification du jeu compile automatiquement un APK (GitHub Actions, `.github/workflows/android.yml`) et le publie dans les **Releases** du dépôt.
+
+1. Sur le téléphone, ouvre la dernière release et télécharge `La-Tournee.apk`.
+2. Ouvre le fichier et autorise l'installation depuis cette source si Android le demande.
+3. L'appli fonctionne ensuite sans connexion (polices incluses). Pour mettre à jour, installe la nouvelle version par-dessus : joueurs et réglages sont conservés.
+
+Fichiers liés : `capacitor.config.json`, `package.json`, `fonts/`, `android-assets/` (icônes, écran de démarrage, clé de signature de l'APK) et `tools/` (`make_icons.py` régénère les icônes, `prepare-android.sh` personnalise le projet Android).

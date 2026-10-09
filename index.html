@@ -8,6 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="La Tournée">
 <title>La Tournée</title>
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&display=swap">
@@ -1809,6 +1810,16 @@ app.addEventListener('submit', e => {
     S.custom.unshift(game === 'tp' ? { game, level, text, text2 } : { game, level, text });
     store.set('custom', S.custom); toast('Carte ajoutée au paquet.'); render(false);
   }
+});
+
+// Appli Android : le bouton retour revient au menu au lieu de quitter le jeu
+const capApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
+if (capApp) capApp.addListener('backButton', () => {
+  if (S.timer) stopTimer();
+  if (S.gate) actions['gate-no']();
+  else if (S.edit) actions['bl-done']();
+  else if (S.screen !== 'home') actions.home();
+  else capApp.exitApp();
 });
 
 render();

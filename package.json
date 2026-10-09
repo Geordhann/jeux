@@ -1,0 +1,17 @@
+{
+  "name": "la-tournee",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jeux de soirée sur un seul téléphone (appli Android avec Capacitor)",
+  "scripts": {
+    "www": "rm -rf www && mkdir www && cp index.html www/ && cp -r fonts www/ && sed -i '/fonts.googleapis.com\\|fonts.gstatic.com/d' www/index.html"
+  },
+  "dependencies": {
+    "@capacitor/android": "6.2.0",
+    "@capacitor/app": "6.0.2",
+    "@capacitor/core": "6.2.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "6.2.0"
+  }
+}

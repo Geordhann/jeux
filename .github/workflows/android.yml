@@ -1,0 +1,75 @@
+name: Appli Android
+
+# Compile l'APK à chaque modification du jeu et le publie dans les Releases
+on:
+  push:
+    branches: [claude/sweet-dirac-7wcg8q, main, master]
+    paths:
+      - index.html
+      - fonts/**
+      - android-assets/**
+      - tools/**
+      - package.json
+      - package-lock.json
+      - capacitor.config.json
+      - .github/workflows/android.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: Préparer le jeu (hors ligne)
+        run: |
+          npm ci
+          npm run www
+
+      - name: Générer le projet Android
+        run: |
+          npx cap add android
+          tools/prepare-android.sh ${{ github.run_number }}
+          npx cap sync android
+
+      - name: Clé de signature stable (pour pouvoir mettre l'appli à jour)
+        run: mkdir -p ~/.android && cp android-assets/debug.keystore ~/.android/debug.keystore
+
+      - name: Compiler l'APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../La-Tournee.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: La-Tournee
+          path: La-Tournee.apk
+
+      - name: Publier la version
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: La Tournée 1.0.${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
+          files: La-Tournee.apk
+          body: |
+            Appli Android de La Tournée, jouable sans connexion.
+
+            Sur le téléphone : télécharge **La-Tournee.apk**, ouvre-le et autorise l'installation depuis cette source si Android le demande.
+            Pour mettre à jour, installe simplement la nouvelle version par-dessus : les joueurs et réglages sont conservés.

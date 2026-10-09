@@ -1,0 +1,9 @@
+{
+  "appId": "fr.latournee.app",
+  "appName": "La Tournée",
+  "webDir": "www",
+  "backgroundColor": "#10261e",
+  "android": {
+    "backgroundColor": "#10261e"
+  }
+}
