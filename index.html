@@ -42,7 +42,7 @@ body {
   font: 16px/1.5 var(--font-body);
   -webkit-tap-highlight-color: transparent;
 }
-#app { max-width: 480px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 40px; display: flex; flex-direction: column; gap: 18px; }
+#app { max-width: 480px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 96px; display: flex; flex-direction: column; gap: 18px; }
 button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
 button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 h1, h2, h3 { margin: 0; text-wrap: balance; }
@@ -241,11 +241,27 @@ table.score { width: 100%; border-collapse: collapse; font-variant-numeric: tabu
 .recap .line { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed var(--paper-edge); padding-bottom: 4px; font-size: .9rem; }
 .recap .line span:last-child { color: var(--ink-soft); text-align: right; }
 textarea.copy { width: 100%; font: .85rem/1.4 var(--font-body); }
+.levels.four { grid-template-columns: repeat(4, 1fr); }
+.music { display: flex; flex-direction: column; gap: 8px; }
+.music-row { display: flex; align-items: center; gap: 12px; }
+.music-row .btn { flex: none; padding: 11px 16px; }
+.music-row input[type=range] { flex: 1; min-width: 0; accent-color: var(--gold); }
+.music-fab { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 52px; height: 52px; border-radius: 50%; background: var(--felt-2); border: 2px solid var(--gold); display: flex; align-items: flex-end; justify-content: center; gap: 4px; padding-bottom: 15px; box-shadow: 0 8px 22px rgba(0,0,0,.45); z-index: 5; }
+.music-fab span { width: 4px; height: 8px; border-radius: 2px; background: var(--gold); opacity: .55; }
+.music-fab span:nth-child(2) { height: 14px; }
+.music-fab span:nth-child(3) { height: 10px; }
+.music-fab.on { background: var(--gold); }
+.music-fab.on span { background: var(--ink); opacity: 1; animation: eq .9s ease-in-out infinite alternate; }
+.music-fab.on span:nth-child(2) { animation-delay: -.3s; }
+.music-fab.on span:nth-child(3) { animation-delay: -.6s; }
+@keyframes eq { from { height: 5px; } to { height: 18px; } }
+@media (prefers-reduced-motion: reduce) { .music-fab.on span { animation: none; } }
 </style>
 </head>
 <body>
 <div id="app" aria-live="polite"></div>
 <div class="toast" id="toast" hidden></div>
+<button class="music-fab" id="musicFab" type="button" aria-pressed="false" aria-label="Lancer la musique d'ambiance"><span></span><span></span><span></span></button>
 
 <script>
 /* ---------- Contenu ---------- */
@@ -1399,6 +1415,140 @@ setInterval(() => {
   if (left <= 0) { stopTimer(); ring(); toast('Temps écoulé !'); render(false); }
 }, 250);
 
+
+/* ---------- Musique d'ambiance ---------- */
+// Musique composée en direct par l'appli (synthèse Web Audio) : création originale,
+// donc libre de droits, sans fichier à télécharger et jouable hors ligne.
+const MUSIC_STYLES = {
+  chill:   { label: 'Chill',   bpm: 84,  chords: [[57, [0, 3, 7, 10]], [53, [0, 4, 7, 11]], [48, [0, 4, 7, 11]], [55, [0, 4, 7, 10]]] },
+  soiree:  { label: 'Soirée',  bpm: 120, chords: [[57, [0, 3, 7]], [53, [0, 4, 7]], [48, [0, 4, 7]], [55, [0, 4, 7]]] },
+  sensuel: { label: 'Sensuel', bpm: 90,  chords: [[50, [0, 3, 7, 10, 14]], [46, [0, 4, 7, 11]], [43, [0, 3, 7, 10]], [45, [0, 4, 7, 10]]] },
+};
+const M = { on: false, style: store.get('music', 'auto'), vol: store.get('musicVol', .6), step: 0, next: 0, cur: 'chill', timer: null, out: null, fx: null, noise: null };
+const musicStyle = () => M.style === 'auto' ? (LEVEL_IDX(S.level) >= 2 ? 'sensuel' : 'soiree') : M.style;
+const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+
+function musicInit() {
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  const c = audioCtx;
+  if (M.out) return;
+  const comp = c.createDynamicsCompressor();
+  M.out = c.createGain(); M.out.gain.value = M.vol * .8;
+  M.out.connect(comp); comp.connect(c.destination);
+  // Écho doux pour les nappes et les notes
+  M.fx = c.createDelay(); M.fx.delayTime.value = .32;
+  const fb = c.createGain(); fb.gain.value = .35;
+  const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1800;
+  const wet = c.createGain(); wet.gain.value = .3;
+  M.fx.connect(lp); lp.connect(fb); fb.connect(M.fx); lp.connect(wet); wet.connect(M.out);
+  M.noise = c.createBuffer(1, c.sampleRate, c.sampleRate);
+  const d = M.noise.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+}
+function env(g, t, v, a, r) { g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + a); g.gain.exponentialRampToValueAtTime(.0001, t + a + r); }
+function kick(t, v) {
+  const c = audioCtx, o = c.createOscillator(), g = c.createGain();
+  o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(45, t + .12);
+  env(g, t, v, .005, .35); o.connect(g); g.connect(M.out); o.start(t); o.stop(t + .4);
+}
+function noiseHit(t, v, type, freq, len, q = .8) {
+  const c = audioCtx, src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  src.buffer = M.noise; f.type = type; f.frequency.value = freq; f.Q.value = q;
+  env(g, t, v, .002, len); src.connect(f); f.connect(g); g.connect(M.out); src.start(t, Math.random() * .5); src.stop(t + len + .05);
+}
+const hat = (t, v, open) => noiseHit(t, v, 'highpass', 7000, open ? .18 : .04);
+const snare = (t, v) => noiseHit(t, v, 'bandpass', 1800, .18);
+const clap = (t, v) => [0, .012, .024].forEach(d => noiseHit(t + d, v, 'bandpass', 1400, .1, 1.2));
+function synth(t, midi, dur, v, { type = 'sawtooth', cut = 900, a = .01, fx = 0, detune = 0 } = {}) {
+  const c = audioCtx, f = c.createBiquadFilter(), g = c.createGain();
+  f.type = 'lowpass'; f.frequency.value = cut;
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + a);
+  g.gain.setValueAtTime(v, t + Math.max(a, dur - .05)); g.gain.exponentialRampToValueAtTime(.0001, t + dur + .3);
+  f.connect(g); g.connect(M.out);
+  if (fx) { const s = c.createGain(); s.gain.value = fx; g.connect(s); s.connect(M.fx); }
+  (detune ? [-detune, detune] : [0]).forEach(dt => {
+    const o = c.createOscillator(); o.type = type; o.frequency.value = mtof(midi); o.detune.value = dt;
+    o.connect(f); o.start(t); o.stop(t + dur + .35);
+  });
+}
+const bass = (t, m, dur, v) => synth(t, m, dur, v, { cut: 380 });
+const pad = (t, notes, dur, v) => notes.forEach(m => synth(t, m, dur, v, { cut: 1100, a: .35, fx: .6, detune: 7 }));
+const stab = (t, notes, v) => notes.forEach(m => synth(t, m, .12, v, { cut: 2400, fx: .5 }));
+const pluck = (t, m, v) => synth(t, m, .18, v, { type: 'triangle', cut: 3000, fx: .8 });
+const keys = (t, notes, dur, v) => notes.forEach(m => synth(t, m, dur, v, { type: 'sine', cut: 4000, a: .02, fx: .5 }));
+
+function playStep(step, t, sd) {
+  const s = step % 16, bar = Math.floor(step / 16) % 4;
+  if (s === 0) M.cur = musicStyle();
+  const st = MUSIC_STYLES[M.cur], [root, iv] = st.chords[bar], notes = iv.map(i => root + i), barLen = sd * 16;
+  const pick = () => root + 12 + iv[rand(iv.length)];
+  if (M.cur === 'chill') {
+    if (s === 0 || s === 10) kick(t, .55);
+    if (s === 4 || s === 12) snare(t, .12);
+    if (s % 2 === 0) hat(t, s % 4 === 2 ? .07 : .04);
+    if (s === 0) { pad(t, notes, barLen, .045); bass(t, root - 12, barLen * .55, .16); }
+    if (s === 10) bass(t, root - 12, barLen * .2, .12);
+    if (s % 2 === 0 && Math.random() < .3) pluck(t, pick(), .06);
+  } else if (M.cur === 'soiree') {
+    if (s % 4 === 0) kick(t, .9);
+    if (s === 4 || s === 12) clap(t, .28);
+    if (s % 4 === 2) { hat(t, .1, true); bass(t, root - 12, sd * 1.6, .2); }
+    else if (s % 2 === 1) hat(t, .035);
+    if (s === 6 || s === 14) stab(t, notes.map(n => n + 12), .05);
+    if (s === 0) pad(t, notes, barLen, .025);
+    if (bar === 3 && s >= 12 && Math.random() < .5) snare(t, .08);
+  } else {
+    const swing = s % 2 ? sd * .18 : 0;
+    if (s === 0 || s === 7 || s === 10) kick(t, .7);
+    if (s === 8) snare(t + swing, .22);
+    hat(t + swing, s % 2 ? .025 : .045);
+    if (s === 0) { bass(t, root - 12, barLen * .85, .2); keys(t, notes.map(n => n + 12), barLen * .45, .05); pad(t, notes, barLen, .02); }
+    if (s === 8) keys(t, notes.map(n => n + 12), barLen * .4, .04);
+    if (s % 4 === 2 && Math.random() < .25) pluck(t, pick() + 12, .04);
+  }
+}
+function musicTick() {
+  const c = audioCtx;
+  while (M.next < c.currentTime + .15) {
+    const sd = 60 / MUSIC_STYLES[M.cur].bpm / 4;
+    playStep(M.step, M.next, sd);
+    M.next += sd; M.step = (M.step + 1) % 64;
+  }
+}
+function musicPlay() {
+  try {
+    musicInit(); audioCtx.resume();
+    M.on = true; M.step = 0; M.cur = musicStyle(); M.next = audioCtx.currentTime + .08;
+    clearInterval(M.timer); M.timer = setInterval(musicTick, 25);
+  } catch (e) { M.on = false; toast("La musique n'est pas disponible sur cet appareil."); }
+  musicFab();
+}
+function musicStop() { M.on = false; clearInterval(M.timer); M.timer = null; musicFab(); }
+function musicVolume(v) {
+  M.vol = v; store.set('musicVol', v);
+  if (M.out) M.out.gain.setTargetAtTime(v * .8, audioCtx.currentTime, .05);
+}
+function musicFab() {
+  const b = document.getElementById('musicFab');
+  if (!b) return;
+  b.classList.toggle('on', M.on);
+  b.setAttribute('aria-pressed', M.on);
+  b.setAttribute('aria-label', M.on ? "Couper la musique d'ambiance" : "Lancer la musique d'ambiance");
+}
+document.getElementById('musicFab').addEventListener('click', () => { M.on ? musicStop() : musicPlay(); if (S.screen === 'home') render(false); });
+// Téléphone en veille ou appli en arrière-plan : on met le son en pause
+document.addEventListener('visibilitychange', () => {
+  if (!audioCtx) return;
+  if (document.hidden) audioCtx.suspend();
+  else if (M.on) { audioCtx.resume(); M.next = audioCtx.currentTime + .08; }
+});
+const musicPanel = () => `<div class="music"><span class="hint">Musique d'ambiance</span>
+    <div class="levels four" role="group" aria-label="Style de musique">${[['auto', 'Auto'], ...Object.entries(MUSIC_STYLES).map(([k, v]) => [k, v.label])].map(([k, l]) =>
+      `<button data-a="music-style" data-v="${k}" aria-pressed="${M.style === k}">${l}</button>`).join('')}</div>
+    <div class="music-row"><button class="btn ${M.on ? 'ghost' : 'paper'}" data-a="music-toggle">${M.on ? 'Couper' : 'Lancer la musique'}</button>
+      <input type="range" id="musicVol" min="0" max="1" step="0.05" value="${M.vol}" aria-label="Volume de la musique"></div>
+    <p class="hint">${M.style === 'auto' ? 'Auto : rythmée en Soft et Piquant, sensuelle à partir de Hot. ' : ''}Composée en direct par l'appli : libre de droits, sans connexion.</p></div>`;
+
 /* ---------- Écrans communs ---------- */
 const topbar = (title, rules) => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button><h2>${title}</h2>${rules ? `<button class="info" data-a="info" data-v="${rules}" aria-label="Règles du jeu">i</button>` : ''}</div>`;
 const levelPicker = () => `<div class="levels" role="group" aria-label="Niveau">${LEVELS.map(l =>
@@ -1424,6 +1574,7 @@ function home() {
     <div class="levels two" role="group" aria-label="Alcool"><button data-a="alcohol" data-v="1" aria-pressed="${S.alcohol}">Avec alcool</button><button data-a="alcohol" data-v="0" aria-pressed="${!S.alcohol}">Sans alcool</button></div>
     <label class="pick drv" for="driverSel"><span>Qui conduit ?</span><select id="driverSel"><option value="">Personne</option>${S.players.map(p => `<option value="${esc(p.name)}" ${isDriver(p.name) ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>
     <div class="packs"><span class="hint">Packs à thème</span><div class="chips">${Object.entries(PACKS).map(([k, pk]) => `<button class="chip tap ${S.packs.includes(k) ? 'on' : ''}" data-a="pack" data-v="${k}" aria-pressed="${S.packs.includes(k)}">${pk.label}</button>`).join('')}</div></div>
+    ${musicPanel()}
     <p class="hint">${{ voiture: 'Défis faisables assis, avec des défis spécial voiture.', maison: 'Tous les défis, y compris ceux qui demandent une autre pièce, un canapé ou une douche.', dehors: "Défis faisables dehors, sans se déshabiller en public." }[S.place]} ${S.alcohol ? 'Le joker et les jeux de cartes se jouent en gorgées.' : 'Les gorgées sont remplacées par des gages.'}${isDriver(S.driver) ? ` ${esc(S.driver)} conduit : jamais d'alcool pour lui ou elle, ses gorgées deviennent des gages.` : ''}</p>
   </section>
   <section class="panel">
@@ -2054,6 +2205,7 @@ function legal() {
   ${sec('Responsabilité', `<p>Les cartes sont des contenus humoristiques destinés à un usage privé entre adultes. Chaque joueur reste seul responsable de ses actes, du respect du consentement des autres et de la loi.</p>
     <p>L'Éditeur ne peut être tenu responsable de l'usage fait de l'application, ni des éventuelles erreurs, interruptions ou indisponibilités.</p>`)}
   ${sec('Propriété intellectuelle', `<p>Les textes des cartes, le design et le code de La Tournée sont la propriété de l'Éditeur, sauf mention contraire, et ne peuvent être reproduits sans autorisation préalable. Les cartes perso que tu crées t'appartiennent.</p>
+    <p>La musique d'ambiance est composée en direct par l'application (synthèse sonore) : c'est une création originale, sans morceau ni extrait d'œuvre tierce, utilisable librement pendant vos soirées.</p>
     <p>Polices Bagel Fat One, Figtree et Fraunces : licence SIL Open Font License 1.1. Application Android construite avec Capacitor (Ionic), licence MIT.</p>`)}
   ${sec('Données personnelles', `<p>La Tournée ne collecte aucune donnée personnelle. Pas de compte, pas de cookie, pas de publicité, pas de statistiques.</p>
     <p>Les prénoms, réglages, préférences, listes noires, cartes perso et scores sont enregistrés uniquement sur ton téléphone et ne sont jamais envoyés à l'Éditeur ni à des tiers. L'appli Android fonctionne sans connexion.</p>
@@ -2253,6 +2405,8 @@ const actions = {
   // Cartes simples
   'deck-next'() { drawDeck(); render(false); },
   sip(v) { bump(v, 'sips'); const u = S.alcohol && !isDriver(v) ? 'gorgée' : 'point'; if (S.screen !== 'score') toast(`${v} : ${stat(v).sips} ${u}${stat(v).sips > 1 ? 's' : ''}`); render(false); },
+  'music-toggle'() { M.on ? musicStop() : musicPlay(); render(false); },
+  'music-style'(v) { M.style = v; store.set('music', v); if (!M.on) musicPlay(); render(false); },
   pack(v) { S.packs = S.packs.includes(v) ? S.packs.filter(k => k !== v) : S.packs.concat(v); store.set('packs', S.packs); render(false); },
   place(v) { S.place = v; store.set('place', v); render(false); },
   alcohol(v) { S.alcohol = v === '1'; store.set('alcohol', S.alcohol); render(false); },
@@ -2342,7 +2496,8 @@ const actions = {
 };
 
 // Tout autre geste arrête le chrono (on a changé de carte ou d'écran)
-const KEEP_TIMER = new Set(['timer-go', 'sip', 'sip-minus', 'target', 'info', 'info-close']);
+const KEEP_TIMER = new Set(['timer-go', 'sip', 'sip-minus', 'target', 'info', 'info-close', 'music-toggle', 'music-style']);
+app.addEventListener('input', e => { if (e.target.id === 'musicVol') musicVolume(+e.target.value); });
 app.addEventListener('click', e => {
   const b = e.target.closest('[data-a]');
   if (!b || b.disabled) return;

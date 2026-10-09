@@ -12,6 +12,7 @@ Jeux de soirée sur un seul téléphone qui fait le tour de la table. Ouvre `ind
 - **Je n'ai jamais**, **Qui pourrait…**, **Tu préfères** : paquets de cartes en 5 niveaux, avec « Qui boit ? » pour compter les gorgées.
 
 ## Réglages
+- **Musique d'ambiance** : Chill, Soirée, Sensuel ou Auto (suit le niveau). Composée en direct par l'appli (synthèse Web Audio) : création originale libre de droits, aucun fichier, fonctionne hors ligne. Bouton flottant en bas à droite pour lancer ou couper.
 - **Qui conduit ?** : le conducteur ne boit jamais. Ses défis et jokers passent en version sans alcool, ses gorgées deviennent des points de gage.
 - **Packs à thème** : Road trip, Halloween, Noël & Nouvel An, Été & vacances, Anniversaire (cartes et mots Undercover en plus).
 - **Pas de répétition** : les cartes déjà vues sont mémorisées d'une soirée à l'autre et ne reviennent qu'une fois le paquet entier joué (« Revoir toutes les cartes » dans le Classement).
