@@ -10,6 +10,7 @@ Jeux de soirée sur un seul téléphone qui fait le tour de la table. Ouvre `ind
 - **Je n'ai jamais**, **Qui pourrait…**, **Tu préfères** : paquets de cartes en 5 niveaux, avec « Qui boit ? » pour compter les gorgées.
 
 ## Réglages
+- **La soirée** : *En voiture* (défis faisables assis + défis spécial voiture), *Chez quelqu'un* (tous les défis) ou *Dehors* (rien qui oblige à se déshabiller en public). *Avec* ou *sans alcool* : sans alcool, les gorgées deviennent des gages et des points.
 - **Joueurs H/F**, et option « défis avec le sexe opposé » ou « avec tout le monde ».
 - **Affinités** :
   - *Préférences* : « plutôt filles » ou « plutôt mecs ». À partir de Piquant, environ 4 défis sur 5 tombent sur le sexe préféré, les autres sont adoucis (Piquant maximum).

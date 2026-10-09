@@ -854,14 +854,161 @@ const SD_QUESTIONS = {
   ],
 };
 
+// Défis pensés pour le lieu, ajoutés au paquet normal (déjà filtré)
+const PLACE_PACK = {
+  voiture: {
+    soft: [
+      "Mets la musique de ton choix et chante le refrain à fond.",
+      "Fais un selfie de groupe avec la tête la plus moche possible.",
+      "Fais la voix du GPS et commente tout ce qui se passe jusqu'à ton prochain tour.",
+      "Fais coucou au prochain passant ou à la prochaine voiture.",
+      "Imite {x} au volant.",
+      "Laisse {x} choisir les 3 prochaines chansons, interdiction de râler.",
+      "Raconte la pire chose qui te soit arrivée en voiture.",
+      "Laisse {x} te faire une coiffure avec ce qu'il y a dans la voiture.",
+      "Fais une pub de 20 secondes pour cette voiture comme si tu la vendais.",
+      "Fais un karaoké de 30 secondes sur la chanson qui passe.",
+      "Dessine un truc sur la buée de la vitre, le groupe devine.",
+      "Montre le dernier truc que tu as acheté en ligne.",
+    ],
+    piquant: [
+      "Échange ta place avec {x} jusqu'à ton prochain tour.",
+      "Pose ta tête sur l'épaule de {x} jusqu'à ton prochain tour.",
+      "Mets une chanson d'amour et chante-la en regardant {x}.",
+      "Masse la nuque de {x} pendant une minute.",
+      "Envoie un vocal de séduction à ton crush, devant tout le monde.",
+      "Écris un mot doux pour {x} sur la buée de la vitre.",
+      "Tiens la main de {x} jusqu'à ton prochain tour.",
+      "Fais un bisou sur la joue de {x}.",
+      "Laisse {x} choisir une chanson, et fais-lui une sérénade dessus.",
+    ],
+    hot: [
+      "Fais un smack à {x}.",
+      "Étends tes jambes sur {x} jusqu'à ton prochain tour.",
+      "Fais un bisou dans le cou de {x}.",
+      "Mets une musique sensuelle et chante-la à l'oreille de {x}.",
+      "Assieds-toi sur les genoux de {x}, à l'arrière, pendant une minute.",
+      "Fais de la buée sur la vitre et dessine un truc coquin.",
+      "Murmure à {x} ce que tu lui ferais si la voiture était à vous deux.",
+      "Mordille l'oreille de {x}.",
+    ],
+    intense: [
+      "Roule une pelle de 5 secondes à {x}.",
+      "Passe à l'arrière avec {x} : les autres sortent prendre l'air pendant 3 minutes.",
+      "Enlève ton haut jusqu'à ton prochain tour (seulement si personne ne peut vous voir de dehors).",
+      "Embrasse {x} dans le cou pendant 15 secondes.",
+      "Fais un suçon à {x}, là où {il} veut.",
+      "Assieds-toi à califourchon sur {x}, à l'arrière, pendant 30 secondes.",
+      "Pose ta main sur la cuisse de {x} jusqu'à ton prochain tour.",
+      "Embrasse {x} pendant 10 secondes, les autres comptent à voix haute.",
+    ],
+    sanslimite: [
+      "Roule une pelle à {x} pendant 20 secondes.",
+      "7 minutes au paradis version voiture : les autres sortent, {x} et toi restez à l'arrière.",
+      "Reste en sous-vêtements jusqu'à ton prochain tour (seulement si personne ne peut vous voir de dehors).",
+      "Trace un chemin de bisous sur {x}, du cou jusqu'au nombril.",
+      "Laisse {x} t'enlever ton haut avec les dents.",
+      "Allonge-toi sur la banquette arrière, {x} s'allonge sur toi pendant 30 secondes.",
+      "Embrasse {x} sur le ventre ou la cuisse, {il} choisit.",
+      "Embrassez-vous, {x} et toi, jusqu'à ce que les vitres soient pleines de buée. Une minute minimum.",,
+      "Passe sur les genoux de {x}, à l'arrière, et roulez-vous une pelle de 10 secondes.",
+      "Embrasse {x} dans le cou jusqu'à ce que {il} dise stop.",
+      "Laisse {x} te faire un suçon où {il} veut.",
+      "Les autres sortent 3 minutes : {x} et toi décidez de ce qui se passe à l'arrière."
+    ],
+  },
+  dehors: {
+    soft: [
+      "Demande à un·e inconnu·e de prendre une photo du groupe dans une pose ridicule.",
+      "Fais une roulade dans l'herbe ou le sable.",
+      "Chante 15 secondes à pleine voix.",
+      "Tiens en équilibre sur une jambe pendant 30 secondes.",
+      "Fais la course avec {x} jusqu'au prochain arbre ou lampadaire.",
+      "Fais un compliment à un·e inconnu·e.",
+    ],
+    piquant: [
+      "Fais un slow sans musique avec {x}.",
+      "Porte {x} sur ton dos sur 20 mètres.",
+      "Demande son prénom et son signe astro à un·e inconnu·e.",
+      "Écris le prénom de {x} dans le sable ou la terre, avec un cœur autour.",
+    ],
+    hot: [
+      "Embrasse {x} contre un arbre ou un mur, 5 secondes.",
+      "Fais un smack à {x} devant tout le monde.",
+      "Allonge-toi dans l'herbe avec {x}, ta tête sur son ventre, pendant une minute.",
+      "Fais tourner {x} dans tes bras et finis par un bisou dans le cou.",
+    ],
+    intense: [
+      "Roule une pelle à {x} sous un lampadaire.",
+      "Disparais 3 minutes à l'écart avec {x}.",
+      "Embrasse {x} dans le cou pendant 15 secondes.",
+      "Porte {x} dans tes bras et embrasse-{lui} le front, puis la bouche.",,
+      "Embrasse {x} pendant 10 secondes, les autres comptent.",
+      "Faites un selfie en vous embrassant, {x} et toi.",
+      "Murmure à {x}, en détail, ce que tu lui ferais ce soir."
+    ],
+    sanslimite: [
+      "Disparais 7 minutes à l'écart avec {x}.",
+      "Roule une pelle de 20 secondes à {x}, contre un arbre ou un mur.",
+      "Roule une pelle à deux personnes du groupe, au choix.",
+      "Allongez-vous l'un sur l'autre dans l'herbe ou le sable pendant 30 secondes, {x} et toi.",,
+      "Roule une pelle à {x} jusqu'à ce que quelqu'un du groupe dise stop.",
+      "Fais un suçon à {x}, là où {il} veut.",
+      "Disparais 10 minutes à l'écart avec {x}.",
+      "Embrasse {x} dans le cou pendant 30 secondes."
+    ],
+  },
+};
+
+// Gages quand on joue sans alcool
+const GAGES = [
+    "Fais 10 pompes ou 15 squats.",
+    "Chante un refrain choisi par le groupe.",
+    "Parle avec un accent jusqu'à ton prochain tour.",
+    "Laisse le groupe poster une story sur ton compte.",
+    "Fais un compliment à chaque joueur.",
+    "Imite un animal choisi par le groupe.",
+    "Envoie un message choisi par le groupe à un·e pote.",
+    "Garde les yeux fermés jusqu'à ton prochain tour.",
+    "Laisse le groupe choisir ta photo de profil pour 24 h.",
+    "Raconte ta plus grosse honte.",
+    "Parle en rimes jusqu'à ton prochain tour.",
+    "Mange ou bois un truc choisi par le groupe (sans alcool).",
+];
+
+const PLACES = [
+  { id: 'voiture', label: 'En voiture' },
+  { id: 'maison', label: "Chez quelqu'un" },
+  { id: 'dehors', label: 'Dehors' },
+];
+// Ce qui n'est pas faisable selon le lieu (défis seulement, pas les vérités)
+const NOT_IN = {
+  voiture: /autre pièce|de la pièce|canapé|douche|chaise|cuisine|lap dance|strip-tease|slow|squats|gainage|dans(e|er)\b|danse|marchant|allonge|glaçon|chantilly|miel|fruit sur|feutre|coussin|genou à terre|califourchon|position préférée|7 minutes au paradis|bras de fer|tango|scène de film|passage érotique|mime un film|chemin de bisous/i,
+  dehors: /autre pièce|de la pièce|canapé|douche|chaise|cuisine|sous-vêtements|déshabille|strip-tease|enlève ton haut|enlève (deux|un) vêtements?|enlève un vêtement|t'enlever|enlevez|ton haut|lap dance|allonge|chantilly|miel|coussin|7 minutes au paradis|glaçon|fruit sur|chemin de bisous|califourchon|ventre|cuisse|torse/i,
+};
+const NEEDS_ALCOHOL = /shot|bois ton verre|tequila|cocktail|boire (\d+ )?shots|plus jamais d'alcool|ne plus jamais boire/i;
+const okHere = t => !(NOT_IN[S.place] && NOT_IN[S.place].test(t)) && (S.alcohol || !NEEDS_ALCOHOL.test(t));
+// Sans alcool, les gorgées deviennent des gages
+function adapt(t) {
+  if (S.alcohol) return t;
+  return t
+    .replace(/ou bois (\d+|une) gorgées?/gi, 'ou prends un gage du groupe')
+    .replace(/bois une gorgée/gi, 'prends un gage')
+    .replace(/(Le perdant|Le premier qui rit) boit( \d+ gorgées)?/g, '$1 prend un gage')
+    .replace(/boire (\d+) gorgées/gi, 'prendre un gage du groupe');
+}
+const W = () => S.alcohol
+  ? { sip: 'gorgée', sips: 'Gorgées', who: 'Qui boit ?', plus: '+1 gorgée', joker: 'Joker (2 gorgées)', top: 'Plus grosse descente' }
+  : { sip: 'point', sips: 'Points de gage', who: 'Qui prend un point ?', plus: '+1 point de gage', joker: 'Joker (gage)', top: 'Roi des gages' };
+
 const GAMES = [
   { id: 'aov', name: 'Action ou Vérité', suit: '♥', desc: "Le classique. Chacun son tour, du Soft au Sans limite.", min: 2 },
   { id: 'bottle', name: 'La Bouteille', suit: '♣', desc: "Fais tourner : elle choisit ton duo et votre défi.", min: 2 },
   { id: 'sd', name: 'Speed Dating', suit: '♥', desc: "Tête-à-tête chronométrés, vote secret, matchs révélés à la fin.", min: 2, mixed: true },
   { id: 'uc', name: 'Undercover', suit: '♠', desc: "Un mot secret, des imposteurs, un vote. Démasquez-les.", min: 3 },
-  { id: 'nhie', name: "Je n'ai jamais", suit: '♦', desc: "Ceux qui l'ont déjà fait boivent.", min: 2 },
+  { id: 'nhie', name: "Je n'ai jamais", suit: '♦', desc: "Ceux qui l'ont déjà fait boivent ou baissent un doigt.", min: 2 },
   { id: 'qui', name: 'Qui pourrait…', suit: '♣', desc: "À 3, tout le monde pointe quelqu'un.", min: 3 },
-  { id: 'tp', name: 'Tu préfères', suit: '♦', desc: "Deux choix, le groupe vote, la minorité boit.", min: 2 },
+  { id: 'tp', name: 'Tu préfères', suit: '♦', desc: "Deux choix, le groupe vote, la minorité prend.", min: 2 },
 ];
 
 const CUSTOM_GAMES = [
@@ -880,6 +1027,8 @@ const S = {
   examples: false,
   level: store.get('level', 'soft'),
   target: store.get('target', 'oppose'), // 'oppose' | 'tous'
+  place: store.get('place', 'voiture'),
+  alcohol: store.get('alcohol', false),
   black: store.get('black', []),          // "a>b" : a ne veut pas de défi avec b
   couples: store.get('couples', []),      // [[a, b]]
   coupleMode: store.get('coupleMode', true),
@@ -908,6 +1057,7 @@ const byName = n => S.players.find(p => p.name === n);
 // Pioche sans répétition tant que le paquet n'est pas épuisé
 const used = {};
 function draw(key, arr) {
+  key += '|' + S.place + S.alcohol;
   const u = used[key] || (used[key] = new Set());
   if (u.size >= arr.length) u.clear();
   let i; do { i = rand(arr.length); } while (u.has(i));
@@ -920,7 +1070,14 @@ function cards(game, level) {
   const base = game === 'action' || game === 'verite' ? AOV[level][game]
     : game === 'bottle' ? BOTTLE[level] : game === 'nhie' ? NHIE[level] : game === 'qui' ? QUI[level] : TP[level];
   const mine = S.custom.filter(c => c.game === game && c.level === level).map(c => game === 'tp' ? [c.text, c.text2] : c.text);
-  return base.concat(mine);
+  let all = base.concat(mine);
+  if (game === 'action' || game === 'bottle' || game === 'tp') {
+    all = all.filter(c => okHere(Array.isArray(c) ? c.join(' ') : c));
+    const pack = (PLACE_PACK[S.place] || {})[level] || [];
+    if (game !== 'tp') all = all.concat(pack.filter(t => (S.alcohol || !NEEDS_ALCOHOL.test(t)) && (game === 'action' || t.includes('{x}'))));
+  }
+  if (game === 'nhie' || game === 'qui' || game === 'verite') return all;
+  return all.length ? all : base;
 }
 
 /* ---------- Couples & liste noire ---------- */
@@ -965,7 +1122,7 @@ function capLevel(cur, x, level) {
 const softNote = c => c.capped ? `<p class="sub">Défi adouci : hors préférences.</p>` : '';
 
 function fill(text, x) {
-  return esc(text)
+  return esc(adapt(text))
     .replace(/\{x\}/g, x ? `<em>${esc(x.name)}</em>` : "quelqu'un de ton choix")
     .replace(/\{lui\}/g, x && x.g === 'f' ? 'elle' : 'lui')
     .replace(/\{il\}/g, x && x.g === 'f' ? 'elle' : 'il');
@@ -979,7 +1136,7 @@ let toastTimer;
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.hidden = false;
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2200);
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, Math.max(2200, msg.length * 70));
 }
 
 function savePlayers() { S.examples = false; store.set('players', S.players); }
@@ -1029,7 +1186,7 @@ const targetPicker = () => `<div class="levels two" role="group" aria-label="Dé
   <button data-a="target" data-v="tous" aria-pressed="${S.target === 'tous'}">Défis avec tout le monde</button></div>`;
 const pipsOf = id => LEVELS.find(l => l.id === id).pips;
 const cardIdx = (letter, lvl) => `<span class="idx tl"><b>${letter}</b><i>${lvl ? pipsOf(lvl) : ''}</i></span><span class="idx br"><b>${letter}</b><i>${lvl ? pipsOf(lvl) : ''}</i></span>`;
-const sipRow = () => `<section class="sips"><h3>Qui boit ? <span class="hint">Touche un nom pour +1 gorgée</span></h3>
+const sipRow = () => `<section class="sips"><h3>${W().who} <span class="hint">Touche un nom pour ${W().plus}</span></h3>
   <div class="chips">${S.players.map(p => `<button class="chip tap" data-a="sip" data-v="${esc(p.name)}">${esc(p.name)} <span class="n">${stat(p.name).sips}</span></button>`).join('')}</div></section>`;
 
 function home() {
@@ -1039,6 +1196,12 @@ function home() {
   return `
   <h1 class="logo">La<span>Tournée</span></h1>
   <p class="tag">Sept jeux de soirée, un seul téléphone qui fait le tour de la table.</p>
+  <section class="panel">
+    <h3><span>La soirée</span></h3>
+    <div class="levels three" role="group" aria-label="Où jouez-vous ?">${PLACES.map(pl => `<button data-a="place" data-v="${pl.id}" aria-pressed="${S.place === pl.id}">${pl.label}</button>`).join('')}</div>
+    <div class="levels two" role="group" aria-label="Alcool"><button data-a="alcohol" data-v="1" aria-pressed="${S.alcohol}">Avec alcool</button><button data-a="alcohol" data-v="0" aria-pressed="${!S.alcohol}">Sans alcool</button></div>
+    <p class="hint">${{ voiture: 'Défis faisables assis, avec des défis spécial voiture.', maison: 'Tous les défis, y compris ceux qui demandent une autre pièce, un canapé ou une douche.', dehors: "Défis faisables dehors, sans se déshabiller en public." }[S.place]} ${S.alcohol ? 'Le joker et les jeux de cartes se jouent en gorgées.' : 'Les gorgées sont remplacées par des gages.'}</p>
+  </section>
   <section class="panel">
     <h3><span>Joueurs</span><span>${n}</span></h3>
     ${S.examples ? `<p class="hint">Noms d'exemple : supprime-les et ajoute ta bande.</p>` : ''}
@@ -1057,7 +1220,7 @@ function home() {
     <button class="tool" data-a="open" data-v="custom"><b>Cartes perso</b><small>${S.custom.length} carte${S.custom.length > 1 ? 's' : ''} ajoutée${S.custom.length > 1 ? 's' : ''}</small></button>
     <button class="tool" data-a="open" data-v="score"><b>Classement</b><small>Gorgées, jokers, défis</small></button>
   </section>
-  <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte 2 gorgées (ou un gage soft choisi par le groupe). Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>`;
+  <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte ${S.alcohol ? '2 gorgées' : 'un gage'}. Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>`;
 }
 
 /* ---------- Action ou Vérité ---------- */
@@ -1078,7 +1241,7 @@ function aov() {
       <p class="text">${c.html}</p>${softNote(c)}
     </div>
     ${timerBlock(c.secs)}
-    <div class="row"><button class="btn" data-a="aov-next">Fait, au suivant</button><button class="btn ghost" data-a="aov-joker">Joker (2 gorgées)</button></div>
+    <div class="row"><button class="btn" data-a="aov-next">Fait, au suivant</button><button class="btn ghost" data-a="aov-joker">${W().joker}</button></div>
     <button class="btn ghost" data-a="aov-pick" data-v="${c.kind}">Autre carte</button>`;
   }
   return `${topbar('Action ou Vérité')}${levelPicker()}${targetPicker()}
@@ -1106,26 +1269,29 @@ function bottle() {
   </div>
   ${c ? `<div class="card">${cardIdx('♣', c.level)}<p class="kind">Défi à deux</p><p class="text">${c.html}</p>${softNote(c)}</div>
     ${timerBlock(c.secs)}
-    <div class="row"><button class="btn" data-a="b-done">Fait, ${esc(b.target)} tourne</button><button class="btn ghost" data-a="b-joker">Joker (2 gorgées)</button></div>`
+    <div class="row"><button class="btn" data-a="b-done">Fait, ${esc(b.target)} tourne</button><button class="btn ghost" data-a="b-joker">${W().joker}</button></div>`
   : `<button class="btn big" data-a="b-spin" ${b.spinning ? 'disabled' : ''}>${b.spinning ? 'Ça tourne…' : 'Faire tourner la bouteille'}</button>`}`;
 }
 
 /* ---------- Cartes simples ---------- */
 const DECKS = {
-  nhie: { title: "Je n'ai jamais", how: "Lis la carte à voix haute. Ceux qui l'ont déjà fait boivent une gorgée, et racontent si le groupe insiste." },
-  qui: { title: 'Qui pourrait…', how: "Lis la carte, compte jusqu'à 3, et tout le monde pointe quelqu'un. La personne la plus désignée boit autant de gorgées que de doigts pointés vers elle." },
-  tp: { title: 'Tu préfères', how: "Chacun choisit en même temps (main gauche ou main droite). Le camp minoritaire boit." },
+  nhie: { title: "Je n'ai jamais", how: "Lis la carte à voix haute. Ceux qui l'ont déjà fait boivent une gorgée, et racontent si le groupe insiste.",
+    dry: "Tout le monde commence avec 5 doigts levés. Ceux qui l'ont déjà fait baissent un doigt et racontent si le groupe insiste. À 0 doigt, gage." },
+  qui: { title: 'Qui pourrait…', how: "Lis la carte, compte jusqu'à 3, et tout le monde pointe quelqu'un. La personne la plus désignée boit autant de gorgées que de doigts pointés vers elle.",
+    dry: "Lis la carte, compte jusqu'à 3, et tout le monde pointe quelqu'un. La personne la plus désignée prend un point de gage par doigt pointé vers elle." },
+  tp: { title: 'Tu préfères', how: "Chacun choisit en même temps (main gauche ou main droite). Le camp minoritaire boit.",
+    dry: "Chacun choisit en même temps (main gauche ou main droite). Le camp minoritaire prend un point de gage." },
 };
 function deck(game) {
   const d = DECKS[game], c = S.deck.card;
   let face;
   if (!c) face = `<div class="card verso"><p class="text">${d.title}</p></div>`;
-  else if (game === 'tp') face = `<div class="card">${cardIdx('?', c.level)}<p class="kind">Tu préfères…</p><p class="text">${esc(c.v[0])}</p><p class="or">ou</p><p class="text">${esc(c.v[1])}</p></div>`;
+  else if (game === 'tp') face = `<div class="card">${cardIdx('?', c.level)}<p class="kind">Tu préfères…</p><p class="text">${esc(adapt(c.v[0]))}</p><p class="or">ou</p><p class="text">${esc(adapt(c.v[1]))}</p></div>`;
   else if (game === 'nhie') face = `<div class="card black">${cardIdx('J', c.level)}<p class="kind">Je n'ai jamais…</p><p class="text">${esc(c.v.replace(/[.\s]+$/, ''))}.</p></div>`;
   else face = `<div class="card">${cardIdx('Q', c.level)}<p class="kind">Qui est le plus susceptible de…</p><p class="text">${esc(c.v.replace(/[?\s]+$/, ''))} ?</p></div>`;
   return `${topbar(d.title)}${levelPicker()}${face}
   <button class="btn big" data-a="deck-next">${c ? 'Carte suivante' : 'Tirer une carte'}</button>
-  <p class="howto">${d.how}</p>${sipRow()}`;
+  <p class="howto">${S.alcohol ? d.how : d.dry}</p>${sipRow()}`;
 }
 
 /* ---------- Speed Dating ---------- */
@@ -1176,7 +1342,7 @@ function sd() {
     return `${topbar('Speed Dating')}
     <div class="turn"><small>Tête-à-tête</small><strong>${s.r + 1} / ${s.rounds.length}</strong></div>
     <ul class="pairs">${rd.pairs.map(([a, b]) => `<li><span>${esc(a)}</span><span class="heart" aria-label="avec">♥</span><span>${esc(b)}</span></li>`).join('')}</ul>
-    ${rd.pause.length ? `<p class="howto">En pause : ${rd.pause.map(esc).join(', ')}. Profitez-en pour remplir les verres.</p>` : ''}
+    ${rd.pause.length ? `<p class="howto">En pause : ${rd.pause.map(esc).join(', ')}. ${S.alcohol ? 'Profitez-en pour remplir les verres.' : 'Profitez-en pour souffler.'}</p>` : ''}
     <div class="card">${cardIdx('♥', s.level)}<p class="kind">Question du tour</p><p class="text">${esc(rd.q)}</p><p class="sub">Chacun répond, puis la conversation est libre.</p></div>
     ${timerBlock(S.sdCfg.secs)}
     <button class="btn big ${last ? 'red' : ''}" data-a="sd-next">${last ? 'Passer au vote secret' : 'On tourne'}</button>`;
@@ -1306,7 +1472,7 @@ function uc() {
     <div class="turn"><small>Fin de partie</small><strong>${msg}</strong></div>
     <div class="card"><p class="kind">Les mots</p><p class="text">Civils : ${esc(u.civil)}<br>Undercover : <em>${esc(u.under)}</em></p>
       <div class="roles">${u.ps.map(p => `<div class="${p.role === 'civil' ? '' : 'imp'}"><span>${esc(p.name)}</span><span>${roleName(p.role)}</span></div>`).join('')}</div></div>
-    <p class="howto">Les perdants boivent une gorgée (déjà comptée dans le classement).</p>
+    <p class="howto">Les perdants ${S.alcohol ? 'boivent une gorgée' : 'prennent un point de gage'} (déjà compté dans le classement).</p>
     <div class="row"><button class="btn" data-a="uc-again">Rejouer</button><button class="btn ghost" data-a="home">Menu</button></div>`;
 }
 
@@ -1377,11 +1543,11 @@ const CUSTOM_HINTS = {
 function score() {
   const rows = S.players.map(p => ({ n: p.name, ...stat(p.name) }));
   const best = (f, label) => { const top = rows.slice().sort((a, b) => b[f] - a[f])[0]; return top && top[f] > 0 ? `<div><small>${label}</small><b>${esc(top.n)}</b><span>${top[f]}</span></div>` : ''; };
-  const titles = best('sips', 'Plus grosse descente') + best('done', 'Le plus courageux') + best('jokers', 'Roi du joker');
+  const titles = best('sips', W().top) + best('done', 'Le plus courageux') + best('jokers', 'Roi du joker');
   return `${topbar('Classement')}
-  ${titles ? `<section class="titles">${titles}</section>` : `<p class="howto">Les compteurs se remplissent tout seuls quand vous jouez : défis faits, jokers, gorgées.</p>`}
+  ${titles ? `<section class="titles">${titles}</section>` : `<p class="howto">Les compteurs se remplissent tout seuls quand vous jouez : défis faits, jokers, ${W().sips.toLowerCase()}.</p>`}
   <div class="scroll"><table class="score">
-    <thead><tr><th scope="col">Joueur</th><th scope="col">Gorgées</th><th scope="col">Jokers</th><th scope="col">Défis</th></tr></thead>
+    <thead><tr><th scope="col">Joueur</th><th scope="col">${W().sips}</th><th scope="col">Jokers</th><th scope="col">Défis</th></tr></thead>
     <tbody>${rows.sort((a, b) => b.sips - a.sips).map(r => `<tr><th scope="row">${esc(r.n)}</th>
       <td><span class="adj"><button data-a="sip-minus" data-v="${esc(r.n)}" aria-label="Retirer une gorgée à ${esc(r.n)}">−</button><b>${r.sips}</b><button data-a="sip" data-v="${esc(r.n)}" aria-label="Ajouter une gorgée à ${esc(r.n)}">+</button></span></td>
       <td>${r.jokers}</td><td>${r.done}</td></tr>`).join('')}</tbody>
@@ -1436,6 +1602,15 @@ function drawDeck() {
   S.deck.card = { v: draw(g + lvl, cards(g, lvl)), level: lvl };
 }
 
+// Sans alcool, le joker donne un gage tiré au hasard (faisable sur place)
+function joker(n) {
+  bump(n, 'jokers');
+  if (S.alcohol) { bump(n, 'sips', 2); toast(`Joker ! 2 gorgées pour ${n}.`); return; }
+  bump(n, 'sips');
+  const ok = GAGES.filter(okHere);
+  toast(`Joker ! Gage pour ${n} : ${draw('gage', ok.length ? ok : GAGES)}`);
+}
+
 /* ---------- Actions ---------- */
 const actions = {
   home() { S.screen = 'home'; S.uc = null; S.sd = null; S.bottle = null; S.edit = null; S.confirm = null; render(); },
@@ -1479,7 +1654,7 @@ const actions = {
   'aov-next'() { bump(S.players[S.aov.turn % S.players.length].name, 'done'); S.aov.turn++; S.aov.card = null; render(false); },
   'aov-joker'() {
     const n = S.players[S.aov.turn % S.players.length].name;
-    bump(n, 'jokers'); bump(n, 'sips', 2); toast(`Joker ! 2 gorgées pour ${n}.`);
+    joker(n);
     S.aov.turn++; S.aov.card = null; render(false);
   },
 
@@ -1502,14 +1677,16 @@ const actions = {
   },
   'b-joker'() {
     const b = S.bottle, cur = S.players[b.turn % S.players.length];
-    bump(cur.name, 'jokers'); bump(cur.name, 'sips', 2); toast(`Joker ! 2 gorgées pour ${cur.name}.`);
+    joker(cur.name);
     b.turn = S.players.findIndex(p => p.name === b.target); b.card = null;
     render(false);
   },
 
   // Cartes simples
   'deck-next'() { drawDeck(); render(false); },
-  sip(v) { bump(v, 'sips'); if (S.screen !== 'score') toast(`${v} : ${stat(v).sips} gorgée${stat(v).sips > 1 ? 's' : ''}`); render(false); },
+  sip(v) { bump(v, 'sips'); if (S.screen !== 'score') toast(`${v} : ${stat(v).sips} ${W().sip}${stat(v).sips > 1 ? 's' : ''}`); render(false); },
+  place(v) { S.place = v; store.set('place', v); render(false); },
+  alcohol(v) { S.alcohol = v === '1'; store.set('alcohol', S.alcohol); render(false); },
   'sip-minus'(v) { bump(v, 'sips', -1); render(false); },
   reset() { S.confirm = 'reset'; render(false); },
   'reset-no'() { S.confirm = null; render(false); },
