@@ -7,9 +7,15 @@ Jeux de soirée sur un seul téléphone qui fait le tour de la table. Ouvre `ind
 - **La Bouteille** : la bouteille tourne, désigne ton duo et vous donne un défi à deux.
 - **Speed Dating** : tête-à-tête H/F chronométrés avec une question imposée, puis vote secret. Seuls les matchs réciproques sont révélés.
 - **Undercover** : environ 190 paires de mots du quotidien, undercovers, Mr White, option « mots coquins ».
+- **Paranoïa** : une question montrée en secret à son voisin, un prénom à voix haute, pile ou face pour la révéler.
+- **La Roue** : roue des gages (selon niveau, lieu, alcool), « qui paie la tournée ? » ou roue perso.
 - **Je n'ai jamais**, **Qui pourrait…**, **Tu préfères** : paquets de cartes en 5 niveaux, avec « Qui boit ? » pour compter les gorgées.
 
 ## Réglages
+- **Qui conduit ?** : le conducteur ne boit jamais. Ses défis et jokers passent en version sans alcool, ses gorgées deviennent des points de gage.
+- **Packs à thème** : Road trip, Halloween, Noël & Nouvel An, Été & vacances, Anniversaire (cartes et mots Undercover en plus).
+- **Pas de répétition** : les cartes déjà vues sont mémorisées d'une soirée à l'autre et ne reviennent qu'une fois le paquet entier joué (« Revoir toutes les cartes » dans le Classement).
+- **Récap de soirée** : cartes jouées, jeux, titres, matchs du Speed Dating, résultats Undercover, à copier pour le groupe. « Nouvelle soirée » remet les compteurs à zéro.
 - **La soirée** : *En voiture* (défis faisables assis + défis spécial voiture), *Chez quelqu'un* (tous les défis) ou *Dehors* (rien qui oblige à se déshabiller en public). *Avec* ou *sans alcool* : sans alcool, les gorgées deviennent des gages et des points.
 - **Joueurs H/F**, et option « défis avec le sexe opposé » ou « avec tout le monde ».
 - **Affinités** :

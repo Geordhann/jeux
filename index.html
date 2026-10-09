@@ -213,6 +213,34 @@ table.score { width: 100%; border-collapse: collapse; font-variant-numeric: tabu
 .chip.tap.on { background: var(--gold); }
 .turn strong.q { font-size: clamp(1.4rem, 7vw, 1.9rem); }
 .card .text.big-result { font-family: var(--font-display); font-size: clamp(2rem, 11vw, 3rem); color: var(--red); }
+.drv { justify-content: space-between; gap: 12px; }
+.drv span { font-weight: 600; }
+.drv select { flex: 0 1 55%; }
+.drv-badge { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; background: var(--gold); color: var(--ink); border-radius: 999px; padding: 2px 7px; }
+.packs { display: flex; flex-direction: column; gap: 6px; }
+.chip.tap { color: var(--ink); }
+.coin { width: 150px; height: 150px; margin: 8px auto; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f6d58a, var(--gold) 55%, #a87d2c); color: var(--ink); display: grid; place-items: center; font-family: var(--font-display); font-size: 2.2rem; box-shadow: 0 0 0 6px #a87d2c, 0 14px 30px rgba(0,0,0,.45); flex: none; }
+.coin.spin { animation: flip .35s linear infinite; }
+.coin.done { animation: land .5s ease-out; }
+.coin.face { background: radial-gradient(circle at 35% 30%, #ffffff, var(--paper) 55%, var(--paper-edge)); box-shadow: 0 0 0 6px var(--paper-edge), 0 14px 30px rgba(0,0,0,.45); }
+@keyframes flip { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
+@keyframes land { from { transform: scale(1.25); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .coin.spin, .coin.done { animation: none; } }
+.recap { background: var(--paper); color: var(--ink); border-radius: 18px; padding: 22px 18px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 3px 0 var(--paper-edge), 0 18px 40px rgba(0,0,0,.35); }
+.recap .kind { text-transform: uppercase; letter-spacing: .16em; font-size: .78rem; font-weight: 800; color: var(--red); text-align: center; }
+.recap h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.6rem; text-align: center; line-height: 1.15; }
+.recap .nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+.recap .nums b { font-family: var(--font-display); font-weight: 400; font-size: 1.9rem; color: var(--red); display: block; font-variant-numeric: tabular-nums; }
+.recap .nums small { color: var(--ink-soft); font-size: .78rem; }
+.recap .titles div { background: var(--felt); color: var(--fg); }
+.recap .titles small { color: var(--gold); }
+.recap .titles span { color: var(--muted); }
+.recap .block { display: flex; flex-direction: column; gap: 6px; }
+.recap .block > small { text-transform: uppercase; letter-spacing: .1em; font-size: .72rem; font-weight: 800; color: var(--red); }
+.recap .pairs li { background: var(--felt); color: var(--fg); }
+.recap .line { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed var(--paper-edge); padding-bottom: 4px; font-size: .9rem; }
+.recap .line span:last-child { color: var(--ink-soft); text-align: right; }
+textarea.copy { width: 100%; font: .85rem/1.4 var(--font-body); }
 </style>
 </head>
 <body>
@@ -1095,6 +1123,84 @@ const WHEEL = {
 const WHEEL_QUESTIONS = ['Qui paie la tournée ?', 'Qui choisit la musique ?', 'Qui commence ?', 'Qui va chercher à manger ?', 'Qui prend le prochain gage ?', 'Qui raconte une anecdote ?'];
 const WHEEL_COLORS = [['--red', '--paper'], ['--paper', '--ink'], ['--gold', '--ink'], ['--felt-2', '--fg']];
 
+// Packs à thème : cartes ajoutées aux paquets quand le pack est activé
+const PACKS = {
+  roadtrip: {"label": "Road trip", "action": {"soft": ["Fais la voix d'un guide touristique et commente le paysage pendant 30 secondes.", "Lance un blind test : fredonne une chanson, le premier qui trouve choisit la suivante.", "Imite le bruit de la voiture pendant 10 secondes, sans rire.", "Repère une plaque d'immatriculation et invente une phrase avec ses lettres."], "piquant": ["Choisis une chanson d'amour et dédicace-la à {x}.", "Pose ta tête sur l'épaule de {x} jusqu'à la prochaine pause.", "Fais écouter ta playlist « honteuse » au groupe et assume."], "hot": ["Murmure à {x} l'endroit le plus fou où tu aimerais faire une pause à deux.", "Fais un bisou dans le cou de {x} pendant que les autres comptent jusqu'à 5."]}, "verite": {"soft": ["Ton pire souvenir de trajet en voiture ?", "La destination de road trip de tes rêves ?", "Ta chanson de voiture la plus honteuse ?"], "piquant": ["Tu as déjà embrassé quelqu'un dans une voiture ? Raconte.", "Avec qui ici tu ferais un road trip à deux ?", "Ton pire date en voiture ?"], "hot": ["Tu l'as déjà fait dans une voiture ? Où étiez-vous garés ?", "Avec qui ici tu dormirais à l'arrière de la voiture ?"]}, "nhie": {"soft": ["dormi dans une voiture", "fait pipi au bord de la route", "chanté à tue-tête en voiture"], "piquant": ["embrassé quelqu'un dans une voiture", "eu un rencard dans une voiture"], "hot": ["fait l'amour dans une voiture"]}, "qui": {"soft": ["s'endormir en premier pendant un trajet", "se perdre même avec le GPS", "mettre la pire playlist"], "piquant": ["draguer quelqu'un sur une aire d'autoroute"], "hot": ["embuer les vitres ce soir"]}, "tp": {"soft": [["10 h de route avec ta pire playlist", "2 h de route dans un silence total"], ["conduire toute la nuit", "dormir dans la voiture"]]}, "uc": [["Autoroute", "Nationale"], ["Station-service", "Aire de repos"], ["GPS", "Carte routière"], ["Klaxon", "Clignotant"], ["Péage", "Radar"]]},
+  halloween: {"label": "Halloween", "action": {"soft": ["Raconte une histoire qui fait peur en 30 secondes, lampe du téléphone sous le menton.", "Fais ta meilleure imitation de zombie jusqu'à ce que quelqu'un rie.", "Pousse un cri d'horreur digne d'un film.", "Transforme {x} en monstre avec ce que tu as sous la main."], "piquant": ["Fais une morsure de vampire, toute douce, dans le cou de {x}.", "Murmure à {x} une réplique de film d'horreur avec ta voix la plus sexy."], "hot": ["Fais un bisou de vampire dans le cou de {x} pendant 5 secondes.", "Laisse {x} te faire une morsure de vampire où {il} veut dans le cou."]}, "verite": {"soft": ["Ta plus grosse peur ?", "Le film d'horreur qui t'a traumatisé·e ?", "Tu crois aux fantômes ?"], "piquant": ["Le déguisement le plus sexy que tu aies porté ?", "Qui ici tu sauverais en premier d'une attaque de zombies ?"], "hot": ["Ton déguisement de rêve pour une soirée coquine ?", "Tu t'es déjà collé·e à quelqu'un pendant un film d'horreur exprès ?"]}, "nhie": {"soft": ["regardé un film d'horreur les yeux fermés", "fait le tour des maisons pour Halloween"], "piquant": ["embrassé quelqu'un déguisé", "dragué quelqu'un en soirée déguisée"]}, "qui": {"soft": ["mourir en premier dans un film d'horreur", "crier pour un rien"], "piquant": ["porter le déguisement le plus osé"]}, "tp": {"soft": [["une nuit dans une maison hantée", "une nuit dans un cimetière"], ["être un vampire", "être un loup-garou"]]}, "uc": [["Citrouille", "Pastèque"], ["Vampire", "Loup-garou"], ["Fantôme", "Momie"], ["Sorcière", "Magicien"], ["Bonbon", "Chocolat"]]},
+  noel: {"label": "Noël & Nouvel An", "action": {"soft": ["Chante un chant de Noël version rap.", "Fais ton discours de Nouvel An comme un président.", "Imite le Père Noël après une soirée trop arrosée.", "Donne une bonne résolution pour l'année prochaine à {x}."], "piquant": ["Fais un bisou sur la joue de {x}, sous un gui imaginaire.", "Dis à {x} quel cadeau tu aimerais {lui} offrir."], "hot": ["Fais un bisou de minuit à {x}, comme si c'était le décompte.", "Décris à {x} le cadeau coquin que tu aimerais trouver sous le sapin."]}, "verite": {"soft": ["Le pire cadeau de Noël que tu aies reçu ?", "La résolution que tu n'as jamais tenue ?", "Tu as cru au Père Noël jusqu'à quel âge ?"], "piquant": ["Ton bisou de minuit le plus mémorable ?", "Avec qui ici tu passerais le réveillon en tête-à-tête ?"], "hot": ["Ton Nouvel An le plus chaud, raconte.", "Le cadeau le plus coquin que tu aies offert ou reçu ?"]}, "nhie": {"soft": ["offert un cadeau recyclé", "raté le décompte de minuit"], "piquant": ["embrassé quelqu'un à minuit pile", "écrit à un·e ex le 1er janvier"]}, "qui": {"soft": ["offrir le pire cadeau", "s'endormir avant minuit"], "piquant": ["embrasser un·e inconnu·e à minuit"]}, "tp": {"soft": [["Noël en famille", "Noël entre potes"], ["Nouvel An en boîte", "Nouvel An à la maison"]]}, "uc": [["Sapin", "Houx"], ["Père Noël", "Lutin"], ["Bûche", "Galette des rois"], ["Feu d'artifice", "Pétard"], ["Cadeau", "Surprise"]]},
+  ete: {"label": "Été & vacances", "action": {"soft": ["Fais ta meilleure imitation de touriste perdu.", "Danse la macarena pendant 20 secondes.", "Raconte ton pire coup de soleil avec les gestes.", "Fais une pub pour ta crème solaire préférée."], "piquant": ["Mets de la crème solaire imaginaire sur les épaules de {x}.", "Dis à {x} avec qui {il} irait bien en vacances, à part toi."], "hot": ["Mets de la crème (ou fais semblant) dans le dos de {x} pendant une minute.", "Décris à {x} ta nuit d'été idéale à deux."]}, "verite": {"soft": ["Tes pires vacances ?", "La destination où tu rêves d'aller ?", "Ton plus gros coup de soleil ?"], "piquant": ["Ton amour de vacances le plus marquant ?", "Avec qui ici tu partirais une semaine sur une île ?"], "hot": ["Tu l'as déjà fait sur une plage ?", "Ton aventure de vacances la plus folle ?"]}, "nhie": {"soft": ["perdu mes affaires à la plage", "eu un coup de soleil en forme de maillot"], "piquant": ["eu un amour de vacances", "fait du naturisme"]}, "qui": {"soft": ["oublier sa crème solaire", "rater son avion de vacances"], "piquant": ["avoir un amour de vacances cet été"]}, "tp": {"soft": [["la mer", "la montagne"], ["le camping", "l'hôtel tout compris"]]}, "uc": [["Tongs", "Sandales"], ["Crème solaire", "Après-soleil"], ["Parasol", "Serviette"], ["Glace", "Granité"], ["Camping", "Gîte"]]},
+  anniv: {"label": "Anniversaire", "action": {"soft": ["Chante joyeux anniversaire version opéra.", "Fais un discours de 30 secondes pour la personne qui fête son anniversaire.", "Raconte ton meilleur souvenir avec la personne qui fête son anniversaire.", "Souffle des bougies imaginaires et fais un vœu à voix haute."], "piquant": ["Fais un bisou sur la joue de la personne qui fête son anniversaire.", "Offre un compliment-cadeau à {x}."], "hot": ["Offre un cadeau à la personne qui fête son anniversaire : un smack ou un bisou dans le cou, elle choisit.", "Fais un lap dance d'anniversaire de 30 secondes à la personne qui fête son anniversaire."]}, "verite": {"soft": ["Ton pire anniversaire ?", "Le plus beau cadeau que tu aies reçu ?", "Ton vœu d'anniversaire de l'an dernier s'est réalisé ?"], "piquant": ["Le cadeau le plus romantique qu'on t'ait fait ?", "Qui ici t'a fait le meilleur cadeau ?"], "hot": ["Le cadeau d'anniversaire le plus coquin que tu aies reçu ou offert ?", "Ton anniversaire le plus chaud ?"]}, "nhie": {"soft": ["oublié l'anniversaire de mon/ma meilleur·e ami·e", "fêté mon anniversaire seul·e"], "piquant": ["embrassé quelqu'un à ma propre fête d'anniversaire"]}, "qui": {"soft": ["oublier l'anniversaire de quelqu'un ici", "pleurer en ouvrant un cadeau"], "piquant": ["offrir un cadeau trop osé"]}, "tp": {"soft": [["une fête surprise", "un dîner en petit comité"], ["un gros cadeau", "plein de petits cadeaux"]]}, "uc": [["Bougie", "Allumette"], ["Gâteau", "Cupcake"], ["Cadeau", "Carte"], ["Ballon", "Guirlande"], ["Fête surprise", "Anniversaire"]]},
+};
+// Paranoïa : questions dont la réponse est un prénom du groupe
+const PARA = {
+  soft: [
+    "Qui ici ferait le pire colocataire ?",
+    "Qui a le plus de chances de devenir célèbre ?",
+    "Qui chante le plus faux ?",
+    "Qui mentirait le mieux à la police ?",
+    "Qui pleure devant les films ?",
+    "Qui est le plus radin ?",
+    "Qui oublierait ton anniversaire ?",
+    "Qui survivrait le moins longtemps sur une île déserte ?",
+    "Qui a le pire style ?",
+    "Qui est le plus accro à son téléphone ?",
+    "Qui balancerait un secret en premier ?",
+    "Qui est drôle sans le faire exprès ?",
+  ],
+  piquant: [
+    "Qui ici embrasse le mieux, à ton avis ?",
+    "Avec qui tu partirais en vacances en tête-à-tête ?",
+    "Qui a le plus de charme ?",
+    "Qui serait le meilleur date ?",
+    "Qui drague le plus mal ?",
+    "Qui a un crush secret dans le groupe ?",
+    "Qui ferait le/la meilleur·e partenaire ?",
+    "À qui tu enverrais un message à 3 h du matin ?",
+    "Qui a le plus beau sourire ?",
+    "Qui se remettrait avec son ex ?",
+    "Qui est le plus jaloux ou la plus jalouse ?",
+    "Qui te plaît le plus physiquement ici ?",
+  ],
+  hot: [
+    "Avec qui ici tu passerais une nuit ?",
+    "Qui est le meilleur coup du groupe, à ton avis ?",
+    "Qui a le plus gros body count ?",
+    "Qui a les fantasmes les plus fous ?",
+    "Qui embrasserais-tu là, maintenant ?",
+    "Qui est le plus bruyant au lit ?",
+    "Qui a déjà envoyé des nudes ?",
+    "Qui ferait le meilleur lap dance ?",
+    "Qui a le plus de sex-appeal ?",
+    "Avec qui tu prendrais une douche ?",
+    "Qui serait le plus coquin en couple ?",
+    "Qui a l'air le plus sauvage au lit ?",
+  ],
+  intense: [
+    "Avec qui ici tu coucherais ce soir ?",
+    "Qui a déjà fantasmé sur quelqu'un ici ?",
+    "Qui ferait le meilleur sex friend ?",
+    "Avec qui tu ferais 7 minutes au paradis ?",
+    "Qui a les plus belles fesses ?",
+    "Qui serait partant pour un plan à trois ?",
+    "Qui as-tu déjà imaginé sans vêtements ?",
+    "Avec qui tu passerais un week-end entier au lit ?",
+    "Qui a le plus de chances de finir la nuit avec quelqu'un d'ici ?",
+    "Qui te ferait le meilleur massage ?",
+  ],
+  sanslimite: [
+    "Qui inviterais-tu dans un plan à trois ?",
+    "Qui est ton fantasme le plus tabou ici ?",
+    "Avec qui tu coucherais si personne ne le savait jamais ?",
+    "Qui voudrais-tu voir en sous-vêtements maintenant ?",
+    "Qui serait le plus doué au lit ?",
+    "Qui a déjà couché avec quelqu'un du groupe ?",
+    "Avec qui tu prendrais une douche, là, maintenant ?",
+    "Qui embrasserais-tu partout ?",
+    "Qui serait ton coup d'un soir idéal ?",
+    "Qui te ferait craquer en une seule nuit ?",
+  ],
+};
+
 const GAMES = [
   { id: 'aov', name: 'Action ou Vérité', suit: '♥', desc: "Le classique. Chacun son tour, du Soft au Sans limite.", min: 2 },
   { id: 'bottle', name: 'La Bouteille', suit: '♣', desc: "Fais tourner : elle choisit ton duo et votre défi.", min: 2 },
@@ -1102,6 +1208,7 @@ const GAMES = [
   { id: 'uc', name: 'Undercover', suit: '♠', desc: "Un mot secret, des imposteurs, un vote. Démasquez-les.", min: 3 },
   { id: 'nhie', name: "Je n'ai jamais", suit: '♦', desc: "Ceux qui l'ont déjà fait boivent ou baissent un doigt.", min: 2 },
   { id: 'qui', name: 'Qui pourrait…', suit: '♣', desc: "À 3, tout le monde pointe quelqu'un.", min: 3 },
+  { id: 'para', name: 'Paranoïa', suit: '♠', desc: "Une question chuchotée, un prénom à voix haute, pile ou face pour tout révéler.", min: 3 },
   { id: 'tp', name: 'Tu préfères', suit: '♦', desc: "Deux choix, le groupe vote, la minorité prend.", min: 2 },
   { id: 'wheel', name: 'La Roue', suit: '♠', desc: "Roue des gages, « qui paie la tournée ? » ou ta propre roue.", min: 2 },
 ];
@@ -1124,6 +1231,10 @@ const S = {
   target: store.get('target', 'oppose'), // 'oppose' | 'tous'
   place: store.get('place', 'voiture'),
   alcohol: store.get('alcohol', false),
+  driver: store.get('driver', null),     // prénom du conducteur : il ne boit jamais
+  packs: store.get('packs', []),
+  night: store.get('night', null),       // récap de la soirée en cours
+  para: null,
   black: store.get('black', []),          // "a>b" : a ne veut pas de défi avec b
   couples: store.get('couples', []),      // [[a, b]]
   coupleMode: store.get('coupleMode', true),
@@ -1142,6 +1253,12 @@ S.players = S.players.map(p => typeof p === 'string' ? { name: p, g: 'h' } : p);
 // Les niveaux 18+ redemandent la confirmation à chaque ouverture
 if (!LEVELS.some(l => l.id === S.level && !l.adult)) S.level = 'soft';
 
+if (!S.night) S.night = { start: Date.now(), cards: 0, games: [], matches: [], uc: [] };
+const saveNight = () => store.set('night', S.night);
+const isDriver = n => !!n && S.driver === n && !!byName(n);
+// Exécute fn comme si on jouait sans alcool (pour le conducteur)
+function dry(fn) { const a = S.alcohol; S.alcohol = false; try { return fn(); } finally { S.alcohol = a; } }
+
 const app = document.getElementById('app');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rand = n => Math.floor(Math.random() * n);
@@ -1149,23 +1266,33 @@ const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { c
 const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const byName = n => S.players.find(p => p.name === n);
 
-// Pioche sans répétition tant que le paquet n'est pas épuisé
-const used = {};
+// Pioche sans répétition, mémorisée d'une soirée à l'autre :
+// une carte ne revient qu'une fois tout son paquet joué
+const seen = store.get('seen', {});
+const NO_COUNT = new Set(['gage', 'wcap']);
 function draw(key, arr) {
-  key += '|' + S.place + S.alcohol;
-  const u = used[key] || (used[key] = new Set());
-  if (u.size >= arr.length) u.clear();
-  let i; do { i = rand(arr.length); } while (u.has(i));
-  u.add(i);
-  return arr[i];
+  const id = c => JSON.stringify(c);
+  let u = new Set(seen[key] || []);
+  let free = arr.filter(c => !u.has(id(c)));
+  if (!free.length) { u = new Set(); free = arr; }
+  const pick = free[rand(free.length)];
+  u.add(id(pick)); seen[key] = [...u]; store.set('seen', seen);
+  if (!NO_COUNT.has(key)) { S.night.cards++; saveNight(); }
+  return pick;
 }
+const seenCount = () => Object.values(seen).reduce((n, l) => n + l.length, 0);
 
 // Paquet de base + cartes perso du même jeu et du même niveau
 function cards(game, level) {
   const base = game === 'action' || game === 'verite' ? AOV[level][game]
     : game === 'bottle' ? BOTTLE[level] : game === 'nhie' ? NHIE[level] : game === 'qui' ? QUI[level] : TP[level];
   const mine = S.custom.filter(c => c.game === game && c.level === level).map(c => game === 'tp' ? [c.text, c.text2] : c.text);
-  let all = base.concat(mine);
+  const themed = S.packs.filter(k => PACKS[k]).flatMap(k => {
+    const pk = PACKS[k], src = game === 'bottle' ? pk.action : pk[game];
+    const list = (src && src[level]) || [];
+    return game === 'bottle' ? list.filter(t => t.includes('{x}')) : list;
+  });
+  let all = base.concat(mine, themed);
   if (game === 'action' || game === 'bottle' || game === 'tp') {
     all = all.filter(c => okHere(Array.isArray(c) ? c.join(' ') : c));
     const pack = (PLACE_PACK[S.place] || {})[level] || [];
@@ -1290,17 +1417,19 @@ function home() {
   const why = g => n < g.min ? `Il faut au moins ${g.min} joueurs.` : g.mixed && !(hasH && hasF) ? 'Il faut au moins un H et une F.' : '';
   return `
   <h1 class="logo">La<span>Tournée</span></h1>
-  <p class="tag">Sept jeux de soirée, un seul téléphone qui fait le tour de la table.</p>
+  <p class="tag">Neuf jeux de soirée, un seul téléphone qui fait le tour de la table.</p>
   <section class="panel">
     <h3><span>La soirée</span></h3>
     <div class="levels three" role="group" aria-label="Où jouez-vous ?">${PLACES.map(pl => `<button data-a="place" data-v="${pl.id}" aria-pressed="${S.place === pl.id}">${pl.label}</button>`).join('')}</div>
     <div class="levels two" role="group" aria-label="Alcool"><button data-a="alcohol" data-v="1" aria-pressed="${S.alcohol}">Avec alcool</button><button data-a="alcohol" data-v="0" aria-pressed="${!S.alcohol}">Sans alcool</button></div>
-    <p class="hint">${{ voiture: 'Défis faisables assis, avec des défis spécial voiture.', maison: 'Tous les défis, y compris ceux qui demandent une autre pièce, un canapé ou une douche.', dehors: "Défis faisables dehors, sans se déshabiller en public." }[S.place]} ${S.alcohol ? 'Le joker et les jeux de cartes se jouent en gorgées.' : 'Les gorgées sont remplacées par des gages.'}</p>
+    <label class="pick drv" for="driverSel"><span>Qui conduit ?</span><select id="driverSel"><option value="">Personne</option>${S.players.map(p => `<option value="${esc(p.name)}" ${isDriver(p.name) ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>
+    <div class="packs"><span class="hint">Packs à thème</span><div class="chips">${Object.entries(PACKS).map(([k, pk]) => `<button class="chip tap ${S.packs.includes(k) ? 'on' : ''}" data-a="pack" data-v="${k}" aria-pressed="${S.packs.includes(k)}">${pk.label}</button>`).join('')}</div></div>
+    <p class="hint">${{ voiture: 'Défis faisables assis, avec des défis spécial voiture.', maison: 'Tous les défis, y compris ceux qui demandent une autre pièce, un canapé ou une douche.', dehors: "Défis faisables dehors, sans se déshabiller en public." }[S.place]} ${S.alcohol ? 'Le joker et les jeux de cartes se jouent en gorgées.' : 'Les gorgées sont remplacées par des gages.'}${isDriver(S.driver) ? ` ${esc(S.driver)} conduit : jamais d'alcool pour lui ou elle, ses gorgées deviennent des gages.` : ''}</p>
   </section>
   <section class="panel">
     <h3><span>Joueurs</span><span>${n}</span></h3>
     ${S.examples ? `<p class="hint">Noms d'exemple : supprime-les et ajoute ta bande.</p>` : ''}
-    <div class="chips">${S.players.map((p, i) => `<span class="chip"><button class="sex ${p.g}" data-a="sex" data-v="${i}" aria-label="${esc(p.name)} : ${p.g === 'f' ? 'femme' : 'homme'}, toucher pour changer">${p.g === 'f' ? 'F' : 'H'}</button>${esc(p.name)}${partnerHere(p.name) ? ' <span class="heart" aria-label="en couple">♥</span>' : ''}<button data-a="rm" data-v="${i}" aria-label="Retirer ${esc(p.name)}">✕</button></span>`).join('')}</div>
+    <div class="chips">${S.players.map((p, i) => `<span class="chip"><button class="sex ${p.g}" data-a="sex" data-v="${i}" aria-label="${esc(p.name)} : ${p.g === 'f' ? 'femme' : 'homme'}, toucher pour changer">${p.g === 'f' ? 'F' : 'H'}</button>${esc(p.name)}${partnerHere(p.name) ? ' <span class="heart" aria-label="en couple">♥</span>' : ''}${isDriver(p.name) ? ' <span class="drv-badge">au volant</span>' : ''}<button data-a="rm" data-v="${i}" aria-label="Retirer ${esc(p.name)}">✕</button></span>`).join('')}</div>
     <form class="add" id="addForm"><input id="newPlayer" placeholder="Prénom" maxlength="20" autocomplete="off" aria-label="Prénom du joueur"><button class="btn sexbtn" type="submit" value="h" aria-label="Ajouter un homme">+ H</button><button class="btn red sexbtn" type="submit" value="f" aria-label="Ajouter une femme">+ F</button></form>
     <p class="hint">Touche le H ou le F d'un joueur pour le changer.</p>
   </section>
@@ -1314,6 +1443,7 @@ function home() {
     <button class="tool" data-a="open" data-v="rel"><b>Affinités</b><small>Préférences, couples, liste noire</small></button>
     <button class="tool" data-a="open" data-v="custom"><b>Cartes perso</b><small>${S.custom.length} carte${S.custom.length > 1 ? 's' : ''} ajoutée${S.custom.length > 1 ? 's' : ''}</small></button>
     <button class="tool" data-a="open" data-v="score"><b>Classement</b><small>Gorgées, jokers, défis</small></button>
+    <button class="tool" data-a="open" data-v="recap"><b>Récap de soirée</b><small>${S.night.cards} cartes jouées ce soir</small></button>
   </section>
   <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte ${S.alcohol ? '2 gorgées' : 'un gage'}. Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>
   <footer class="foot"><button class="link" data-a="open" data-v="legal">Mentions légales</button><span>${LEGAL.year} © La Tournée. Tous droits réservés.</span>${S.alcohol ? '<span>L\'abus d\'alcool est dangereux pour la santé.</span>' : ''}</footer>`;
@@ -1373,6 +1503,7 @@ function bottle() {
 const wheelCur = () => S.players[S.wheel.turn % S.players.length];
 // 8 gages faisables ici, complétés par les niveaux inférieurs si besoin
 function wheelGages() {
+  if (S.alcohol && S.wheel && isDriver(wheelCur().name)) return dry(wheelGages);
   const ok = it => okHere(it.text) && (S.alcohol || !it.alcohol);
   const idx = LEVEL_IDX(S.level);
   let pool = shuffle(WHEEL[S.level].filter(ok));
@@ -1448,11 +1579,84 @@ function spinWheel() {
         const lvl = capLevel(cur, x, S.level);
         if (lvl !== S.level) { level = lvl; text = draw('wcap', WHEEL[lvl].filter(it => it.text.includes('{x}'))).text; }
       }
-      w.result = { label: sg.label, level, capped: level !== S.level, html: fill(text, x), secs: secondsIn(text) };
+      w.result = { label: sg.label, level, capped: level !== S.level, html: isDriver(cur.name) ? dry(() => fill(text, x)) : fill(text, x), secs: secondsIn(text) };
     } else w.result = { label: sg.label };
     ring();
     render(false);
   }, fast ? 350 : 3500);
+}
+
+/* ---------- Paranoïa ---------- */
+function para() {
+  const pa = S.para, n = S.players.length;
+  const asker = S.players[pa.turn % n].name, answerer = S.players[(pa.turn + 1) % n].name;
+  const cost = S.alcohol ? 'boire 2 gorgées' : 'prendre un gage';
+  if (pa.step === 'ask') return `${topbar('Paranoïa', 'para')}${levelPicker()}
+    <div class="turn"><small>${esc(asker)} pose la question à</small><strong>${esc(answerer)}</strong></div>
+    <div class="card verso"><p class="text">Question secrète</p></div>
+    <button class="btn big" data-a="p-show">Je suis ${esc(asker)}, voir la question</button>
+    <p class="howto">Les autres ne regardent pas l'écran.</p>`;
+  if (pa.step === 'show') return `${topbar('Paranoïa', 'para')}
+    <div class="card black">${cardIdx('?', S.level)}<p class="kind">Question secrète</p><p class="text">${esc(pa.q)}</p>
+      <p class="sub">Montre discrètement l'écran à ${esc(answerer)}, ou chuchote-lui la question. ${esc(answerer)} répond à voix haute, avec un prénom du groupe.</p></div>
+    <button class="btn big" data-a="p-answered">${esc(answerer)} a répondu</button>`;
+  if (pa.step === 'flip') return `${topbar('Paranoïa', 'para')}
+    <div class="turn"><small>Pile, on révèle la question</small><strong>Face, elle reste secrète</strong></div>
+    <div class="coin ${pa.coin ? 'spin' : ''}" aria-hidden="true"><span>?</span></div>
+    <button class="btn big red" data-a="p-flip">Lancer la pièce</button>`;
+  const pile = pa.coin === 'pile';
+  return `${topbar('Paranoïa', 'para')}
+    <div class="coin done ${pa.coin}"><span>${pile ? 'Pile' : 'Face'}</span></div>
+    ${pile || pa.reveal ? `<div class="card">${cardIdx('?', S.level)}<p class="kind">${pile ? 'La question était' : 'Question révélée'}</p><p class="text">${esc(pa.q)}</p></div>`
+      : `<div class="card verso"><p class="text">La question reste secrète…</p></div>
+         <p class="howto">La personne désignée peut ${cost} pour la connaître. Et elle seule l'entend !</p>
+         <button class="btn ghost" data-a="p-reveal">Révéler (gage payé)</button>`}
+    <button class="btn big" data-a="p-next">Tour suivant</button>`;
+}
+
+/* ---------- Récap de soirée ---------- */
+const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
+const unitOf = n => S.alcohol && !isDriver(n) ? 'gorgée' : 'point';
+const GAME_NAME = id => (GAMES.find(g => g.id === id) || {}).name || id;
+function recapData() {
+  const rows = S.players.map(p => ({ n: p.name, ...stat(p.name) }));
+  // Le conducteur ne concourt pas pour la plus grosse descente
+  const top = f => { const t = rows.filter(r => f !== 'sips' || !S.alcohol || !isDriver(r.n)).sort((a, b) => b[f] - a[f])[0]; return t && t[f] > 0 ? t : null; };
+  const titles = [['done', 'Le plus courageux', 'défi'], ['jokers', 'Roi du joker', 'joker'], ['sips', W().top, W().sip]]
+    .map(([f, label, unit]) => { const t = top(f); return t ? { label, name: t.n, value: plural(t[f], unit) } : null; }).filter(Boolean);
+  const date = new Date(S.night.start).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return { rows, titles, date };
+}
+function recapText() {
+  const { rows, titles, date } = recapData(), nt = S.night;
+  const lines = [`🃏 La Tournée · soirée du ${date}`, `${plural(S.players.length, 'joueur')} · ${plural(nt.cards, 'carte')} jouée${nt.cards > 1 ? 's' : ''} · ${plural(nt.games.length, 'jeu').replace('jeus', 'jeux')}`];
+  if (nt.games.length) lines.push(`Jeux : ${nt.games.map(GAME_NAME).join(', ')}`);
+  titles.forEach(t => lines.push(`🏆 ${t.label} : ${t.name} (${t.value})`));
+  if (nt.matches.length) lines.push(`💘 Matchs : ${nt.matches.map(m => m.join(' & ')).join(', ')}`);
+  if (nt.uc.length) lines.push(`🕵️ Undercover : ${nt.uc.length} partie${nt.uc.length > 1 ? 's' : ''}`);
+  lines.push('', ...rows.filter(r => r.done || r.jokers || r.sips).map(r => `${r.n} : ${plural(r.done, 'défi')}, ${plural(r.jokers, 'joker')}, ${plural(r.sips, unitOf(r.n))}`));
+  return lines.join('\n');
+}
+function recap() {
+  const { rows, titles, date } = recapData(), nt = S.night;
+  const ucWins = { civils: 'civils', imposteurs: 'imposteurs', white: 'Mr White' };
+  return `${topbar('Récap de la soirée')}
+  <div class="recap">
+    <p class="kind">La Tournée</p>
+    <h3>Soirée du ${esc(date)}</h3>
+    <div class="nums"><div><b>${S.players.length}</b><small>joueurs</small></div><div><b>${nt.cards}</b><small>cartes jouées</small></div><div><b>${nt.games.length}</b><small>jeux</small></div></div>
+    ${titles.length ? `<div class="titles">${titles.map(t => `<div><small>${t.label}</small><b>${esc(t.name)}</b><span>${t.value}</span></div>`).join('')}</div>` : `<p class="sub">Pas encore de défi relevé ce soir.</p>`}
+    ${nt.matches.length ? `<div class="block"><small>Matchs du Speed Dating</small><ul class="pairs">${nt.matches.map(([a, b]) => `<li><span>${esc(a)}</span><span class="heart" aria-label="et">♥</span><span>${esc(b)}</span></li>`).join('')}</ul></div>` : ''}
+    ${nt.uc.length ? `<div class="block"><small>Undercover</small><p>${nt.uc.map(w => `Victoire des ${ucWins[w]}`).join(' · ')}</p></div>` : ''}
+    ${nt.games.length ? `<div class="block"><small>Jeux joués</small><p>${nt.games.map(GAME_NAME).join(' · ')}</p></div>` : ''}
+    <div class="block"><small>Par joueur</small>${rows.map(r => `<div class="line"><span>${esc(r.n)}</span><span>${plural(r.done, 'défi')} · ${plural(r.jokers, 'joker')} · ${plural(r.sips, unitOf(r.n))}</span></div>`).join('')}</div>
+  </div>
+  <button class="btn" data-a="recap-copy">Copier le récap pour le groupe</button>
+  ${S.recapFallback ? `<textarea class="copy" readonly rows="8" aria-label="Texte du récap">${esc(recapText())}</textarea><p class="hint">Sélectionne le texte et copie-le.</p>` : ''}
+  <p class="howto">Pour partager une image, fais une capture d'écran du récap.</p>
+  ${S.confirm === 'night' ? `<div class="row"><button class="btn red" data-a="night-ok">Oui, nouvelle soirée</button><button class="btn ghost" data-a="night-no">Annuler</button></div>`
+    : `<button class="btn ghost" data-a="night">Commencer une nouvelle soirée</button>`}
+  <p class="hint">Une nouvelle soirée remet les compteurs et le récap à zéro. Les cartes déjà vues restent mémorisées.</p>`;
 }
 
 /* ---------- Cartes simples ---------- */
@@ -1473,7 +1677,7 @@ function deck(game) {
   else face = `<div class="card">${cardIdx('Q', c.level)}<p class="kind">Qui est le plus susceptible de…</p><p class="text">${esc(c.v.replace(/[?\s]+$/, ''))} ?</p></div>`;
   return `${topbar(d.title, game)}${levelPicker()}${face}
   <button class="btn big" data-a="deck-next">${c ? 'Carte suivante' : 'Tirer une carte'}</button>
-  <p class="howto">${S.alcohol ? d.how : d.dry}</p>${sipRow()}`;
+  <p class="howto">${S.alcohol ? d.how : d.dry}${S.alcohol && isDriver(S.driver) ? ` ${esc(S.driver)} conduit : pour lui ou elle, chaque gorgée devient un point de gage.` : ''}</p>${sipRow()}`;
 }
 
 /* ---------- Speed Dating ---------- */
@@ -1517,6 +1721,17 @@ function sdNew() {
   Object.keys(met).forEach(k => { met[k] = met[k].filter(canVote); if (!canVote(k) || !met[k].length) delete met[k]; });
   S.sd = { rounds, r: 0, level: S.level, step: 'round', met, voters: shuffle(Object.keys(met)), v: 0, revealed: false, sel: [], votes: {} };
 }
+function sdMatches(s) {
+  if (s.matches) return s.matches;
+  const matches = [], done = new Set();
+  let oneWay = 0;
+  Object.entries(s.votes).forEach(([a, list]) => list.forEach(b => {
+    if ((s.votes[b] || []).includes(a)) { const k = [a, b].sort().join('|'); if (!done.has(k)) { done.add(k); matches.push([a, b]); } }
+    else oneWay++;
+  }));
+  s.matches = matches; s.oneWay = oneWay;
+  return matches;
+}
 function sd() {
   const s = S.sd;
   if (s.step === 'round') {
@@ -1542,12 +1757,7 @@ function sd() {
       <p class="howto">Tu peux cocher plusieurs personnes, ou personne.</p>
       <button class="btn big" data-a="sd-cast">Valider et cacher</button>`;
   }
-  const matches = [], seen = new Set();
-  let oneWay = 0;
-  Object.entries(s.votes).forEach(([a, list]) => list.forEach(b => {
-    if ((s.votes[b] || []).includes(a)) { const k = [a, b].sort().join('|'); if (!seen.has(k)) { seen.add(k); matches.push([a, b]); } }
-    else oneWay++;
-  }));
+  const matches = sdMatches(s), oneWay = s.oneWay || 0;
   return `${topbar('Speed Dating', 'sd')}
     <div class="turn"><small>Résultats</small><strong>${matches.length ? `${matches.length} match${matches.length > 1 ? 's' : ''} !` : 'Aucun match'}</strong></div>
     ${matches.length ? `<ul class="pairs big">${matches.map(([a, b]) => `<li><span>${esc(a)}</span><span class="heart" aria-label="et">♥</span><span>${esc(b)}</span></li>`).join('')}</ul>
@@ -1587,7 +1797,8 @@ function ucSetup() {
 }
 function ucNew() {
   const cfg = S.ucCfg;
-  let pair = draw('uc' + !!cfg.hot, cfg.hot ? UC_WORDS.concat(UC_WORDS_HOT) : UC_WORDS);
+  const words = UC_WORDS.concat(cfg.hot ? UC_WORDS_HOT : [], ...S.packs.filter(k => PACKS[k]).map(k => PACKS[k].uc));
+  let pair = draw('uc', words);
   if (Math.random() < .5) pair = [pair[1], pair[0]];
   const roles = shuffle([
     ...Array(cfg.under).fill('under'),
@@ -1735,7 +1946,11 @@ function score() {
       <td>${r.jokers}</td><td>${r.done}</td></tr>`).join('')}</tbody>
   </table></div>
   ${S.confirm === 'reset' ? `<div class="row"><button class="btn red" data-a="reset-ok">Oui, tout remettre à zéro</button><button class="btn ghost" data-a="reset-no">Annuler</button></div>`
-    : `<button class="btn ghost" data-a="reset">Remettre les compteurs à zéro</button>`}`;
+    : `<button class="btn ghost" data-a="reset">Remettre les compteurs à zéro</button>`}
+  <button class="btn" data-a="open" data-v="recap">Voir le récap de la soirée</button>
+  <section class="panel"><h3><span>Cartes déjà vues</span><span>${seenCount()}</span></h3>
+    <p class="hint">Les cartes ne reviennent pas d'une soirée à l'autre tant que tout le paquet n'a pas été joué.</p>
+    <button class="btn ghost" data-a="seen-reset">Revoir toutes les cartes</button></section>`;
 }
 
 
@@ -1750,6 +1965,7 @@ const RULES = {
     "Choisis le niveau en haut : de Soft à Sans limite.",
     "« Défis avec le sexe opposé » ou « avec tout le monde » décide qui peut être visé par les défis.",
     "Préférences, couples et liste noire se règlent dans Affinités, depuis l'accueil.",
+    "Le conducteur (choisi dans « La soirée ») ne boit jamais : ses défis et jokers passent en version sans alcool.",
   ] }),
   bottle: () => ({ title: 'La Bouteille', steps: [
     "Le joueur surligné en jaune fait tourner la bouteille.",
@@ -1785,6 +2001,14 @@ const RULES = {
     S.alcohol ? "La personne la plus désignée boit une gorgée par doigt pointé vers elle." : "La personne la plus désignée prend un point de gage par doigt pointé vers elle.",
     "Elle peut se justifier… ou pas.",
   ], tips: ["Il faut au moins 3 joueurs."] }),
+  para: () => ({ title: 'Paranoïa', steps: [
+    "Le joueur affiché prend le téléphone et lit la question en secret.",
+    "Il la montre discrètement (ou la chuchote) à son voisin désigné.",
+    "Le voisin répond à voix haute avec un prénom du groupe. Personne d'autre ne sait pourquoi.",
+    "On lance la pièce : pile, la question est révélée à tous. Face, elle reste secrète.",
+    `Si c'est face, la personne désignée peut ${S.alcohol ? 'boire 2 gorgées' : 'prendre un gage'} pour connaître la question.`,
+    "Au tour suivant, c'est le voisin qui pose la question.",
+  ], tips: ["Parfait en voiture : pas besoin de bouger.", "Il faut au moins 3 joueurs."] }),
   wheel: () => ({ title: 'La Roue', steps: [
     "Choisis le mode en haut : Gages, Qui ? ou Perso.",
     "Gages : la roue tire un gage pour le joueur affiché, selon le niveau, le lieu et l'alcool. Fais-le, ou prends le joker, puis on passe au suivant.",
@@ -1852,7 +2076,7 @@ function gate() {
 }
 
 /* ---------- Rendu ---------- */
-const SCREENS = { home, aov, bottle, wheel, ucsetup: ucSetup, uc, sdsetup: sdSetup, sd, rel, custom, score, legal };
+const SCREENS = { home, aov, bottle, wheel, para, recap, ucsetup: ucSetup, uc, sdsetup: sdSetup, sd, rel, custom, score, legal };
 let lastScreen = null;
 function render(scroll = true) {
   const s = S.screen;
@@ -1876,9 +2100,12 @@ function spinBottle() {
     if (!b || !b.spinning) return;
     b.spinning = false; b.from = b.to;
     const cur = S.players[b.turn % S.players.length], x = byName(b.target);
-    const lvl = capLevel(cur, x, S.level);
-    const raw = draw('bottle' + lvl, cards('bottle', lvl));
-    b.card = { level: lvl, capped: lvl !== S.level, html: fill(raw, x), secs: secondsIn(raw) };
+    const make = () => {
+      const lvl = capLevel(cur, x, S.level);
+      const raw = draw('bottle' + lvl, cards('bottle', lvl));
+      return { level: lvl, capped: lvl !== S.level, html: fill(raw, x), secs: secondsIn(raw) };
+    };
+    b.card = isDriver(cur.name) ? dry(make) : make();
     render(false);
   }, fast ? 350 : 2700);
 }
@@ -1891,7 +2118,7 @@ function drawDeck() {
 // Sans alcool, le joker donne un gage tiré au hasard (faisable sur place)
 function joker(n) {
   bump(n, 'jokers');
-  if (S.alcohol) { bump(n, 'sips', 2); toast(`Joker ! 2 gorgées pour ${n}.`); return; }
+  if (S.alcohol && !isDriver(n)) { bump(n, 'sips', 2); toast(`Joker ! 2 gorgées pour ${n}.`); return; }
   bump(n, 'sips');
   const ok = GAGES.filter(okHere);
   toast(`Joker ! Gage pour ${n} : ${draw('gage', ok.length ? ok : GAGES)}`);
@@ -1914,6 +2141,7 @@ const actions = {
     if (v === 'hot') toast('Niveau Hot : majeurs uniquement, et chacun peut refuser.');
     if (S.screen === 'aov') S.aov.card = null;
     else if (S.screen === 'bottle') { if (!S.bottle.spinning) S.bottle.card = null; }
+    else if (S.screen === 'para') { if (S.para.step === 'ask') S.para.q = draw('para' + v, PARA[v]); }
     else if (S.screen === 'wheel') { if (!S.wheel.spinning) { S.wheel.result = null; S.wheel.gages = wheelGages(); } }
     else if (DECKS[S.screen] && S.deck.card) drawDeck();
     render();
@@ -1929,9 +2157,11 @@ const actions = {
     location.reload();
   },
   open(v) {
+    if (GAMES.some(g => g.id === v) && !S.night.games.includes(v)) { S.night.games.push(v); saveNight(); }
     if (v === 'uc') { S.ucCfg = S.ucCfg || { under: 1, white: false }; S.screen = 'ucsetup'; }
     else if (v === 'sd') S.screen = 'sdsetup';
-    else if (v === 'wheel') { S.screen = 'wheel'; S.wheel = { mode: 'gage', turn: rand(S.players.length), from: 0, to: 0, spinning: false, result: null, hit: 0, q: WHEEL_QUESTIONS[0], gages: wheelGages() }; }
+    else if (v === 'wheel') { S.screen = 'wheel'; S.wheel = { mode: 'gage', turn: rand(S.players.length), from: 0, to: 0, spinning: false, result: null, hit: 0, q: WHEEL_QUESTIONS[0], gages: [] }; S.wheel.gages = wheelGages(); }
+    else if (v === 'para') { S.screen = 'para'; S.para = { turn: rand(S.players.length), step: 'ask', q: draw('para' + S.level, PARA[S.level]), coin: null }; }
     else if (v === 'bottle') { S.screen = 'bottle'; S.bottle = { turn: rand(S.players.length), from: 0, to: 0, target: null, card: null, spinning: false }; }
     else { S.screen = v; S.aov.card = null; S.deck.card = null; S.aov.turn = rand(S.players.length); }
     render();
@@ -1941,10 +2171,13 @@ const actions = {
   'aov-pick'(v) {
     const kind = v === 'random' ? (Math.random() < .5 ? 'action' : 'verite') : v;
     const p = S.players[S.aov.turn % S.players.length];
-    const x = pickTarget(p, S.level);
-    const lvl = kind === 'action' ? capLevel(p, x, S.level) : S.level;
-    const raw = draw('aov' + lvl + kind, cards(kind, lvl));
-    S.aov.card = { kind, level: lvl, capped: lvl !== S.level, html: fill(raw, x), secs: kind === 'action' ? secondsIn(raw) : 0 };
+    const make = () => {
+      const x = pickTarget(p, S.level);
+      const lvl = kind === 'action' ? capLevel(p, x, S.level) : S.level;
+      const raw = draw('aov' + lvl + kind, cards(kind, lvl));
+      return { kind, level: lvl, capped: lvl !== S.level, html: fill(raw, x), secs: kind === 'action' ? secondsIn(raw) : 0 };
+    };
+    S.aov.card = isDriver(p.name) ? dry(make) : make();
     render(false);
   },
   'aov-next'() { bump(S.players[S.aov.turn % S.players.length].name, 'done'); S.aov.turn++; S.aov.card = null; render(false); },
@@ -1955,6 +2188,28 @@ const actions = {
   },
 
   // Bouteille
+  'p-show'() { S.para.step = 'show'; render(); },
+  'p-answered'() { S.para.step = 'flip'; S.para.coin = null; render(); },
+  'p-flip'() {
+    const pa = S.para; pa.coin = 'spin'; render(false);
+    setTimeout(() => { if (S.para !== pa) return; pa.coin = Math.random() < .5 ? 'pile' : 'face'; pa.step = 'result'; pa.reveal = false; ring(); render(false); },
+      matchMedia('(prefers-reduced-motion: reduce)').matches ? 100 : 1400);
+  },
+  'p-reveal'() { S.para.reveal = true; render(false); },
+  'p-next'() { const pa = S.para; pa.turn++; pa.step = 'ask'; pa.coin = null; pa.q = draw('para' + S.level, PARA[S.level]); render(); },
+  'recap-copy'() {
+    const t = recapText();
+    const fail = () => { S.recapFallback = true; render(false); };
+    try { navigator.clipboard.writeText(t).then(() => toast('Récap copié : colle-le dans le groupe.'), fail); } catch (e) { fail(); }
+  },
+  night() { S.confirm = 'night'; render(false); },
+  'night-no'() { S.confirm = null; render(false); },
+  'night-ok'() {
+    S.stats = {}; store.set('stats', S.stats);
+    S.night = { start: Date.now(), cards: 0, games: [], matches: [], uc: [] }; saveNight();
+    S.confirm = null; S.recapFallback = false; toast('Nouvelle soirée, bon jeu !'); render(false);
+  },
+  'seen-reset'() { Object.keys(seen).forEach(k => delete seen[k]); store.set('seen', seen); toast('Toutes les cartes sont de nouveau disponibles.'); render(false); },
   'w-mode'(v) { const w = S.wheel; w.mode = v; w.result = null; if (v === 'gage') w.gages = wheelGages(); render(false); },
   'w-q'(v) { S.wheel.q = v; S.wheel.result = null; render(false); },
   'w-spin'() {
@@ -1997,7 +2252,8 @@ const actions = {
 
   // Cartes simples
   'deck-next'() { drawDeck(); render(false); },
-  sip(v) { bump(v, 'sips'); if (S.screen !== 'score') toast(`${v} : ${stat(v).sips} ${W().sip}${stat(v).sips > 1 ? 's' : ''}`); render(false); },
+  sip(v) { bump(v, 'sips'); const u = S.alcohol && !isDriver(v) ? 'gorgée' : 'point'; if (S.screen !== 'score') toast(`${v} : ${stat(v).sips} ${u}${stat(v).sips > 1 ? 's' : ''}`); render(false); },
+  pack(v) { S.packs = S.packs.includes(v) ? S.packs.filter(k => k !== v) : S.packs.concat(v); store.set('packs', S.packs); render(false); },
   place(v) { S.place = v; store.set('place', v); render(false); },
   alcohol(v) { S.alcohol = v === '1'; store.set('alcohol', S.alcohol); render(false); },
   'sip-minus'(v) { bump(v, 'sips', -1); render(false); },
@@ -2020,14 +2276,14 @@ const actions = {
   'sd-next'() {
     const s = S.sd;
     if (s.r + 1 < s.rounds.length) { s.r++; render(); return; }
-    if (!s.voters.length) { s.step = 'result'; render(); return; }
+    if (!s.voters.length) { s.step = 'result'; s.matches = []; render(); return; }
     s.step = 'vote'; s.v = 0; s.revealed = false; render();
   },
   'sd-reveal'() { S.sd.revealed = true; S.sd.sel = []; render(false); },
   'sd-sel'(v) { const s = S.sd; s.sel = s.sel.includes(v) ? s.sel.filter(x => x !== v) : s.sel.concat(v); render(false); },
   'sd-cast'() {
     const s = S.sd; s.votes[s.voters[s.v]] = s.sel; s.sel = []; s.revealed = false;
-    if (++s.v >= s.voters.length) s.step = 'result';
+    if (++s.v >= s.voters.length) { s.step = 'result'; sdMatches(s).forEach(m => S.night.matches.push(m)); saveNight(); }
     render();
   },
 
@@ -2057,6 +2313,7 @@ const actions = {
       u.winner = w; u.step = 'end';
       const civilsWon = w === 'civils';
       u.ps.forEach(p => { if ((p.role === 'civil') !== civilsWon) bump(p.name, 'sips'); });
+      S.night.uc.push(w); saveNight();
     } else { u.round++; ucOrder(); u.step = 'play'; }
     render();
   },
@@ -2093,6 +2350,7 @@ app.addEventListener('click', e => {
   actions[b.dataset.a](b.dataset.v);
 });
 app.addEventListener('change', e => {
+  if (e.target.id === 'driverSel') { S.driver = e.target.value || null; store.set('driver', S.driver); render(false); return; }
   if (e.target.id !== 'cGame') return;
   const g = e.target.value;
   document.getElementById('cText2').hidden = g !== 'tp';
