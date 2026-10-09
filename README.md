@@ -22,6 +22,10 @@ Jeux de soirée sur un seul téléphone qui fait le tour de la table. Ouvre `ind
 
 Les niveaux Intense et Sans limite demandent une confirmation (tout le monde majeur et d'accord) : c'est osé, jamais porno.
 
+## Règles et mentions légales
+- Le bouton **i** en haut de chaque jeu affiche ses règles (elles s'adaptent au mode avec ou sans alcool).
+- **Mentions légales** en bas de l'accueil : éditeur, hébergeurs, public majeur, alcool et sécurité, responsabilité, propriété intellectuelle, données personnelles (tout reste sur le téléphone, bouton « Effacer toutes mes données »). L'éditeur et le contact se modifient dans la constante `LEGAL` de `index.html`.
+
 ## Appli Android (hors ligne)
 
 Chaque modification du jeu compile automatiquement un APK (GitHub Actions, `.github/workflows/android.yml`) et le publie dans les **Releases** du dépôt.

@@ -194,6 +194,18 @@ table.score { width: 100%; border-collapse: collapse; font-variant-numeric: tabu
 .adj { display: inline-flex; align-items: center; gap: 8px; }
 .adj button { width: 30px; height: 30px; border-radius: 50%; background: var(--paper); color: var(--ink); font-weight: 800; }
 .adj b { min-width: 2ch; }
+.info { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--gold); color: var(--gold); font-family: var(--font-card); font-style: italic; font-weight: 500; font-size: 1.2rem; display: grid; place-items: center; flex: none; }
+.legal-card { justify-content: flex-start; padding: 28px 22px; animation: none; }
+.rules-title { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; text-align: center; color: var(--ink); }
+.steps { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 10px; line-height: 1.45; }
+.steps li::marker { font-weight: 800; color: var(--red); }
+.tips { margin: 0; padding: 12px 0 0 1.2em; border-top: 1px dashed var(--paper-edge); display: flex; flex-direction: column; gap: 6px; color: var(--ink-soft); font-size: .92rem; }
+.legal-wrap { background: rgba(0,0,0,.35); border: 1px solid var(--felt-line); border-radius: 22px; padding: 26px 22px; display: flex; flex-direction: column; gap: 30px; }
+.legal { display: flex; flex-direction: column; gap: 12px; }
+.legal h2 { font-family: var(--font-body); font-weight: 800; font-size: 1.55rem; color: var(--fg); line-height: 1.2; }
+.legal p { color: var(--muted); line-height: 1.55; overflow-wrap: anywhere; }
+.foot { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; color: var(--muted); font-size: .85rem; padding-top: 6px; }
+.link { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; font-size: .95rem; padding: 4px 8px; }
 </style>
 </head>
 <body>
@@ -1179,7 +1191,7 @@ setInterval(() => {
 }, 250);
 
 /* ---------- Écrans communs ---------- */
-const topbar = title => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button><h2>${title}</h2></div>`;
+const topbar = (title, rules) => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button><h2>${title}</h2>${rules ? `<button class="info" data-a="info" data-v="${rules}" aria-label="Règles du jeu">i</button>` : ''}</div>`;
 const levelPicker = () => `<div class="levels" role="group" aria-label="Niveau">${LEVELS.map(l =>
   `<button data-a="level" data-v="${l.id}" aria-pressed="${S.level === l.id}"><span>${l.label}</span><span class="pips" aria-hidden="true">${l.pips}</span></button>`).join('')}</div>`;
 const targetPicker = () => `<div class="levels two" role="group" aria-label="Défis avec">
@@ -1221,7 +1233,8 @@ function home() {
     <button class="tool" data-a="open" data-v="custom"><b>Cartes perso</b><small>${S.custom.length} carte${S.custom.length > 1 ? 's' : ''} ajoutée${S.custom.length > 1 ? 's' : ''}</small></button>
     <button class="tool" data-a="open" data-v="score"><b>Classement</b><small>Gorgées, jokers, défis</small></button>
   </section>
-  <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte ${S.alcohol ? '2 gorgées' : 'un gage'}. Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>`;
+  <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte ${S.alcohol ? '2 gorgées' : 'un gage'}. Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>
+  <footer class="foot"><button class="link" data-a="open" data-v="legal">Mentions légales</button><span>${LEGAL.year} © La Tournée. Tous droits réservés.</span>${S.alcohol ? '<span>L\'abus d\'alcool est dangereux pour la santé.</span>' : ''}</footer>`;
 }
 
 /* ---------- Action ou Vérité ---------- */
@@ -1245,7 +1258,7 @@ function aov() {
     <div class="row"><button class="btn" data-a="aov-next">Fait, au suivant</button><button class="btn ghost" data-a="aov-joker">${W().joker}</button></div>
     <button class="btn ghost" data-a="aov-pick" data-v="${c.kind}">Autre carte</button>`;
   }
-  return `${topbar('Action ou Vérité')}${levelPicker()}${targetPicker()}
+  return `${topbar('Action ou Vérité', 'aov')}${levelPicker()}${targetPicker()}
   <div class="turn"><small>C'est au tour de</small><strong>${esc(p.name)}</strong></div>${body}`;
 }
 
@@ -1259,7 +1272,7 @@ function bottle() {
     return `<span class="seat ${cls}" style="left:${50 + 41 * Math.sin(a)}%;top:${50 - 41 * Math.cos(a)}%">${esc(p.name)}</span>`;
   }).join('');
   const c = b.card;
-  return `${topbar('La Bouteille')}${levelPicker()}${targetPicker()}
+  return `${topbar('La Bouteille', 'bottle')}${levelPicker()}${targetPicker()}
   <div class="turn"><small>${c ? 'Défi pour' : 'Fais tourner'}</small><strong>${c ? `${esc(cur.name)} & ${esc(b.target)}` : esc(cur.name)}</strong></div>
   <div class="table-ring">${seats}
     <svg class="bottle" id="bottle" viewBox="0 0 40 160" aria-hidden="true" style="transform:rotate(${b.from}deg)">
@@ -1290,7 +1303,7 @@ function deck(game) {
   else if (game === 'tp') face = `<div class="card">${cardIdx('?', c.level)}<p class="kind">Tu préfères…</p><p class="text">${esc(adapt(c.v[0]))}</p><p class="or">ou</p><p class="text">${esc(adapt(c.v[1]))}</p></div>`;
   else if (game === 'nhie') face = `<div class="card black">${cardIdx('J', c.level)}<p class="kind">Je n'ai jamais…</p><p class="text">${esc(c.v.replace(/[.\s]+$/, ''))}.</p></div>`;
   else face = `<div class="card">${cardIdx('Q', c.level)}<p class="kind">Qui est le plus susceptible de…</p><p class="text">${esc(c.v.replace(/[?\s]+$/, ''))} ?</p></div>`;
-  return `${topbar(d.title)}${levelPicker()}${face}
+  return `${topbar(d.title, game)}${levelPicker()}${face}
   <button class="btn big" data-a="deck-next">${c ? 'Carte suivante' : 'Tirer une carte'}</button>
   <p class="howto">${S.alcohol ? d.how : d.dry}</p>${sipRow()}`;
 }
@@ -1298,7 +1311,7 @@ function deck(game) {
 /* ---------- Speed Dating ---------- */
 function sdSetup() {
   const h = S.players.filter(p => p.g === 'h').length, f = S.players.length - h;
-  return `${topbar('Speed Dating')}${levelPicker()}
+  return `${topbar('Speed Dating', 'sd')}${levelPicker()}
   <section class="panel">
     <h3><span>Durée d'un tête-à-tête</span></h3>
     <div class="levels three" role="group" aria-label="Durée">${[60, 120, 180].map(s => `<button data-a="sd-secs" data-v="${s}" aria-pressed="${S.sdCfg.secs === s}">${s / 60} min</button>`).join('')}</div>
@@ -1340,7 +1353,7 @@ function sd() {
   const s = S.sd;
   if (s.step === 'round') {
     const rd = s.rounds[s.r], last = s.r + 1 >= s.rounds.length;
-    return `${topbar('Speed Dating')}
+    return `${topbar('Speed Dating', 'sd')}
     <div class="turn"><small>Tête-à-tête</small><strong>${s.r + 1} / ${s.rounds.length}</strong></div>
     <ul class="pairs">${rd.pairs.map(([a, b]) => `<li><span>${esc(a)}</span><span class="heart" aria-label="avec">♥</span><span>${esc(b)}</span></li>`).join('')}</ul>
     ${rd.pause.length ? `<p class="howto">En pause : ${rd.pause.map(esc).join(', ')}. ${S.alcohol ? 'Profitez-en pour remplir les verres.' : 'Profitez-en pour souffler.'}</p>` : ''}
@@ -1350,12 +1363,12 @@ function sd() {
   }
   if (s.step === 'vote') {
     const who = s.voters[s.v];
-    if (!s.revealed) return `${topbar('Speed Dating')}
+    if (!s.revealed) return `${topbar('Speed Dating', 'sd')}
       <div class="turn"><small>Passe le téléphone à</small><strong>${esc(who)}</strong></div>
       <div class="card verso"><p class="text">Vote secret</p></div>
       <button class="btn big" data-a="sd-reveal">Je suis ${esc(who)}, voter</button>
       <p class="howto">${s.v + 1} / ${s.voters.length}. Personne ne regarde l'écran.</p>`;
-    return `${topbar('Speed Dating')}
+    return `${topbar('Speed Dating', 'sd')}
       <div class="turn"><small>${esc(who)}, qui t'a plu ?</small><strong>Coche en secret</strong></div>
       <div class="vote">${s.met[who].map(n => `<button data-a="sd-sel" data-v="${esc(n)}" aria-pressed="${s.sel.includes(n)}">${esc(n)}</button>`).join('')}</div>
       <p class="howto">Tu peux cocher plusieurs personnes, ou personne.</p>
@@ -1367,7 +1380,7 @@ function sd() {
     if ((s.votes[b] || []).includes(a)) { const k = [a, b].sort().join('|'); if (!seen.has(k)) { seen.add(k); matches.push([a, b]); } }
     else oneWay++;
   }));
-  return `${topbar('Speed Dating')}
+  return `${topbar('Speed Dating', 'sd')}
     <div class="turn"><small>Résultats</small><strong>${matches.length ? `${matches.length} match${matches.length > 1 ? 's' : ''} !` : 'Aucun match'}</strong></div>
     ${matches.length ? `<ul class="pairs big">${matches.map(([a, b]) => `<li><span>${esc(a)}</span><span class="heart" aria-label="et">♥</span><span>${esc(b)}</span></li>`).join('')}</ul>
       <p class="howto">Chaque match trinque ensemble. Le reste de la soirée vous appartient.</p>`
@@ -1385,7 +1398,7 @@ function ucSetup() {
   const maxU = max - (cfg.white ? 1 : 0);
   cfg.under = Math.min(Math.max(cfg.under, cfg.white ? 0 : 1), Math.max(maxU, 0));
   const civ = n - cfg.under - (cfg.white ? 1 : 0);
-  return `${topbar('Undercover')}
+  return `${topbar('Undercover', 'uc')}
   <section class="panel">
     <div class="stepper"><span><b>Undercover</b><br><span class="hint">Ont un mot proche de celui des civils</span></span>
       <span class="ctl"><button data-a="uc-u" data-v="-1" aria-label="Moins" ${cfg.under <= (cfg.white ? 0 : 1) ? 'disabled' : ''}>−</button><output>${cfg.under}</output><button data-a="uc-u" data-v="1" aria-label="Plus" ${cfg.under >= maxU ? 'disabled' : ''}>+</button></span></div>
@@ -1436,7 +1449,7 @@ function uc() {
   const u = S.uc;
   if (u.step === 'pass') {
     const p = u.ps[u.idx];
-    if (!u.revealed) return `${topbar('Undercover')}
+    if (!u.revealed) return `${topbar('Undercover', 'uc')}
       <div class="turn"><small>Passe le téléphone à</small><strong>${esc(p.name)}</strong></div>
       <div class="card verso"><p class="text">Mot secret</p></div>
       <button class="btn big" data-a="uc-reveal">Je suis ${esc(p.name)}, voir mon mot</button>
@@ -1444,17 +1457,17 @@ function uc() {
     const word = p.role === 'white'
       ? `<p class="kind">Mr White</p><p class="text">Tu n'as pas de mot.</p><p class="sub">Écoute les indices des autres et bluffe. Si tu es éliminé·e, tu pourras deviner le mot des civils.</p>`
       : `<p class="kind">Ton mot</p><p class="text">${esc(p.role === 'civil' ? u.civil : u.under)}</p><p class="sub">Tu ne sais pas si tu es civil ou undercover.</p>`;
-    return `${topbar('Undercover')}<div class="turn"><small>Mot de</small><strong>${esc(p.name)}</strong></div>
+    return `${topbar('Undercover', 'uc')}<div class="turn"><small>Mot de</small><strong>${esc(p.name)}</strong></div>
       <div class="card black">${cardIdx('♠')}${word}</div>
       <button class="btn big" data-a="uc-hide">${u.idx + 1 < u.ps.length ? 'Cacher et passer' : 'Cacher et commencer'}</button>`;
   }
-  if (u.step === 'play') return `${topbar('Undercover')}
+  if (u.step === 'play') return `${topbar('Undercover', 'uc')}
     <div class="turn"><small>Tour</small><strong>${u.round}</strong></div>
     <section class="panel"><h3><span>Ordre de parole</span></h3>
       <p class="hint">Chacun donne un indice en un mot, dans cet ordre. Ensuite, débat libre.</p>
       <ol class="order">${u.order.map(n => `<li>${esc(n)}</li>`).join('')}</ol></section>
     <button class="btn big" data-a="uc-vote">Passer au vote</button>`;
-  if (u.step === 'vote') return `${topbar('Undercover')}
+  if (u.step === 'vote') return `${topbar('Undercover', 'uc')}
     <div class="turn"><small>Tour ${u.round}</small><strong>Qui on élimine ?</strong></div>
     <div class="vote">${u.ps.filter(p => p.alive).map(p => `<button data-a="uc-sel" data-v="${esc(p.name)}" aria-pressed="${u.sel === p.name}">${esc(p.name)}</button>`).join('')}</div>
     ${u.sel ? `<button class="btn big red" data-a="uc-kill">Éliminer ${esc(u.sel)}</button>` : `<p class="howto">Touchez le nom du joueur qui a reçu le plus de votes.</p>`}
@@ -1464,12 +1477,12 @@ function uc() {
     let extra = '';
     if (p.role === 'white' && u.guess === null) extra = `<form class="guess" id="guessForm"><label for="guessIn" class="sub">Mr White, devine le mot des civils :</label><input id="guessIn" autocomplete="off" placeholder="Ton mot"><div class="row"><button class="btn red" type="submit">Valider</button><button class="btn paper" type="button" data-a="uc-giveup">J'abandonne</button></div></form>`;
     else if (p.role === 'white') extra = `<p class="sub">Réponse : « ${esc(u.guess)} ». ${u.winner === 'white' ? 'Bien vu !' : 'Raté.'}</p>`;
-    return `${topbar('Undercover')}
+    return `${topbar('Undercover', 'uc')}
       <div class="card ${p.role === 'civil' ? 'black' : ''}"><p class="kind">Éliminé·e</p><p class="text">${esc(p.name)}<br>était <em>${roleName(p.role)}</em></p>${extra}</div>
       ${p.role === 'white' && u.guess === null ? '' : `<button class="btn big" data-a="uc-continue">Continuer</button>`}`;
   }
   const msg = { civils: 'Les civils gagnent !', imposteurs: 'Les imposteurs gagnent !', white: 'Mr White gagne !' }[u.winner];
-  return `${topbar('Undercover')}
+  return `${topbar('Undercover', 'uc')}
     <div class="turn"><small>Fin de partie</small><strong>${msg}</strong></div>
     <div class="card"><p class="kind">Les mots</p><p class="text">Civils : ${esc(u.civil)}<br>Undercover : <em>${esc(u.under)}</em></p>
       <div class="roles">${u.ps.map(p => `<div class="${p.role === 'civil' ? '' : 'imp'}"><span>${esc(p.name)}</span><span>${roleName(p.role)}</span></div>`).join('')}</div></div>
@@ -1557,6 +1570,103 @@ function score() {
     : `<button class="btn ghost" data-a="reset">Remettre les compteurs à zéro</button>`}`;
 }
 
+
+/* ---------- Règles (bouton i) ---------- */
+const RULES = {
+  aov: () => ({ title: 'Action ou Vérité', steps: [
+    "L'appli désigne à qui c'est le tour.",
+    "Le joueur choisit Action ou Vérité, ou laisse le hasard décider.",
+    "Vérité : il répond honnêtement. Action : il fait le défi. Quand un défi a une durée, un chrono apparaît.",
+    `Pas envie ? Joker : ${S.alcohol ? '2 gorgées' : 'un gage tiré au hasard'}. Puis « Fait, au suivant ».`,
+  ], tips: [
+    "Choisis le niveau en haut : de Soft à Sans limite.",
+    "« Défis avec le sexe opposé » ou « avec tout le monde » décide qui peut être visé par les défis.",
+    "Préférences, couples et liste noire se règlent dans Affinités, depuis l'accueil.",
+  ] }),
+  bottle: () => ({ title: 'La Bouteille', steps: [
+    "Le joueur surligné en jaune fait tourner la bouteille.",
+    "Elle s'arrête sur son ou sa partenaire de défi, en respectant préférences, couples et liste noire.",
+    "Vous réalisez le défi à deux, ou celui qui a fait tourner prend le joker.",
+    "Ensuite, c'est la personne désignée qui fait tourner.",
+  ], tips: ["Le niveau et le réglage « sexe opposé / tout le monde » s'appliquent aussi ici."] }),
+  sd: () => ({ title: 'Speed Dating', steps: [
+    "Choisis le niveau des questions et la durée d'un tête-à-tête (1, 2 ou 3 min).",
+    `L'appli forme des duos H/F. Chaque duo se met face à face${S.place === 'voiture' ? ' (en voiture : changez de place)' : ''}.`,
+    "Lancez le chrono : chacun répond à la question, puis discussion libre jusqu'à la sonnerie.",
+    "« On tourne » : nouveaux duos, nouvelle question. Si les équipes ne sont pas égales, quelqu'un fait une pause.",
+    "À la fin, le téléphone passe de main en main : chacun coche en secret qui lui a plu.",
+    "Seuls les matchs réciproques sont annoncés. Les crushs à sens unique restent secrets.",
+  ], tips: ["Il faut au moins un H et une F.", "Avec « les couples restent entre eux », les couples discutent mais ne votent pas."] }),
+  uc: () => ({ title: 'Undercover', steps: [
+    "Le téléphone passe de main en main : chacun découvre son mot en secret.",
+    "Les civils ont tous le même mot. Les undercovers ont un mot proche, sans savoir qu'ils sont undercover. Mr White n'a aucun mot.",
+    "À chaque tour, chacun donne un indice en un mot, dans l'ordre affiché.",
+    "On débat, on vote, et on élimine la personne la plus désignée. Son rôle est révélé.",
+    "Les civils gagnent s'ils éliminent tous les imposteurs. Les imposteurs gagnent s'il ne reste qu'un civil.",
+    "Mr White éliminé peut deviner le mot des civils : s'il trouve, il gagne seul.",
+  ], tips: ["Donne des indices ni trop évidents (sinon l'undercover comprend), ni trop vagues (sinon on te soupçonne).", "L'option « Mots coquins » ajoute des paires osées."] }),
+  nhie: () => ({ title: "Je n'ai jamais", steps: [
+    "Une personne lit la carte à voix haute : « Je n'ai jamais… ».",
+    S.alcohol ? "Ceux qui l'ont déjà fait boivent une gorgée." : "Tout le monde commence avec 5 doigts levés. Ceux qui l'ont déjà fait baissent un doigt.",
+    "Si le groupe insiste, ils racontent.",
+    S.alcohol ? "Carte suivante, et ainsi de suite." : "À 0 doigt, c'est un gage.",
+  ], tips: ["Le bouton « " + W().who + " » en bas compte les points dans le classement."] }),
+  qui: () => ({ title: 'Qui pourrait…', steps: [
+    "Lis la carte à voix haute.",
+    "Compte jusqu'à 3 : tout le monde pointe en même temps la personne qui correspond le mieux.",
+    S.alcohol ? "La personne la plus désignée boit une gorgée par doigt pointé vers elle." : "La personne la plus désignée prend un point de gage par doigt pointé vers elle.",
+    "Elle peut se justifier… ou pas.",
+  ], tips: ["Il faut au moins 3 joueurs."] }),
+  tp: () => ({ title: 'Tu préfères', steps: [
+    "Lis les deux choix à voix haute.",
+    "Tout le monde choisit en même temps : main gauche pour le premier, main droite pour le second.",
+    S.alcohol ? "Le camp minoritaire boit." : "Le camp minoritaire prend un point de gage.",
+    "En cas d'égalité, chaque camp défend son choix en une phrase et le lecteur tranche.",
+  ], tips: [] }),
+};
+function rules() {
+  const r = RULES[S.info]();
+  return `<div class="topbar"><button class="back" data-a="info-close" aria-label="Fermer les règles">←</button><h2>Règles</h2></div>
+  <div class="card legal-card"><p class="kind">Comment jouer</p><h3 class="rules-title">${r.title}</h3>
+    <ol class="steps">${r.steps.map(t => `<li>${esc(t)}</li>`).join('')}</ol>
+    ${r.tips.length ? `<ul class="tips">${r.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}</div>
+  <p class="howto">Règle d'or : tout le monde peut refuser un défi, sans se justifier.</p>
+  <button class="btn big" data-a="info-close">Compris, on joue</button>`;
+}
+
+/* ---------- Mentions légales ---------- */
+const LEGAL = {
+  editor: 'Geordhann',
+  contact: 'github.com/Geordhann/jeux',
+  year: 2026,
+};
+function legal() {
+  const sec = (h, body) => `<section class="legal"><h2>${h}</h2>${body}</section>`;
+  return `${topbar('Mentions légales')}
+  <div class="legal-wrap">
+  ${sec('Mentions légales', `<p>L'application La Tournée (version Android et version web) est un jeu de soirée gratuit et non commercial, édité à titre personnel par ${esc(LEGAL.editor)} (ci-après « l'Éditeur »).</p>
+    <p>Éditeur : ${esc(LEGAL.editor)}, particulier</p><p>Contact : ${esc(LEGAL.contact)}</p><p>Statut : projet personnel, sans activité commerciale</p>
+    <p>Hébergement du code et des fichiers d'installation : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis (github.com)</p>
+    <p>Hébergement de la version web : Anthropic PBC, San Francisco, États-Unis (claude.ai)</p>`)}
+  ${sec('Public concerné', `<p>Les niveaux Soft et Piquant sont tout public. Les niveaux Hot, Intense et Sans limite, ainsi que l'option « Mots coquins », sont strictement réservés aux personnes majeures et consentantes.</p>
+    <p>Chaque joueur peut refuser n'importe quel défi, à tout moment, sans avoir à se justifier. Aucun défi ne doit être réalisé sous la pression du groupe.</p>`)}
+  ${sec('Alcool et sécurité', `<p>L'abus d'alcool est dangereux pour la santé. À consommer avec modération. Le mode « Sans alcool » remplace toutes les gorgées par des gages.</p>
+    <p>En voiture, on joue uniquement à l'arrêt. Le conducteur ne boit pas et ne prend jamais le volant après avoir bu.</p>
+    <p>Dehors, aucun défi ne doit être réalisé d'une façon qui pourrait choquer des passants : l'exhibition sexuelle en public est punie par la loi.</p>`)}
+  ${sec('Responsabilité', `<p>Les cartes sont des contenus humoristiques destinés à un usage privé entre adultes. Chaque joueur reste seul responsable de ses actes, du respect du consentement des autres et de la loi.</p>
+    <p>L'Éditeur ne peut être tenu responsable de l'usage fait de l'application, ni des éventuelles erreurs, interruptions ou indisponibilités.</p>`)}
+  ${sec('Propriété intellectuelle', `<p>Les textes des cartes, le design et le code de La Tournée sont la propriété de l'Éditeur, sauf mention contraire, et ne peuvent être reproduits sans autorisation préalable. Les cartes perso que tu crées t'appartiennent.</p>
+    <p>Polices Bagel Fat One, Figtree et Fraunces : licence SIL Open Font License 1.1. Application Android construite avec Capacitor (Ionic), licence MIT.</p>`)}
+  ${sec('Données personnelles', `<p>La Tournée ne collecte aucune donnée personnelle. Pas de compte, pas de cookie, pas de publicité, pas de statistiques.</p>
+    <p>Les prénoms, réglages, préférences, listes noires, cartes perso et scores sont enregistrés uniquement sur ton téléphone et ne sont jamais envoyés à l'Éditeur ni à des tiers. L'appli Android fonctionne sans connexion.</p>
+    <p>Dans la version web, les polices peuvent être chargées depuis Google Fonts, ce qui transmet ton adresse IP à Google.</p>
+    <p>Tu peux tout effacer à tout moment avec le bouton ci-dessous, ou en désinstallant l'appli.</p>
+    ${S.confirm === 'wipe' ? `<div class="row"><button class="btn red" data-a="wipe-ok">Oui, tout effacer</button><button class="btn ghost" data-a="wipe-no">Annuler</button></div>`
+      : `<button class="btn ghost" data-a="wipe">Effacer toutes mes données</button>`}`)}
+  </div>
+  <footer class="foot"><span>${LEGAL.year} © La Tournée. Tous droits réservés.</span><span>@${esc(LEGAL.editor)}</span></footer>`;
+}
+
 function gate() {
   const l = LEVELS.find(x => x.id === S.gate);
   return `<div class="turn"><small>Niveau</small><strong>${l.label}</strong></div>
@@ -1568,15 +1678,15 @@ function gate() {
 }
 
 /* ---------- Rendu ---------- */
-const SCREENS = { home, aov, bottle, ucsetup: ucSetup, uc, sdsetup: sdSetup, sd, rel, custom, score };
+const SCREENS = { home, aov, bottle, ucsetup: ucSetup, uc, sdsetup: sdSetup, sd, rel, custom, score, legal };
 let lastScreen = null;
 function render(scroll = true) {
   const s = S.screen;
-  app.innerHTML = S.gate ? gate() : SCREENS[s] ? SCREENS[s]() : deck(s);
-  const key = S.gate || s;
+  app.innerHTML = S.gate ? gate() : S.info ? rules() : SCREENS[s] ? SCREENS[s]() : deck(s);
+  const key = S.gate || (S.info && 'info') || s;
   if (scroll && key !== lastScreen) window.scrollTo(0, 0);
   lastScreen = key;
-  if (s === 'bottle' && S.bottle.spinning && !S.gate) spinBottle();
+  if (s === 'bottle' && S.bottle.spinning && !S.gate && !S.info) spinBottle();
 }
 
 function spinBottle() {
@@ -1614,7 +1724,7 @@ function joker(n) {
 
 /* ---------- Actions ---------- */
 const actions = {
-  home() { S.screen = 'home'; S.uc = null; S.sd = null; S.bottle = null; S.edit = null; S.confirm = null; render(); },
+  home() { S.info = null; S.screen = 'home'; S.uc = null; S.sd = null; S.bottle = null; S.edit = null; S.confirm = null; render(); },
   rm(v) {
     const name = S.players[+v].name;
     S.players.splice(+v, 1); savePlayers();
@@ -1634,6 +1744,14 @@ const actions = {
   },
   'gate-ok'() { S.adultOk = true; const v = S.gate; S.gate = null; actions.level(v); },
   'gate-no'() { S.gate = null; render(); },
+  info(v) { S.info = v; render(); },
+  'info-close'() { S.info = null; render(); },
+  wipe() { S.confirm = 'wipe'; render(false); },
+  'wipe-no'() { S.confirm = null; render(false); },
+  'wipe-ok'() {
+    try { Object.keys(localStorage).filter(k => k.startsWith('tournee.')).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    location.reload();
+  },
   open(v) {
     if (v === 'uc') { S.ucCfg = S.ucCfg || { under: 1, white: false }; S.screen = 'ucsetup'; }
     else if (v === 'sd') S.screen = 'sdsetup';
@@ -1773,7 +1891,7 @@ const actions = {
 };
 
 // Tout autre geste arrête le chrono (on a changé de carte ou d'écran)
-const KEEP_TIMER = new Set(['timer-go', 'sip', 'sip-minus', 'target']);
+const KEEP_TIMER = new Set(['timer-go', 'sip', 'sip-minus', 'target', 'info', 'info-close']);
 app.addEventListener('click', e => {
   const b = e.target.closest('[data-a]');
   if (!b || b.disabled) return;
@@ -1816,7 +1934,8 @@ app.addEventListener('submit', e => {
 const capApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
 if (capApp) capApp.addListener('backButton', () => {
   if (S.timer) stopTimer();
-  if (S.gate) actions['gate-no']();
+  if (S.info) actions['info-close']();
+  else if (S.gate) actions['gate-no']();
   else if (S.edit) actions['bl-done']();
   else if (S.screen !== 'home') actions.home();
   else capApp.exitApp();
