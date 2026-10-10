@@ -30,7 +30,7 @@ Intro animée au lancement, puis 4 onglets en bas de l'écran : **Jeux** (la lis
 - **Classement** : gorgées, jokers et défis réalisés, avec titres de fin de soirée.
 - **Chrono** : apparaît dès qu'un défi a une durée (« 30 secondes », « 7 minutes »…), sonne et vibre à la fin.
 
-Les niveaux Intense et Sans limite demandent une confirmation (tout le monde majeur et d'accord) : c'est osé, jamais porno.
+Les niveaux Hot, Intense et Sans limite demandent une confirmation (tout le monde majeur et d'accord) : c'est osé, jamais porno.
 
 ## Règles et mentions légales
 - Le bouton **i** en haut de chaque jeu affiche ses règles (elles s'adaptent au mode avec ou sans alcool).
