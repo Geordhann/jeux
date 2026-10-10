@@ -300,8 +300,8 @@ body.on-intro .music-fab { display: none; }
 const LEVELS = [
   { id: 'soft', label: 'Soft', pips: '●' },
   { id: 'piquant', label: 'Piquant', pips: '●●' },
-  { id: 'hot', label: 'Hot', pips: '●●●', adult: true },
-  { id: 'intense', label: 'Intense', pips: '●●●●', adult: true },
+  { id: 'hot', label: 'Hot', pips: '●●●' },
+  { id: 'intense', label: 'Intense', pips: '●●●●' },
   { id: 'sanslimite', label: 'Sans limite', pips: '●●●●●', adult: true },
 ];
 
@@ -2434,14 +2434,12 @@ function legal() {
 
 function gate() {
   const l = LEVELS.find(x => x.id === S.gate);
-  const what = S.gate === 'hot'
-    ? 'Au programme : bisous, smacks, lap dance et un vêtement en moins de temps en temps.'
-    : "Ça va jusqu'aux sous-vêtements, aux pelles, aux bisous sur le corps et aux caresses par-dessus les sous-vêtements. Jamais de sexe, jamais de nudité complète.";
+  const what = "Ça va jusqu'aux sous-vêtements, aux pelles, aux bisous sur le corps et aux caresses par-dessus les sous-vêtements. Jamais de sexe, jamais de nudité complète.";
   return `<div class="turn"><small>Niveau</small><strong>${l.label}</strong></div>
   <div class="card"><p class="kind">Réservé aux majeurs</p>
     <p class="text">Tout le monde autour de la table est majeur et partant ?</p>
     <p class="sub">${what} Chacun peut refuser à tout moment avec le joker, sans se justifier.</p>
-    <p class="sub">La confirmation vaut pour Hot, Intense et Sans limite jusqu'à la fermeture de l'appli.</p></div>
+    <p class="sub">La confirmation vaut jusqu'à la fermeture de l'appli.</p></div>
   <button class="btn big red" data-a="gate-ok">On est tous majeurs et d'accord</button>
   <button class="btn ghost" data-a="gate-no">Rester au niveau actuel</button>`;
 }
