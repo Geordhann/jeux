@@ -256,6 +256,38 @@ textarea.copy { width: 100%; font: .85rem/1.4 var(--font-body); }
 .music-fab.on span:nth-child(3) { animation-delay: -.6s; }
 @keyframes eq { from { height: 5px; } to { height: 18px; } }
 @media (prefers-reduced-motion: reduce) { .music-fab.on span { animation: none; } }
+/* Onglets */
+body.on-tabs #app { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px)); }
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: grid; grid-template-columns: repeat(4, 1fr); max-width: 480px; margin: 0 auto; padding: 6px 8px calc(8px + env(safe-area-inset-bottom, 0px)); background: var(--felt); border-top: 1px solid var(--felt-line); box-shadow: 0 -10px 24px rgba(0,0,0,.3); }
+.tabbar button { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px; border-radius: 12px; color: var(--muted); font-size: .74rem; font-weight: 700; }
+.tabbar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tabbar button[aria-current="page"] { color: var(--gold); background: rgba(231,181,82,.1); }
+body.on-tabs .music-fab { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+body.on-intro .music-fab { display: none; }
+.mini-head { padding-top: 8px; }
+.logo.small { font-size: 2.6rem; padding-top: 0; }
+.logo.small span { display: inline; }
+.tab-title { font-family: var(--font-display); font-weight: 400; font-size: 2rem; color: var(--gold); padding-top: 8px; }
+.summary { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--felt-line); background: rgba(0,0,0,.18); color: var(--muted); font-size: .88rem; font-weight: 600; }
+.summary span { color: var(--gold); font-size: 1.2rem; }
+.notice { display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 12px 14px; border-radius: 12px; background: var(--gold); color: var(--ink); }
+.notice span { font-size: .86rem; }
+.tool.wide { text-align: left; }
+/* Intro */
+.intro { min-height: calc(100vh - 60px); min-height: calc(100dvh - 60px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; cursor: pointer; }
+.deal { position: relative; width: 220px; height: 190px; }
+.deal .c { position: absolute; left: 50%; top: 10px; width: 104px; height: 148px; margin-left: -52px; border-radius: 14px; background: var(--paper); box-shadow: 0 3px 0 var(--paper-edge), 0 14px 30px rgba(0,0,0,.45); display: grid; place-items: center; color: var(--red); font-family: var(--font-display); font-size: 3rem; opacity: 0; animation: dealIn .7s cubic-bezier(.2,.9,.3,1.25) forwards; }
+.deal .c.b { color: var(--ink); }
+.deal .c1 { --r: -16deg; --x: -62px; animation-delay: .15s; }
+.deal .c2 { --r: 0deg; --x: 0px; animation-delay: .35s; z-index: 1; }
+.deal .c3 { --r: 16deg; --x: 62px; animation-delay: .55s; z-index: 2; }
+@keyframes dealIn { from { opacity: 0; transform: translate(0, 220px) rotate(40deg) scale(.7); } to { opacity: 1; transform: translate(var(--x), 0) rotate(var(--r)); } }
+.intro-logo { font-size: clamp(3.4rem, 17vw, 4.8rem); opacity: 0; animation: rise .6s ease-out .9s forwards; }
+.intro-tag { color: var(--muted); max-width: 26ch; opacity: 0; animation: rise .6s ease-out 1.15s forwards; }
+.intro-btn { width: min(100%, 320px); opacity: 0; animation: rise .6s ease-out 1.4s forwards; }
+.intro-age { font-size: .78rem; color: var(--muted); opacity: 0; animation: rise .6s ease-out 1.6s forwards; }
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .deal .c, .intro-logo, .intro-tag, .intro-btn, .intro-age { animation: none; opacity: 1; } .deal .c { transform: translate(var(--x), 0) rotate(var(--r)); } }
 </style>
 </head>
 <body>
@@ -1385,6 +1417,8 @@ const S = {
   adultOk: false,
   gate: null,
   screen: 'home',
+  tab: store.get('tab', 'jeux'),
+  intro: true,
   aov: { turn: 0, card: null },
   deck: { card: null },
   uc: null, ucCfg: null, bottle: null, wheel: null, wheelPerso: store.get('wheelPerso', ['Vérité', 'Action', 'Gage', 'Joker', 'Relance', 'Bisou']), sd: null, sdCfg: { secs: 120 },
@@ -1687,43 +1721,90 @@ const cardIdx = (letter, lvl) => `<span class="idx tl"><b>${letter}</b><i>${lvl 
 const sipRow = () => `<section class="sips"><h3>${W().who} <span class="hint">Touche un nom pour ${W().plus}</span></h3>
   <div class="chips">${S.players.map(p => `<button class="chip tap" data-a="sip" data-v="${esc(p.name)}">${esc(p.name)} <span class="n">${stat(p.name).sips}</span></button>`).join('')}</div></section>`;
 
-function home() {
+const TABS = [
+  { id: 'jeux', label: 'Jeux', icon: '<rect x="4" y="5" width="11" height="15" rx="2"/><path d="M9 3.5h9a2 2 0 0 1 2 2V18"/>' },
+  { id: 'joueurs', label: 'Joueurs', icon: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.6c2.6.2 4.4 2 5 5"/>' },
+  { id: 'soiree', label: 'Soirée', icon: '<path d="M5 6h14M5 12h14M5 18h14"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="18" r="2"/>' },
+  { id: 'plus', label: 'Plus', icon: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>' },
+];
+const tabbar = () => `<nav class="tabbar" aria-label="Onglets">${TABS.map(t => `<button data-a="tab" data-v="${t.id}" aria-current="${S.tab === t.id ? 'page' : 'false'}">
+  <svg viewBox="0 0 24 24" aria-hidden="true">${t.icon}</svg><span>${t.label}</span></button>`).join('')}</nav>`;
+
+function tabJeux() {
   const n = S.players.length;
   const hasH = S.players.some(p => p.g === 'h'), hasF = S.players.some(p => p.g === 'f');
   const why = g => n < g.min ? `Il faut au moins ${g.min} joueurs.` : g.mixed && !(hasH && hasF) ? 'Il faut au moins un H et une F.' : '';
-  return `
-  <h1 class="logo">La<span>Tournée</span></h1>
-  <p class="tag">Neuf jeux de soirée, un seul téléphone qui fait le tour de la table.</p>
-  <section class="panel">
-    <h3><span>La soirée</span></h3>
-    <div class="levels three" role="group" aria-label="Où jouez-vous ?">${PLACES.map(pl => `<button data-a="place" data-v="${pl.id}" aria-pressed="${S.place === pl.id}">${pl.label}</button>`).join('')}</div>
-    <div class="levels two" role="group" aria-label="Alcool"><button data-a="alcohol" data-v="1" aria-pressed="${S.alcohol}">Avec alcool</button><button data-a="alcohol" data-v="0" aria-pressed="${!S.alcohol}">Sans alcool</button></div>
-    <label class="pick drv" for="driverSel"><span>Qui conduit ?</span><select id="driverSel"><option value="">Personne</option>${S.players.map(p => `<option value="${esc(p.name)}" ${isDriver(p.name) ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>
-    <div class="packs"><span class="hint">Packs à thème</span><div class="chips">${Object.entries(PACKS).map(([k, pk]) => `<button class="chip tap ${S.packs.includes(k) ? 'on' : ''}" data-a="pack" data-v="${k}" aria-pressed="${S.packs.includes(k)}">${pk.label}</button>`).join('')}</div></div>
-    ${musicPanel()}
-    <p class="hint">${{ voiture: 'Défis faisables assis, avec des défis spécial voiture.', maison: 'Tous les défis, y compris ceux qui demandent une autre pièce, un canapé ou une douche.', dehors: "Défis faisables dehors, sans se déshabiller en public." }[S.place]} ${S.alcohol ? 'Le joker et les jeux de cartes se jouent en gorgées.' : 'Les gorgées sont remplacées par des gages.'}${isDriver(S.driver) ? ` ${esc(S.driver)} conduit : jamais d'alcool pour lui ou elle, ses gorgées deviennent des gages.` : ''}</p>
-  </section>
-  <section class="panel">
-    <h3><span>Joueurs</span><span>${n}</span></h3>
-    ${S.examples ? `<p class="hint">Noms d'exemple : supprime-les et ajoute ta bande.</p>` : ''}
-    <div class="chips">${S.players.map((p, i) => `<span class="chip"><button class="sex ${p.g}" data-a="sex" data-v="${i}" aria-label="${esc(p.name)} : ${p.g === 'f' ? 'femme' : 'homme'}, toucher pour changer">${p.g === 'f' ? 'F' : 'H'}</button>${esc(p.name)}${partnerHere(p.name) ? ' <span class="heart" aria-label="en couple">♥</span>' : ''}${isDriver(p.name) ? ' <span class="drv-badge">au volant</span>' : ''}<button data-a="rm" data-v="${i}" aria-label="Retirer ${esc(p.name)}">✕</button></span>`).join('')}</div>
-    <form class="add" id="addForm"><input id="newPlayer" placeholder="Prénom" maxlength="20" autocomplete="off" aria-label="Prénom du joueur"><button class="btn sexbtn" type="submit" value="h" aria-label="Ajouter un homme">+ H</button><button class="btn red sexbtn" type="submit" value="f" aria-label="Ajouter une femme">+ F</button></form>
-    <p class="hint">Touche le H ou le F d'un joueur pour le changer.</p>
-  </section>
+  const place = PLACES.find(pl => pl.id === S.place).label;
+  return `<header class="mini-head"><h1 class="logo small">La <span>Tournée</span></h1></header>
+  <button class="summary" data-a="tab" data-v="soiree">${plural(n, 'joueur')} · ${place} · ${S.alcohol ? 'Avec alcool' : 'Sans alcool'}${S.packs.length ? ` · ${plural(S.packs.length, 'pack')}` : ''}${isDriver(S.driver) ? ` · ${esc(S.driver)} au volant` : ''}<span aria-hidden="true">›</span></button>
+  ${S.examples ? `<button class="notice" data-a="tab" data-v="joueurs"><b>Ajoute ta bande</b><span>Les joueurs affichés sont des exemples. Touche ici pour mettre vos prénoms.</span></button>` : ''}
   <section class="games">
     ${GAMES.map(g => { const w = why(g); return `<button class="game" data-a="open" data-v="${g.id}" ${w ? 'disabled' : ''}>
       <span class="suit ${g.suit === '♠' || g.suit === '♣' ? 'b' : ''}" aria-hidden="true">${g.suit}</span>
       <span><b>${g.name}</b><small>${w || g.desc}</small></span>
       <span class="go" aria-hidden="true">›</span></button>`; }).join('')}
+  </section>`;
+}
+function tabJoueurs() {
+  const n = S.players.length;
+  return `<h2 class="tab-title">Joueurs</h2>
+  <section class="panel">
+    <h3><span>La bande</span><span>${n}</span></h3>
+    ${S.examples ? `<p class="hint">Noms d'exemple : supprime-les et ajoute ta bande.</p>` : ''}
+    <div class="chips">${S.players.map((p, i) => `<span class="chip"><button class="sex ${p.g}" data-a="sex" data-v="${i}" aria-label="${esc(p.name)} : ${p.g === 'f' ? 'femme' : 'homme'}, toucher pour changer">${p.g === 'f' ? 'F' : 'H'}</button>${esc(p.name)}${partnerHere(p.name) ? ' <span class="heart" aria-label="en couple">♥</span>' : ''}${isDriver(p.name) ? ' <span class="drv-badge">au volant</span>' : ''}<button data-a="rm" data-v="${i}" aria-label="Retirer ${esc(p.name)}">✕</button></span>`).join('')}</div>
+    <form class="add" id="addForm"><input id="newPlayer" placeholder="Prénom" maxlength="20" autocomplete="off" aria-label="Prénom du joueur"><button class="btn sexbtn" type="submit" value="h" aria-label="Ajouter un homme">+ H</button><button class="btn red sexbtn" type="submit" value="f" aria-label="Ajouter une femme">+ F</button></form>
+    <p class="hint">Touche le H ou le F d'un joueur pour le changer.</p>
   </section>
+  <button class="tool wide" data-a="open" data-v="rel"><b>Affinités</b><small>Préférences (plutôt filles ou plutôt mecs), couples et liste noire secrète</small></button>`;
+}
+function tabSoiree() {
+  return `<h2 class="tab-title">La soirée</h2>
+  <section class="panel">
+    <h3><span>Où êtes-vous ?</span></h3>
+    <div class="levels three" role="group" aria-label="Où jouez-vous ?">${PLACES.map(pl => `<button data-a="place" data-v="${pl.id}" aria-pressed="${S.place === pl.id}">${pl.label}</button>`).join('')}</div>
+    <p class="hint">${{ voiture: 'Défis faisables assis, avec des défis spécial voiture.', maison: 'Tous les défis, y compris ceux qui demandent une autre pièce, un canapé ou une douche.', dehors: "Défis faisables dehors, sans se déshabiller en public." }[S.place]}</p>
+  </section>
+  <section class="panel">
+    <h3><span>Alcool</span></h3>
+    <div class="levels two" role="group" aria-label="Alcool"><button data-a="alcohol" data-v="1" aria-pressed="${S.alcohol}">Avec alcool</button><button data-a="alcohol" data-v="0" aria-pressed="${!S.alcohol}">Sans alcool</button></div>
+    <label class="pick drv" for="driverSel"><span>Qui conduit ?</span><select id="driverSel"><option value="">Personne</option>${S.players.map(p => `<option value="${esc(p.name)}" ${isDriver(p.name) ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>
+    <p class="hint">${S.alcohol ? 'Le joker et les jeux de cartes se jouent en gorgées.' : 'Les gorgées sont remplacées par des gages.'}${isDriver(S.driver) ? ` ${esc(S.driver)} conduit : jamais d'alcool pour lui ou elle, ses gorgées deviennent des gages.` : ''}</p>
+  </section>
+  <section class="panel">
+    <h3><span>Packs à thème</span><span>${S.packs.length}</span></h3>
+    <div class="chips">${Object.entries(PACKS).map(([k, pk]) => `<button class="chip tap ${S.packs.includes(k) ? 'on' : ''}" data-a="pack" data-v="${k}" aria-pressed="${S.packs.includes(k)}">${pk.label}</button>`).join('')}</div>
+    <p class="hint">Ajoute des cartes et des mots Undercover sur le thème choisi.</p>
+  </section>
+  <section class="panel">${musicPanel()}</section>`;
+}
+function tabPlus() {
+  return `<h2 class="tab-title">Plus</h2>
   <section class="tools">
-    <button class="tool" data-a="open" data-v="rel"><b>Affinités</b><small>Préférences, couples, liste noire</small></button>
-    <button class="tool" data-a="open" data-v="custom"><b>Cartes perso</b><small>${S.custom.length} carte${S.custom.length > 1 ? 's' : ''} ajoutée${S.custom.length > 1 ? 's' : ''}</small></button>
+    <button class="tool" data-a="open" data-v="recap"><b>Récap de soirée</b><small>${plural(S.night.cards, 'carte')} jouée${S.night.cards > 1 ? 's' : ''} ce soir</small></button>
     <button class="tool" data-a="open" data-v="score"><b>Classement</b><small>Gorgées, jokers, défis</small></button>
-    <button class="tool" data-a="open" data-v="recap"><b>Récap de soirée</b><small>${S.night.cards} cartes jouées ce soir</small></button>
+    <button class="tool" data-a="open" data-v="custom"><b>Cartes perso</b><small>${S.custom.length} carte${S.custom.length > 1 ? 's' : ''} ajoutée${S.custom.length > 1 ? 's' : ''}</small></button>
+    <button class="tool" data-a="open" data-v="rel"><b>Affinités</b><small>Préférences, couples, liste noire</small></button>
   </section>
+  <button class="btn ghost" data-a="intro">Revoir l'intro</button>
   <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte ${S.alcohol ? '2 gorgées' : 'un gage'}. Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>
   <footer class="foot"><button class="link" data-a="open" data-v="legal">Mentions légales</button><span>${LEGAL.year} © La Tournée. Tous droits réservés.</span>${S.alcohol ? '<span>L\'abus d\'alcool est dangereux pour la santé.</span>' : ''}</footer>`;
+}
+function home() {
+  const body = { jeux: tabJeux, joueurs: tabJoueurs, soiree: tabSoiree, plus: tabPlus }[S.tab] || tabJeux;
+  return body() + tabbar();
+}
+
+/* ---------- Intro au lancement ---------- */
+function intro() {
+  return `<div class="intro" data-a="intro-go">
+    <div class="deal" aria-hidden="true">
+      <span class="c c1"><b>♥</b></span><span class="c c2 b"><b>♠</b></span><span class="c c3"><b>♦</b></span>
+    </div>
+    <h1 class="logo intro-logo">La<span>Tournée</span></h1>
+    <p class="intro-tag">Le jeu de soirée qui fait le tour de la table.</p>
+    <button class="btn big intro-btn" data-a="intro-go">C'est parti</button>
+    <p class="intro-age">Niveaux osés réservés aux majeurs · Chacun peut refuser</p>
+  </div>`;
 }
 
 /* ---------- Action ou Vérité ---------- */
@@ -2358,8 +2439,10 @@ const SCREENS = { home, aov, bottle, wheel, para, recap, ucsetup: ucSetup, uc, s
 let lastScreen = null;
 function render(scroll = true) {
   const s = S.screen;
-  app.innerHTML = S.gate ? gate() : S.info ? rules() : SCREENS[s] ? SCREENS[s]() : deck(s);
-  const key = S.gate || (S.info && 'info') || s;
+  app.innerHTML = S.intro ? intro() : S.gate ? gate() : S.info ? rules() : SCREENS[s] ? SCREENS[s]() : deck(s);
+  document.body.classList.toggle('on-tabs', !S.intro && !S.gate && !S.info && s === 'home');
+  document.body.classList.toggle('on-intro', S.intro);
+  const key = (S.intro && 'intro') || S.gate || (S.info && 'info') || (s === 'home' ? 'home-' + S.tab : s);
   if (scroll && key !== lastScreen) window.scrollTo(0, 0);
   lastScreen = key;
   if (s === 'bottle' && S.bottle.spinning && !S.gate && !S.info) spinBottle();
@@ -2426,6 +2509,9 @@ const actions = {
   },
   'gate-ok'() { S.adultOk = true; const v = S.gate; S.gate = null; actions.level(v); },
   'gate-no'() { S.gate = null; render(); },
+  tab(v) { S.tab = v; store.set('tab', v); render(); },
+  intro() { S.intro = true; render(); },
+  'intro-go'() { if (!S.intro) return; S.intro = false; render(); },
   info(v) { S.info = v; render(); },
   'info-close'() { S.info = null; render(); },
   wipe() { S.confirm = 'wipe'; render(false); },
@@ -2674,7 +2760,9 @@ if (capApp) capApp.addListener('backButton', () => {
   if (S.info) actions['info-close']();
   else if (S.gate) actions['gate-no']();
   else if (S.edit) actions['bl-done']();
+  else if (S.intro) actions['intro-go']();
   else if (S.screen !== 'home') actions.home();
+  else if (S.tab !== 'jeux') actions.tab('jeux');
   else capApp.exitApp();
 });
 
