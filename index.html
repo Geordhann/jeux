@@ -1479,7 +1479,10 @@ function cards(game, level) {
 }
 
 /* ---------- Couples & liste noire ---------- */
-const blocked = (a, b) => S.black.includes(a + '>' + b) || S.black.includes(b + '>' + a);
+// Duos tenus à l'écart des défis en silence (rien n'est affiché dans l'appli)
+const QUIET_PAIRS = [['santino', 'celia']];
+const quietPair = (a, b) => QUIET_PAIRS.some(([x, y]) => (norm(a) === x && norm(b) === y) || (norm(a) === y && norm(b) === x));
+const blocked = (a, b) => S.black.includes(a + '>' + b) || S.black.includes(b + '>' + a) || quietPair(a, b);
 const partnerOf = n => { const c = S.couples.find(c => c.includes(n)); return c ? (c[0] === n ? c[1] : c[0]) : null; };
 const partnerHere = n => { const p = partnerOf(n); return p && byName(p) ? p : null; };
 
