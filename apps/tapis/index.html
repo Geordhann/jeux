@@ -63,7 +63,6 @@
 .rl-chip { position: absolute; right: -4px; top: -6px; min-width: 24px; height: 24px; padding: 0 4px; border-radius: 999px; background: var(--gold); color: var(--ink); border: 2px dashed #fff; font-size: .7rem; display: grid; place-items: center; z-index: 1; box-shadow: 0 2px 4px rgba(0,0,0,.4); }
 .jeton.j5 { background: #c93a3f; }
 .jeton[aria-pressed="true"] { outline: 3px solid var(--gold); outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) { .rl-wheel { transition: none !important; } }
 /* Salle de jeu : moquette bordeaux à losanges dorés, néons */
 body { background-color: var(--felt);
   background-image: linear-gradient(180deg, rgba(255,95,162,.16) 0%, rgba(234,120,80,.10) 18%, transparent 42%),
@@ -630,6 +629,7 @@ MPG.rl = {
   },
   notify(prev, v) {
     if (v.step === 'bet' && (!prev || prev.step !== 'bet')) MP.rlDraft = null;
+    if (v.spin && (!prev || !prev.spin)) MP.rlStart = Date.now() - (RL_SPIN - v.spin.left);
     if (v.step === 'result' && prev && prev.step === 'spin') { const me = v.players.find(x => x.me); buzz(me && me.gain > 0 ? [80, 60, 80, 60, 160] : 120); }
   },
   screen() { return rlScreen(MP.role === 'host' ? MPG.rl.view(MP_CID) : MP.view); },
@@ -672,11 +672,10 @@ function rlWheelSvg(angle) {
       <circle cx="100" cy="100" r="62" fill="#6b4426"/><circle cx="100" cy="100" r="54" fill="#17513a"/><circle cx="100" cy="100" r="9" fill="#e7b552"/></svg></div>`;
 }
 function rlSpinAnim() {
-  const v = MP.role === 'host' ? MPG.rl.view(MP_CID) : MP.view, el = document.getElementById('rlWheel');
-  if (!el || !v || !v.spin) return;
-  el.getBoundingClientRect();
-  el.style.transition = `transform ${Math.max(300, v.spin.left) / 1000}s cubic-bezier(.1,.65,.12,1)`;
-  el.style.transform = `rotate(${v.spin.to}deg)`;
+  const v = MP.role === 'host' ? MPG.rl.view(MP_CID) : MP.view;
+  if (!v || !v.spin) return;
+  const start = MP.role === 'host' ? MP.H.spin.at : MP.rlStart || Date.now() - (RL_SPIN - v.spin.left);
+  spinWheel('rlWheel', v.wheel, v.spin.to, start, RL_SPIN);
 }
 function rlScreen(v) {
   const host = MP.role === 'host', me = v.players.find(p => p.me) || { chips: 0 };

@@ -563,12 +563,9 @@ APP.rules.lgroles = () => ({ title: 'Tous les rôles', steps: LG_CAMPS.flatMap((
   tips: ["Le maire n'est pas une carte : il est élu par le village. Sa voix compte double et, s'il meurt, il désigne son successeur.", 'Ordre de la nuit : Voleur, Comédien, Cupidon, Chien-loup, Voyante, Renard, Amoureux, Juge bègue, Sœurs, Frères, Enfant sauvage, Montreur d\'ours, Corbeau, Pyromane, Salvateur, Loups-garous, Infect père, Grand méchant loup, Loup blanc, Sorcière, Gitane, Joueur de flûte, Charmés.'] });
 
 function lgSpinAnim() {
-  const H = MP.H, el = document.getElementById('wheel');
-  if (!el || MP.role !== 'host' || H.step !== 'spin' || !H.spin) return;
-  const left = Math.max(300, 3400 - (Date.now() - H.spin.at));
-  el.getBoundingClientRect();
-  el.style.transition = `transform ${left / 1000}s cubic-bezier(.12,.7,.15,1)`;
-  el.style.transform = `rotate(${H.spin.to}deg)`;
+  const H = MP.H;
+  if (MP.role !== 'host' || H.step !== 'spin' || !H.spin) return;
+  spinWheel('wheel', H.spin.from, H.spin.to, H.spin.at, 3400);
 }
 
 /* --- Petits morceaux d'affichage --- */

@@ -236,6 +236,21 @@ function mpClose(forget) {
   if (mpLock) { mpLock.release().catch(() => {}); mpLock = null; }
 }
 // Minuteur propre à une partie : annulé automatiquement quand la partie se ferme
+// Roue qui tourne image par image : marche sur tous les navigateurs (Safari compris),
+// même avec « réduire les animations » et même si l'écran est redessiné pendant le tirage
+let wheelRaf = 0;
+function spinWheel(id, from, to, start, dur) {
+  cancelAnimationFrame(wheelRaf);
+  const step = () => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const k = Math.min(1, Math.max(0, (Date.now() - start) / dur));
+    el.style.transition = 'none';
+    el.style.transform = `rotate(${from + (to - from) * (1 - Math.pow(1 - k, 4))}deg)`;
+    if (k < 1) wheelRaf = requestAnimationFrame(step);
+  };
+  step();
+}
 function mpTimer(k, fn, ms) {
   const m = MP;
   if (!m) return;
