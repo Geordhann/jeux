@@ -1,3 +1,25 @@
+# Jeux de soirée
+
+Trois applis, un seul dépôt :
+
+| Appli | Jeux | Comment on joue |
+| --- | --- | --- |
+| **La Tournée** | Action ou Vérité, Undercover, Paranoïa, La Roue… | Un seul téléphone qui fait le tour de la table, hors ligne |
+| **La Veillée** | Loup-Garou, Téléphone dessiné | Chacun sur son téléphone, en ligne |
+| **Le Tapis** | Poker, Blackjack (jetons fictifs, 18+) | Chacun sur son téléphone, en ligne |
+
+Chaque appli a son icône, son APK et ses mentions légales.
+
+```
+index.html, android-assets/, capacitor.config.json   La Tournée
+apps/veillee/   La Veillée (page, config Capacitor, icônes)
+apps/tapis/     Le Tapis (page, config Capacitor, icônes)
+shared/         socle commun de La Veillée et du Tapis : design (salon.css),
+                accueil, règles, mentions légales et parties en ligne (salon.js), PeerJS
+fonts/          polices incluses (hors ligne)
+tools/          build-www.sh (prépare une appli), prepare-android.sh, make_icons.py
+```
+
 # La Tournée
 
 Jeux de soirée sur un seul téléphone qui fait le tour de la table. Ouvre `index.html` dans un navigateur, rien à installer.
@@ -13,18 +35,6 @@ Intro animée au lancement, puis 4 onglets en bas de l'écran : **Jeux** (la lis
 - **Paranoïa** : une question montrée en secret à son voisin, un prénom à voix haute, pile ou face pour la révéler.
 - **La Roue** : roue des gages (selon niveau, lieu, alcool), « qui paie la tournée ? » ou roue perso.
 - **Je n'ai jamais**, **Qui pourrait…**, **Tu préfères** : paquets de cartes en 5 niveaux, avec « Qui boit ? » pour compter les gorgées.
-
-## Chacun son téléphone (en ligne)
-Des jeux où chaque joueur utilise son propre téléphone. Celui qui crée la partie reçoit un **code à 4 lettres** ; les autres ouvrent La Tournée › Jeux › **Rejoindre une partie** et tapent ce code (ou ouvrent un lien `index.html?code=ABCD`).
-- **Loup-Garou** : le créateur est le maître du jeu (il ne joue pas). Il choisit les cartes (loups automatiques ou à la main, Voyante, Sorcière, Chasseur, Cupidon, Petite fille, Salvateur, Ancien, Idiot du village, Loup blanc), lance la roue, et chacun reçoit sa carte en secret sur son téléphone. Le MJ pilote ensuite la partie : déroulé de la nuit à lire à voix haute, victimes (☠), amoureux (💘), potions, réveil du village avec annonce des morts, votes, et révélation de toutes les cartes à la fin. Les loups voient leurs complices et les amoureux leur partenaire sur leur téléphone (désactivable).
-- **Téléphone dessiné** (façon Gartic Phone, 3 joueurs minimum) : chacun écrit une phrase, la passe à son voisin qui la dessine, le suivant devine le dessin, et ainsi de suite. À la fin, l'hôte fait défiler les albums sur tous les téléphones. Chrono optionnel (1 min à 2 min).
-
-- **Poker** (Texas Hold'em sans limite, 2 à 10 joueurs) : deux cartes secrètes sur ton téléphone, le tapis au centre (flop, turn, river), blindes au choix (5/10, 10/20, 25/50). L'appli gère le bouton, les relances, les tapis, les pots partagés et l'abattage.
-- **Blackjack** : tout le monde contre la banque tenue par l'appli (sabot de 6 jeux, la banque tire jusqu'à 17, blackjack payé 3 pour 2, doubler possible). Option « gages de soirée » : une main perdue = une gorgée (ou un gage), un blackjack = 2 à distribuer.
-
-Poker et Blackjack se jouent avec 1 000 jetons **fictifs** par joueur (recave possible), jamais d'argent réel. On peut rejoindre la table entre deux mains.
-
-Fonctionnement : connexion internet nécessaire. Le téléphone de l'hôte sert de serveur ; les autres s'y connectent en direct (WebRTC via [PeerJS](https://peerjs.com), bibliothèque incluse dans `vendor/`, serveur de mise en relation gratuit de PeerJS). Un téléphone qui se met en veille se reconnecte tout seul et retrouve sa carte ; si l'hôte ferme l'appli, il peut reprendre la partie depuis l'onglet Jeux. Pour tester sans réseau, ouvre plusieurs onglets avec `index.html?local`.
 
 ## Réglages
 - **Musique d'ambiance** : Chill, Soirée, Sensuel ou Auto (suit le niveau). Composée en direct par l'appli (synthèse Web Audio) : création originale libre de droits, aucun fichier, fonctionne hors ligne. Bouton flottant en bas à droite pour lancer ou couper.
@@ -48,12 +58,31 @@ Le niveau Sans limite demande une confirmation (tout le monde majeur et d'accord
 - Le bouton **i** en haut de chaque jeu affiche ses règles (elles s'adaptent au mode avec ou sans alcool).
 - **Mentions légales** en bas de l'accueil : éditeur, hébergeurs, public majeur, alcool et sécurité, responsabilité, propriété intellectuelle, données personnelles (tout reste sur le téléphone, bouton « Effacer toutes mes données »). L'éditeur et le contact se modifient dans la constante `LEGAL` de `index.html`.
 
-## Appli Android (hors ligne)
+# La Veillée
 
-Chaque modification du jeu compile automatiquement un APK (GitHub Actions, `.github/workflows/android.yml`) et le publie dans les **Releases** du dépôt.
+Jeux où chaque joueur utilise son propre téléphone. Celui qui crée la partie reçoit un **code à 4 lettres** ; les autres ouvrent La Veillée › **Rejoindre une partie** et tapent ce code (ou ouvrent un lien `index.html?code=ABCD`).
+- **Loup-Garou** : le créateur est le maître du jeu (il ne joue pas). Il choisit les cartes (loups automatiques ou à la main, Voyante, Sorcière, Chasseur, Cupidon, Petite fille, Salvateur, Ancien, Idiot du village, Loup blanc), lance la roue, et chacun reçoit sa carte en secret sur son téléphone. Le MJ pilote ensuite la partie : déroulé de la nuit à lire à voix haute, victimes (☠), amoureux (💘), potions, réveil du village avec annonce des morts, votes, et révélation de toutes les cartes à la fin. Les loups voient leurs complices et les amoureux leur partenaire (désactivable).
+- **Téléphone dessiné** (3 joueurs minimum) : chacun écrit une phrase, le voisin la dessine, le suivant devine le dessin, et ainsi de suite. À la fin, l'hôte fait défiler les albums sur tous les téléphones. Chrono au choix.
 
-1. Sur le téléphone, ouvre la dernière release et télécharge `La-Tournee.apk`.
+# Le Tapis
+
+Poker et Blackjack entre amis, chacun sur son téléphone, avec 1 000 jetons **fictifs** par joueur (recave possible) : jamais d'argent réel. Réservé aux majeurs (confirmation au premier lancement). On peut rejoindre la table entre deux mains.
+- **Poker** (Texas Hold'em sans limite, 2 à 10 joueurs) : deux cartes secrètes sur ton téléphone, le tapis au centre (flop, turn, river), blindes au choix (5/10, 10/20, 25/50). L'appli gère le bouton, les relances, les tapis, les pots partagés et l'abattage.
+- **Blackjack** : tout le monde contre la banque tenue par l'appli (sabot de 6 jeux, la banque tire jusqu'à 17, blackjack payé 3 pour 2, doubler possible). Gages de soirée au choix : aucun, gorgées ou gages.
+
+## Fonctionnement en ligne (La Veillée et Le Tapis)
+Connexion internet nécessaire. Le téléphone de l'hôte sert de serveur ; les autres s'y connectent en direct (WebRTC via [PeerJS](https://peerjs.com), inclus dans `shared/`, avec le service gratuit de mise en relation de PeerJS). Un téléphone qui se met en veille se reconnecte tout seul et retrouve sa place ; si l'hôte ferme l'appli, il peut reprendre la partie depuis l'accueil.
+
+Pour tester sur un ordinateur : `tools/build-www.sh veillee` (ou `tapis`), puis servir le dossier `build/veillee/www` (par exemple `python3 -m http.server`). Avec `index.html?local`, plusieurs onglets du même navigateur jouent ensemble sans réseau.
+
+Les mentions légales propres à chaque appli (public, alcool, absence d'argent réel pour Le Tapis…) se trouvent dans `window.APP.legal` de sa page ; l'éditeur et le contact, communs, dans la constante `LEGAL` de `shared/salon.js`.
+
+## Applis Android
+
+Chaque modification compile automatiquement les trois APK (GitHub Actions, `.github/workflows/android.yml`) et les publie dans les **Releases** du dépôt : `La-Tournee.apk`, `La-Veillee.apk` et `Le-Tapis.apk`.
+
+1. Sur le téléphone, ouvre la dernière release de l'appli voulue et télécharge son APK.
 2. Ouvre le fichier et autorise l'installation depuis cette source si Android le demande.
-3. L'appli fonctionne ensuite sans connexion (polices incluses). Pour mettre à jour, installe la nouvelle version par-dessus : joueurs et réglages sont conservés.
+3. Pour mettre à jour, installe la nouvelle version par-dessus : réglages conservés. La Tournée fonctionne sans connexion ; La Veillée et Le Tapis ont besoin d'internet pour jouer.
 
-Fichiers liés : `capacitor.config.json`, `package.json`, `fonts/`, `vendor/` (PeerJS), `android-assets/` (icônes, écran de démarrage, clé de signature de l'APK) et `tools/` (`make_icons.py` régénère les icônes, `prepare-android.sh` personnalise le projet Android).
+Fichiers liés : `capacitor.config.json` et `apps/*/capacitor.config.json`, `package.json`, `fonts/`, `android-assets/` et `apps/*/android-assets/` (icônes, écran de démarrage ; la clé de signature des APK est dans `android-assets/`) et `tools/` (`build-www.sh <appli>` prépare une appli dans `build/`, `make_icons.py <appli>` régénère ses icônes, `prepare-android.sh` personnalise le projet Android).

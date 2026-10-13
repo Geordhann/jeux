@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 # Personnalise le projet Android généré par « npx cap add android » :
 # icônes, écran de démarrage, vibreur, mode portrait et numéro de version.
-# Usage : tools/prepare-android.sh [numéro de version]
+# À lancer depuis le dossier qui contient android/ (racine du dépôt ou build/<appli>).
+# Usage : tools/prepare-android.sh [numéro de version] [dossier des icônes] [couleur de fond]
 set -euo pipefail
-cd "$(dirname "$0")/.."
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BUILD="${1:-1}"
+ASSETS="$ROOT/${2:-android-assets}"
+BG="${3:-#10261E}"
 RES=android/app/src/main/res
 
 for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
-  cp android-assets/mipmap-$d/*.png "$RES/mipmap-$d/"
+  cp "$ASSETS"/mipmap-$d/*.png "$RES/mipmap-$d/"
 done
-sed -i 's|<color name="ic_launcher_background">.*</color>|<color name="ic_launcher_background">#10261E</color>|' "$RES/values/ic_launcher_background.xml"
-find "$RES" -name splash.png -exec cp android-assets/splash.png {} \;
+sed -i "s|<color name=\"ic_launcher_background\">.*</color>|<color name=\"ic_launcher_background\">$BG</color>|" "$RES/values/ic_launcher_background.xml"
+find "$RES" -name splash.png -exec cp "$ASSETS/splash.png" {} \;
 
 MANIFEST=android/app/src/main/AndroidManifest.xml
 grep -q 'android.permission.VIBRATE' "$MANIFEST" || \

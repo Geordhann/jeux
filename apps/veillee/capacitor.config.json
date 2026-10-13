@@ -1,0 +1,9 @@
+{
+  "appId": "fr.geordhann.laveillee",
+  "appName": "La Veillée",
+  "webDir": "www",
+  "backgroundColor": "#121a33",
+  "android": {
+    "backgroundColor": "#121a33"
+  }
+}

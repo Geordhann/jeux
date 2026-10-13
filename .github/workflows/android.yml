@@ -1,13 +1,14 @@
-name: Appli Android
+name: Applis Android
 
-# Compile l'APK à chaque modification du jeu et le publie dans les Releases
+# Compile l'APK de chaque appli à chaque modification et le publie dans les Releases
 on:
   push:
     branches: [claude/sweet-dirac-7wcg8q, main, master]
     paths:
       - index.html
+      - apps/**
+      - shared/**
       - fonts/**
-      - vendor/**
       - android-assets/**
       - tools/**
       - package.json
@@ -22,6 +23,35 @@ permissions:
 jobs:
   apk:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: tournee
+            title: La Tournée
+            file: La-Tournee
+            tag: v1.0
+            assets: android-assets
+            bg: '#10261E'
+            latest: true
+            about: Jeux de soirée sur un seul téléphone, jouable sans connexion.
+          - app: veillee
+            title: La Veillée
+            file: La-Veillee
+            tag: veillee-v1.0
+            assets: apps/veillee/android-assets
+            bg: '#121A33'
+            latest: false
+            about: Loup-Garou et Téléphone dessiné, chacun sur son téléphone (connexion internet nécessaire).
+          - app: tapis
+            title: Le Tapis
+            file: Le-Tapis
+            tag: tapis-v1.0
+            assets: apps/tapis/android-assets
+            bg: '#1A1012'
+            latest: false
+            about: Poker et Blackjack entre amis avec des jetons fictifs, chacun sur son téléphone (connexion internet nécessaire, réservé aux majeurs).
+    name: ${{ matrix.title }}
     steps:
       - uses: actions/checkout@v5
 
@@ -35,41 +65,41 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Préparer le jeu (hors ligne)
-        run: |
-          npm ci
-          npm run www
+      - name: Préparer l'appli
+        run: tools/build-www.sh ${{ matrix.app }}
 
       - name: Générer le projet Android
+        working-directory: build/${{ matrix.app }}
         run: |
+          npm ci
           npx cap add android
-          tools/prepare-android.sh ${{ github.run_number }}
+          ../../tools/prepare-android.sh ${{ github.run_number }} ${{ matrix.assets }} '${{ matrix.bg }}'
           npx cap sync android
 
       - name: Clé de signature stable (pour pouvoir mettre l'appli à jour)
         run: mkdir -p ~/.android && cp android-assets/debug.keystore ~/.android/debug.keystore
 
       - name: Compiler l'APK
+        working-directory: build/${{ matrix.app }}/android
         run: |
-          cd android
           ./gradlew assembleDebug --no-daemon
-          cp app/build/outputs/apk/debug/app-debug.apk ../La-Tournee.apk
+          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/${{ matrix.file }}.apk"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: La-Tournee
-          path: La-Tournee.apk
+          name: ${{ matrix.file }}
+          path: ${{ matrix.file }}.apk
 
       - name: Publier la version
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: La Tournée 1.0.${{ github.run_number }}
+          tag_name: ${{ matrix.tag }}.${{ github.run_number }}
+          name: ${{ matrix.title }} 1.0.${{ github.run_number }}
           target_commitish: ${{ github.sha }}
-          make_latest: true
-          files: La-Tournee.apk
+          make_latest: ${{ matrix.latest }}
+          files: ${{ matrix.file }}.apk
           body: |
-            Appli Android de La Tournée, jouable sans connexion.
+            ${{ matrix.about }}
 
-            Sur le téléphone : télécharge **La-Tournee.apk**, ouvre-le et autorise l'installation depuis cette source si Android le demande.
-            Pour mettre à jour, installe simplement la nouvelle version par-dessus : les joueurs et réglages sont conservés.
+            Sur le téléphone : télécharge **${{ matrix.file }}.apk**, ouvre-le et autorise l'installation depuis cette source si Android le demande.
+            Pour mettre à jour, installe simplement la nouvelle version par-dessus : tes réglages sont conservés.

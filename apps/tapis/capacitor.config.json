@@ -1,0 +1,9 @@
+{
+  "appId": "fr.geordhann.letapis",
+  "appName": "Le Tapis",
+  "webDir": "www",
+  "backgroundColor": "#1a1012",
+  "android": {
+    "backgroundColor": "#1a1012"
+  }
+}
