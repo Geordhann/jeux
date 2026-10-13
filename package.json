@@ -4,7 +4,9 @@
   "private": true,
   "description": "La Tournée, La Veillée et Le Tapis : jeux de soirée (applis Android avec Capacitor)",
   "scripts": {
-    "build": "tools/build-www.sh"
+    "build": "tools/build-www.sh",
+    "test": "node tests/banc.js",
+    "telephones": "node tests/serveur.js"
   },
   "dependencies": {
     "@capacitor/android": "6.2.0",
@@ -12,6 +14,7 @@
     "@capacitor/core": "6.2.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "6.2.0"
+    "@capacitor/cli": "6.2.0",
+    "playwright": "1.56.1"
   }
 }

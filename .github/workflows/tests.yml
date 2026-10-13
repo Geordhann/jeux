@@ -1,0 +1,45 @@
+name: Banc d'essai des jeux en ligne
+
+# À chaque modification, des téléphones virtuels rejouent tous les jeux en ligne de bout en bout.
+# Le rapport s'affiche dans le résumé de l'exécution et peut être téléchargé.
+on:
+  push:
+    paths:
+      - apps/**
+      - shared/**
+      - tests/**
+      - tools/build-www.sh
+      - package.json
+      - package-lock.json
+      - .github/workflows/tests.yml
+  workflow_dispatch:
+
+jobs:
+  banc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer le navigateur des téléphones virtuels
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Lancer le banc d'essai
+        run: npm test
+
+      - name: Rapport
+        if: always()
+        run: cat tests/rapport.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rapport-banc-essai
+          path: tests/rapport.md

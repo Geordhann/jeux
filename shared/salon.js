@@ -6,10 +6,13 @@ const APP = window.APP;
 const LEGAL = { editor: 'Geordhann', contact: 'github.com/Geordhann/jeux', year: 2026 };
 
 /* ---------- Outils ---------- */
+// Téléphones virtuels (tests) : ...?local&phone=3 joue comme un téléphone à part, avec sa propre mémoire
+const PHONE = /[?&]local(=|&|$)/.test(location.search) && (new URLSearchParams(location.search).get('phone') || '').replace(/\W/g, '').slice(0, 8);
+const KEY = APP.id + (PHONE ? '.tel' + PHONE : '') + '.';
 const store = {
-  get(k, d) { try { const v = localStorage.getItem(APP.id + '.' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem(APP.id + '.' + k, JSON.stringify(v)); } catch (e) {} },
-  clear() { try { Object.keys(localStorage).filter(k => k.startsWith(APP.id + '.')).forEach(k => localStorage.removeItem(k)); } catch (e) {} },
+  get(k, d) { try { const v = localStorage.getItem(KEY + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) {} },
+  clear() { try { Object.keys(localStorage).filter(k => k.startsWith(KEY)).forEach(k => localStorage.removeItem(k)); } catch (e) {} },
 };
 const app = document.getElementById('app');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -162,7 +165,7 @@ function start() {
 const MP_PREFIX = 'gjeux-' + APP.id + '-v1-';
 const MP_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ'; // sans I, L, O : pas de confusion avec 1 et 0
 const MP_LOCAL = /[?&]local(=|&|$)/.test(location.search); // tests : partie entre onglets d'un même navigateur, sans réseau
-const MP_CID = (() => { // identifiant de ce téléphone : il retrouve sa place (et sa carte) après une coupure
+const MP_CID = PHONE ? 'tel' + PHONE : (() => { // identifiant de ce téléphone : il retrouve sa place (et sa carte) après une coupure
   const k = APP.id + '.cid', mk = () => Math.random().toString(36).slice(2, 12);
   try { const box = MP_LOCAL ? sessionStorage : localStorage; let c = box.getItem(k); if (!c) { c = mk(); box.setItem(k, c); } return c; } catch (e) { return mk(); }
 })();
@@ -256,7 +259,11 @@ function mpHost(game, opts = {}) {
 }
 function mpHostPeer() {
   const m = MP, peer = m.peer = mpNewPeer(MP_PREFIX + m.code);
-  peer.on('open', () => { if (MP !== m || m.peer !== peer) return; m.status = 'open'; m.tries = 0; mpSave(); mpRefresh(); });
+  peer.on('open', () => {
+    if (MP !== m || m.peer !== peer) return;
+    m.status = 'open'; m.tries = 0; mpSave(); mpRefresh();
+    if (MP_LOCAL) try { localStorage.setItem('virtuel.' + APP.id + '.code', m.code); } catch (e) {}
+  });
   peer.on('connection', conn => mpAccept(m, conn));
   peer.on('disconnected', () => setTimeout(() => { try { if (MP === m && peer.disconnected && !peer.destroyed) peer.reconnect(); } catch (e) {} }, 2000));
   peer.on('error', e => {
@@ -453,14 +460,16 @@ function mp() {
   const lost = m.role === 'guest' && m.status === 'lost' ? `<div class="banner">Connexion perdue, reconnexion en cours…</div>` : '';
   return mpTop(title, rules) + lost + mpQuitBox() + MPG[m.game].screen();
 }
+// Les téléphones virtuels retrouvent tout seuls le code de la dernière partie créée à côté
+function localCode() { try { return localStorage.getItem('virtuel.' + APP.id + '.code') || ''; } catch (e) { return ''; } }
 function mpjoin() {
   const last = store.get('mpLast', {}), host = S.mpForm !== 'join';
   return `${topbar(host ? mpGameName(S.mpForm) : 'Rejoindre une partie')}
   <form class="panel" id="joinForm">
     ${host ? '' : `<label class="hint" for="jCode">Code de la partie</label>
-    <input id="jCode" class="code-in" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" value="${esc(S.mpCode || '')}">`}
+    <input id="jCode" class="code-in" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" value="${esc(S.mpCode || (PHONE ? localCode() : ''))}">`}
     <label class="hint" for="jName">Ton prénom</label>
-    <input id="jName" maxlength="20" autocomplete="off" placeholder="Prénom" value="${esc(last.name || '')}">
+    <input id="jName" maxlength="20" autocomplete="off" placeholder="Prénom" value="${esc(last.name || (PHONE ? 'Joueur ' + PHONE : ''))}">
     <button class="btn big" type="submit">${host ? 'Créer la partie' : 'Rejoindre'}</button>
   </form>
   <p class="howto">Chacun joue sur son téléphone, avec une connexion internet. ${host ? 'Tu recevras un code à donner aux autres.' : "Demande le code à l'hôte de la partie."}</p>`;

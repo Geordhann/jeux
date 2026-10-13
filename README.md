@@ -19,6 +19,7 @@ shared/         socle commun de La Veillée et du Tapis : design (salon.css),
                 sons, musiques et ambiances (son.js), PeerJS
 fonts/          polices incluses (hors ligne)
 tools/          build-www.sh (prépare une appli), prepare-android.sh, make_icons.py
+tests/          banc d'essai automatique (banc.js) et téléphones virtuels (telephones.html)
 ```
 
 # La Tournée
@@ -94,6 +95,11 @@ Chacun installe l'APK de l'appli sur son téléphone. L'hôte crée la partie et
 Pour tester sur un ordinateur : `tools/build-www.sh veillee` (ou `tapis`), puis servir le dossier `build/veillee/www` (par exemple `python3 -m http.server`). Avec `index.html?local`, plusieurs onglets du même navigateur jouent ensemble sans réseau.
 
 Les mentions légales propres à chaque appli (public, alcool, absence d'argent réel pour Le Tapis…) se trouvent dans `window.APP.legal` de sa page ; l'éditeur et le contact, communs, dans la constante `LEGAL` de `shared/salon.js`.
+
+## Tester avant de jouer
+
+- **Banc d'essai automatique** : `npm test` (après `npm ci`). Des téléphones virtuels jouent chaque jeu en ligne du début à la fin : Loup-Garou complet (pouvoirs, maire, votes), charge maximale à 47 joueurs, Téléphone dessiné, Tu préfères, Action ou Vérité, Poker (aucun jeton perdu), Blackjack et Roulette (paiements vérifiés, 20 joueurs), reconnexion et sons. Il mesure les temps de réponse et écrit `tests/rapport.md`. `npm test -- lg rl` ne lance que certains essais. Il tourne aussi sur GitHub à chaque modification (onglet Actions, « Banc d'essai des jeux en ligne »).
+- **Téléphones virtuels** : `npm run telephones`, puis ouvre l'adresse affichée (http://localhost:8080). Jusqu'à 8 téléphones côte à côte, reliés sans internet : le téléphone 1 crée la partie, les autres la rejoignent (code et prénom déjà remplis), « ⟳ » redémarre un téléphone pour tester la reconnexion.
 
 ## Applis Android
 

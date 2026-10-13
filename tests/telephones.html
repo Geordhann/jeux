@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Téléphones virtuels</title>
+<style>
+/* Banc d'essai : plusieurs téléphones côte à côte, reliés entre eux sans réseau (mode ?local) */
+:root { color-scheme: dark; --bg: #0f1115; --panel: #181b22; --line: #2a2f3a; --fg: #e9edf3; --muted: #9aa3b2; --accent: #f1b95c; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 12px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+header h1 { font-size: 1.05rem; margin: 0 8px 0 0; }
+header label { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+select, button { font: inherit; color: var(--fg); background: #222733; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+button { cursor: pointer; }
+button.main { background: var(--accent); color: #1a1408; border-color: var(--accent); font-weight: 700; }
+.help { flex-basis: 100%; color: var(--muted); font-size: .85rem; margin: 0; }
+main { display: flex; flex-wrap: wrap; gap: 16px; padding: 16px; justify-content: center; }
+.phone { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.phone .bar { display: flex; gap: 6px; align-items: center; font-size: .82rem; color: var(--muted); }
+.phone .bar b { color: var(--fg); }
+.screen { width: calc(390px * var(--k)); height: calc(800px * var(--k)); border-radius: 26px; overflow: hidden; border: 6px solid #2b2f38; box-shadow: 0 10px 30px rgba(0,0,0,.5); background: #000; }
+.screen iframe { width: 390px; height: 800px; border: 0; transform: scale(var(--k)); transform-origin: 0 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📱 Téléphones virtuels</h1>
+  <label>Appli <select id="app"><option value="veillee">La Veillée</option><option value="tapis">Le Tapis</option></select></label>
+  <label>Téléphones <select id="n"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>8</option></select></label>
+  <label>Taille <select id="k"><option value=".5">Petite</option><option value=".62" selected>Moyenne</option><option value=".8">Grande</option><option value="1">Réelle</option></select></label>
+  <button class="main" id="go">Allumer les téléphones</button>
+  <p class="help">Le téléphone 1 crée la partie ; sur les autres, « Rejoindre une partie » : le code et le prénom sont déjà remplis. « ⟳ » redémarre un téléphone pour tester la reconnexion. Tout se passe dans ce navigateur, sans internet.</p>
+</header>
+<main id="phones"></main>
+<script>
+// Où trouver les applis : à côté de cette page (base=…), sinon dans build/ (npm run telephones)
+const q = new URLSearchParams(location.search);
+const base = q.get('base') || '../build/{app}/www/';
+const $ = id => document.getElementById(id);
+if (q.get('app')) $('app').value = q.get('app');
+if (q.get('n')) $('n').value = q.get('n');
+function boot() {
+  const app = $('app').value, n = +$('n').value, k = $('k').value;
+  // Chaque séance repart de zéro : on oublie le code et les parties des téléphones virtuels précédents
+  try { Object.keys(localStorage).filter(x => x.startsWith('virtuel.') || /\.tel\d+\./.test(x)).forEach(x => localStorage.removeItem(x)); } catch (e) {}
+  $('phones').innerHTML = '';
+  for (let i = 1; i <= n; i++) {
+    const src = base.replace('{app}', app) + 'index.html?local&phone=' + i;
+    const d = document.createElement('div');
+    d.className = 'phone'; d.style.setProperty('--k', k);
+    d.innerHTML = `<div class="bar"><b>Téléphone ${i}</b>${i === 1 ? ' · crée la partie' : ''} <button title="Redémarrer ce téléphone" aria-label="Redémarrer le téléphone ${i}">⟳</button></div>
+      <div class="screen"><iframe title="Téléphone ${i}" src="${src}" allow="autoplay; screen-wake-lock"></iframe></div>`;
+    d.querySelector('button').onclick = () => { const f = d.querySelector('iframe'); f.src = f.src; };
+    $('phones').append(d);
+  }
+}
+$('go').onclick = boot;
+$('k').onchange = () => document.querySelectorAll('.phone').forEach(p => p.style.setProperty('--k', $('k').value));
+boot();
+</script>
+</body>
+</html>
