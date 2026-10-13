@@ -17,29 +17,19 @@ const rand = n => Math.floor(Math.random() * n);
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 const buzz = p => { try { navigator.vibrate && navigator.vibrate(p); } catch (e) {} };
-let toastTimer, audioCtx = null;
+let toastTimer;
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.hidden = false;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, Math.max(2200, msg.length * 70));
 }
-function ring() {
-  try {
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    [0, .35, .7].forEach(d => {
-      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o.frequency.value = 880; o.connect(g); g.connect(audioCtx.destination);
-      g.gain.setValueAtTime(.25, audioCtx.currentTime + d); g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + d + .3);
-      o.start(audioCtx.currentTime + d); o.stop(audioCtx.currentTime + d + .3);
-    });
-  } catch (e) {}
-  buzz([300, 120, 300]);
-}
+const ring = () => buzz([300, 120, 300]); // les sons eux-mêmes viennent de son.js
 
 /* ---------- État et écrans de base ---------- */
 const S = { screen: 'home', intro: true, info: null, confirm: null, adult: store.get('adult', false), mpForm: null, mpCode: '' };
 const actions = {}, SCREENS = {}, MPG = {};
-const topbar = (title, rules) => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button><h2>${title}</h2>${rules ? `<button class="info" data-a="info" data-v="${rules}" aria-label="Règles du jeu">i</button>` : ''}</div>`;
+const rulesBtn = id => `<button class="info" data-a="info" data-v="${id}" aria-label="Règles du jeu">?</button>`;
+const topbar = (title, rules) => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button><h2>${title}</h2>${rules ? rulesBtn(rules) : ''}</div>`;
 const cardIdx = letter => `<span class="idx tl"><b>${letter}</b><i></i></span><span class="idx br"><b>${letter}</b><i></i></span>`;
 const logo = cls => `<h1 class="logo ${cls}">${APP.logo[0]} <span>${APP.logo[1]}</span></h1>`;
 
@@ -61,13 +51,13 @@ function home() {
     <div class="row"><button class="btn red" data-a="mp-resume">Reprendre</button><button class="btn ghost" data-a="mp-forget" style="color:var(--ink);border-color:var(--ink)">Oublier</button></div></div>` : ''}
   <h3 class="sec-title"><span>Créer une partie</span><span>chacun son téléphone</span></h3>
   <section class="games">
-    ${APP.games.map(g => `<button class="game" data-a="mp-new" data-v="${g.id}">
+    ${APP.games.map(g => `<div class="game-row" style="--tile:${g.color || 'var(--gold)'}"><button class="game" data-a="mp-new" data-v="${g.id}">
       <span class="suit emo" aria-hidden="true">${g.icon}</span>
-      <span><b>${g.name}</b><small>${g.desc}</small></span>
-      <span class="go" aria-hidden="true">›</span></button>`).join('')}
+      <span><b>${g.name}</b><small>${g.desc}</small><small class="players">👥 ${g.players}</small></span>
+      <span class="go" aria-hidden="true">›</span></button>${rulesBtn(g.id)}</div>`).join('')}
   </section>
   <button class="btn big" data-a="mp-joinform">Rejoindre une partie</button>
-  <p class="hint">Connexion internet nécessaire. Celui qui crée la partie donne un code à 4 lettres aux autres.</p>
+  <p class="hint">Connexion internet nécessaire. Celui qui crée la partie donne un code à 4 lettres aux autres. Touche « ? » pour lire les règles, et le bouton en bas à droite pour régler les sons.</p>
   ${APP.homeNote ? `<p class="rule">${APP.homeNote}</p>` : ''}
   <footer class="foot"><button class="link" data-a="open" data-v="legal">Mentions légales</button><span>${LEGAL.year} © ${APP.name}. Tous droits réservés.</span></footer>`;
 }
@@ -91,6 +81,7 @@ function legal() {
     <p>Le jeu en ligne dépend de la connexion internet des joueurs et de services tiers gratuits (mise en relation). L'Éditeur ne peut être tenu responsable de l'usage fait de l'application, ni des éventuelles erreurs, coupures ou indisponibilités.</p>`)}
   ${sec('Propriété intellectuelle', `<p>Les textes, le design et le code ${APP.of} sont la propriété de l'Éditeur, sauf mention contraire, et ne peuvent être reproduits sans autorisation préalable. Les dessins et textes créés pendant une partie appartiennent à leurs auteurs.</p>
     ${L.ip}
+    <p>La musique, les ambiances et les bruitages sont composés en direct par l'application (synthèse sonore) : ce sont des créations originales, sans morceau ni enregistrement d'œuvre tierce.</p>
     <p>Polices Bagel Fat One, Figtree et Fraunces : licence SIL Open Font License 1.1. Application Android construite avec Capacitor (Ionic), licence MIT. Connexion entre téléphones : PeerJS, licence MIT.</p>`)}
   ${sec('Jeu en ligne et données personnelles', `<p>${APP.name} ne collecte aucune donnée personnelle pour l'Éditeur : pas de compte, pas de cookie, pas de publicité, pas de statistiques.</p>
     <p>Pendant une partie, les téléphones se connectent directement entre eux (WebRTC, connexion chiffrée). Le prénom que tu choisis et les actions de jeu${L.dataExtra || ''} circulent uniquement entre les téléphones de la partie. L'Éditeur ne les reçoit pas et ne les conserve pas.</p>
@@ -116,11 +107,13 @@ function render(scroll = true) {
   if ((scroll || step) && key !== lastScreen) window.scrollTo(0, 0);
   lastScreen = key;
   if (s === 'mp' && !S.intro && !S.info) mpAfter();
+  if (APP.decor) APP.decor();
+  if (typeof sonUpdate === 'function') sonUpdate();
 }
 Object.assign(actions, {
   home() { S.info = null; S.confirm = null; S.screen = 'home'; render(); },
-  'intro-go'() { if (!S.intro) return; S.intro = false; render(); },
-  'adult-ok'() { S.adult = true; store.set('adult', true); S.intro = false; render(); },
+  'intro-go'() { if (!S.intro) return; S.intro = false; render(); sfx('reveal'); },
+  'adult-ok'() { S.adult = true; store.set('adult', true); S.intro = false; render(); sfx('reveal'); },
   info(v) { S.info = v; render(); },
   'info-close'() { S.info = null; render(); },
   open(v) { S.screen = v; S.confirm = null; render(); },
@@ -407,8 +400,27 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* --- Écrans communs --- */
-const mpTop = (title, rules) => `<div class="topbar"><button class="back" data-a="mp-quit" aria-label="Quitter la partie">←</button><h2>${title}</h2>${rules ? `<button class="info" data-a="info" data-v="${rules}" aria-label="Règles du jeu">i</button>` : ''}</div>`;
+function mpCount() {
+  const list = MP && (MP.role === 'host' ? MP.H && MP.H.players : MP.view && MP.view.players);
+  return list ? list.filter(p => p.on !== false).length : 0;
+}
+const mpTop = (title, rules) => {
+  const n = mpCount();
+  return `<div class="topbar"><button class="back" data-a="mp-quit" aria-label="Quitter la partie">←</button><h2>${title}</h2>
+    ${n ? `<span class="pcount" aria-label="${n} joueur${n > 1 ? 's' : ''} connecté${n > 1 ? 's' : ''}">👥 ${n}<small>/20</small></span>` : ''}${rules ? rulesBtn(rules) : ''}</div>`;
+};
+function mpSound() {
+  const g = MP && MP.game && MPG[MP.game];
+  const v = g && (MP.role === 'host' ? g.view(MP_CID) : MP.view);
+  if (!v) return;
+  const prev = MP.lastView;
+  MP.lastView = v;
+  if (!prev || typeof sfx !== 'function') return;
+  if (v.step === 'lobby' && v.players.length > prev.players.length) sfx('join');
+  if (g.sound) try { g.sound(prev, v); } catch (e) {}
+}
 function mpRefresh() {
+  mpSound();
   if (S.screen !== 'mp' || S.info || S.intro) return;
   const g = MP.game && MPG[MP.game];
   if (g && g.patch && g.patch()) return; // mise à jour légère, sans effacer ce que le joueur est en train de faire

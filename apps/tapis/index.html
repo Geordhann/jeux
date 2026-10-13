@@ -64,6 +64,11 @@
 .jeton.j5 { background: #c93a3f; }
 .jeton[aria-pressed="true"] { outline: 3px solid var(--gold); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .rl-wheel { transition: none !important; } }
+/* Salle de jeu : moquette bordeaux à losanges dorés, néons */
+body { background-color: var(--felt); background-image: radial-gradient(120% 70% at 50% 0%, rgba(231,181,82,.18), transparent 60%), repeating-linear-gradient(45deg, rgba(231,181,82,.06) 0 2px, transparent 2px 26px), repeating-linear-gradient(-45deg, rgba(231,181,82,.06) 0 2px, transparent 2px 26px); background-attachment: fixed; }
+.logo { text-shadow: 0 0 18px rgba(231,181,82,.55); }
+.felt-table, .rl-board { box-shadow: inset 0 0 30px rgba(0,0,0,.45), 0 0 0 2px rgba(231,181,82,.5), 0 12px 30px rgba(0,0,0,.45); }
+.banner.gold { box-shadow: 0 0 20px rgba(231,181,82,.45); }
 </style>
 </head>
 <body>
@@ -79,9 +84,9 @@ window.APP = {
   adultNote: 'Réservé aux majeurs. Jetons fictifs : aucun argent réel, rien à gagner.',
   homeNote: '<strong>Jetons fictifs :</strong> 1 000 par joueur, qui ne s\'achètent pas, ne se gagnent pas et ne s\'échangent contre rien. On joue pour la gloire.',
   games: [
-    { id: 'pk', name: 'Poker', icon: '♠️', desc: "Texas Hold'em : tes cartes sur ton téléphone, l'appli gère pot, blindes et abattage." },
-    { id: 'bj', name: 'Blackjack', icon: '🃏', desc: "Tout le monde contre la banque, tenue par l'appli. Gages de soirée en option." },
-    { id: 'rl', name: 'Roulette', icon: '🎡', desc: "Pose tes jetons sur le tapis depuis ton téléphone, la bille tourne pour tout le monde." },
+    { id: 'pk', name: 'Poker', icon: '♠️', color: '#57c08a', players: '2 à 20 joueurs', desc: "Texas Hold'em : tes cartes sur ton téléphone, l'appli gère pot, blindes et abattage." },
+    { id: 'bj', name: 'Blackjack', icon: '🃏', color: '#ef6f6f', players: '1 à 20 joueurs', desc: "Tout le monde contre la banque, tenue par l'appli. Gages de soirée en option." },
+    { id: 'rl', name: 'Roulette', icon: '🎡', color: '#f2c45a', players: '1 à 20 joueurs', desc: "Pose tes jetons sur le tapis depuis ton téléphone, la bille tourne pour tout le monde." },
   ],
   legal: {
     what: 'est un jeu de casino entre amis en ligne (Poker, Blackjack, Roulette) sans argent',
@@ -98,6 +103,7 @@ window.APP = {
 };
 </script>
 <script src="shared/salon.js"></script>
+<script src="shared/son.js"></script>
 <script>
 /* ---------- Cartes et jetons communs ---------- */
 // Jetons fictifs uniquement : aucun argent réel, aucune mise réelle, aucun achat possible.
@@ -509,14 +515,14 @@ Object.assign(actions, {
   'bj-open'() { MP.H.step = 'bet'; mpPush(); },
   'bj-add'(k) {
     const v = MP.role === 'host' ? MPG.bj.view(MP_CID) : MP.view, p = v.players.find(x => x.me);
-    MP.bjBet = Math.min(p.chips, (MP.bjBet == null ? 0 : MP.bjBet) + +k); render(false);
+    MP.bjBet = Math.min(p.chips, (MP.bjBet == null ? 0 : MP.bjBet) + +k); sfx('chip'); render(false);
   },
   'bj-clear'() { MP.bjBet = 0; render(false); },
-  'bj-all'() { const v = MP.role === 'host' ? MPG.bj.view(MP_CID) : MP.view; MP.bjBet = v.players.find(x => x.me).chips; render(false); },
-  'bj-bet'(v) { mpSend({ t: 'bj-bet', v: +v }); },
+  'bj-all'() { sfx('chips'); const v = MP.role === 'host' ? MPG.bj.view(MP_CID) : MP.view; MP.bjBet = v.players.find(x => x.me).chips; render(false); },
+  'bj-bet'(v) { sfx('chips'); mpSend({ t: 'bj-bet', v: +v }); },
   'bj-unbet'() { mpSend({ t: 'bj-unbet' }); },
   'bj-rebuy'() { mpSend({ t: 'bj-rebuy' }); },
-  'bj-act'(a) { mpSend({ t: 'bj-act', a }); },
+  'bj-act'(a) { if (a === 'double') sfx('chips'); mpSend({ t: 'bj-act', a }); },
   'bj-deal'() { bjDeal(); },
   'bj-skip'() { const p = bjCur(); if (p) bjMove(p, 'stand'); },
   'bj-next'() {
@@ -529,8 +535,8 @@ Object.assign(actions, {
   'pk-start'() { pkStart(); },
   'pk-next'() { pkStart(); },
   'pk-hide'() { MP.pkHide = !MP.pkHide; render(false); },
-  'pk-to'(x) { MP.pkTo = +x; render(false); },
-  'pk-act'(a) { mpSend(a === 'raise' ? { t: 'pk-act', a, to: MP.pkTo } : { t: 'pk-act', a }); },
+  'pk-to'(x) { MP.pkTo = +x; sfx('chip'); render(false); },
+  'pk-act'(a) { if (a === 'fold') sfx('flip'); else if (a === 'check') sfx('tick'); mpSend(a === 'raise' ? { t: 'pk-act', a, to: MP.pkTo } : { t: 'pk-act', a }); },
   'pk-rebuy'() { mpSend({ t: 'pk-rebuy' }); },
   'pk-skip'() { const h = MP.H.hand, c = h.seats[h.cur]; pkAct(c, { a: (h.bet[c] || 0) >= h.curBet ? 'check' : 'fold' }); },
 });
@@ -710,7 +716,7 @@ Object.assign(actions, {
     const v = MP.role === 'host' ? MPG.rl.view(MP_CID) : MP.view, me = v.players.find(p => p.me), chip = MP.rlChip || 10;
     const d = MP.rlDraft = MP.rlDraft || {};
     if (rlSum(d) + chip > me.chips) { toast('Pas assez de jetons pour cette mise.'); return; }
-    d[k] = (d[k] || 0) + chip; render(false);
+    d[k] = (d[k] || 0) + chip; sfx('chip'); render(false);
   },
   'rl-clear'() { MP.rlDraft = null; render(false); },
   'rl-again'() {
@@ -718,7 +724,7 @@ Object.assign(actions, {
     if (rlSum(v.last) > me.chips) { toast('Pas assez de jetons pour rejouer les mêmes mises.'); return; }
     MP.rlDraft = { ...v.last }; render(false);
   },
-  'rl-bet'() { if (MP.rlDraft) mpSend({ t: 'rl-bet', bets: MP.rlDraft }); },
+  'rl-bet'() { if (MP.rlDraft) sfx('chips'); if (MP.rlDraft) mpSend({ t: 'rl-bet', bets: MP.rlDraft }); },
   'rl-unbet'() { mpSend({ t: 'rl-unbet' }); },
   'rl-rebuy'() { mpSend({ t: 'rl-rebuy' }); },
   'rl-spin'() { rlSpin(); },
@@ -729,6 +735,58 @@ Object.assign(actions, {
     mpPush();
   },
 });
+
+/* ---------- Musique : jazz lounge de salle de jeu ---------- */
+// Grille ii-V-I-VI en do : contrebasse qui marche, piano électrique, balais et vibraphone
+const TP_PROG = [[50, [3, 7, 10, 14]], [43, [4, 10, 14, 16]], [48, [4, 7, 11, 14]], [45, [4, 10, 13, 16]]];
+const C_MAJ = [0, 2, 4, 5, 7, 9, 11];
+Object.assign(APP, {
+  tuneLabel: 'Jazz lounge de salle de jeu',
+  sfxLabel: 'Cartes, jetons, roulette, gains…',
+  tunes: {
+    lounge: { bpm: 94, div: 2, play(step, t, sd) {
+      const s = step % 8, barN = Math.floor(step / 8), bar = barN % 4, [root, iv] = TP_PROG[bar], next = TP_PROG[(bar + 1) % 4][0];
+      const sw = s % 2 ? sd * .34 : 0, at = t + sw; // swing : les croches du contretemps sont retardées
+      if (s % 2 === 0) { // contrebasse : une noire par temps, et une note d'approche vers l'accord suivant
+        const walk = [root, root + [7, 3, 4][rand(3)], root + [12, 10, 7][rand(3)], next + (rand(2) ? 1 : -1)][s / 2];
+        INST.bass(at, walk - 12, sd * 1.7, .19);
+        INST.ride(at, s === 2 || s === 6 ? .04 : .025);
+      } else if (rand(3) === 0) INST.ride(at, .018);
+      if (s === 2 || s === 6) INST.brush(at, .22, .028);
+      if ((s === 3 && rand(2)) || (s === 6 && rand(3) === 0) || (s === 0 && bar === 0)) iv.forEach((i, k) => INST.ep(at + k * .008, root + 12 + i, sd * 2.2, .03));
+      if (barN % 8 < 6 && Math.random() < .22) { // quelques notes de vibraphone
+        const pcs = C_MAJ.concat(iv.map(i => (root + i) % 12));
+        let m = 72 + rand(14);
+        while (!pcs.includes(m % 12)) m++;
+        INST.vibe(at, m, sd * (1 + rand(3)), .035);
+      }
+    } },
+  },
+  tune: () => 'lounge',
+});
+const tpMe = v => v.players.find(p => p.me) || {};
+const readyCount = v => v.players.filter(p => p.ready).length;
+MPG.pk.sound = (prev, v) => {
+  if (v.step === 'hand' && prev.step !== 'hand') { sfx('shuffle'); [600, 800].forEach(d => setTimeout(() => sfx('deal'), d)); return; }
+  if (v.board && prev.board && v.board.length > prev.board.length) for (let i = 0; i < v.board.length - prev.board.length; i++) setTimeout(() => sfx('flip'), i * 160);
+  if (v.step === 'hand' && v.pot > prev.pot) sfx('chips');
+  if (v.me && v.me.turn && !(prev.me && prev.me.turn)) setTimeout(() => sfx('ping'), 250);
+  if (v.step === 'show' && prev.step !== 'show' && v.res) sfx(v.res.lines.some(l => l.name === tpMe(v).name) ? 'win' : 'flip');
+};
+MPG.bj.sound = (prev, v) => {
+  const me = tpMe(v), was = tpMe(prev);
+  if (v.step === 'bet' && readyCount(v) > readyCount(prev)) sfx('chip');
+  if (['play', 'dealer', 'result'].includes(v.step) && prev.step === 'bet') { [0, 180, 360, 540].forEach(d => setTimeout(() => sfx('deal'), d)); return; }
+  if (v.dealer.cards.filter(Boolean).length > prev.dealer.cards.filter(Boolean).length) sfx('flip');
+  if (me.hand && was.hand && me.hand.length > was.hand.length) sfx('deal');
+  if (v.step === 'play' && v.turn === me.name && prev.turn !== me.name) setTimeout(() => sfx('ping'), 300);
+  if (v.step === 'result' && prev.step !== 'result' && me.inHand) setTimeout(() => sfx(['win', 'bj'].includes(me.res) ? 'win' : me.res === 'lose' ? 'lose' : 'chip'), 400);
+};
+MPG.rl.sound = (prev, v) => {
+  if (v.step === 'bet' && readyCount(v) > readyCount(prev)) sfx('chip');
+  if (v.step === 'spin' && prev.step !== 'spin' && v.spin) sfx('roulette', v.spin.left);
+  if (v.step === 'result' && prev.step !== 'result') { const me = tpMe(v); if (me.stake) sfx(me.gain > 0 ? 'win' : me.gain < 0 ? 'lose' : 'chip'); }
+};
 
 start();
 </script>

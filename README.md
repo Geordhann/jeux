@@ -15,7 +15,8 @@ index.html, android-assets/, capacitor.config.json   La Tournée
 apps/veillee/   La Veillée (page, config Capacitor, icônes)
 apps/tapis/     Le Tapis (page, config Capacitor, icônes)
 shared/         socle commun de La Veillée et du Tapis : design (salon.css),
-                accueil, règles, mentions légales et parties en ligne (salon.js), PeerJS
+                accueil, règles, mentions légales et parties en ligne (salon.js),
+                sons, musiques et ambiances (son.js), PeerJS
 fonts/          polices incluses (hors ligne)
 tools/          build-www.sh (prépare une appli), prepare-android.sh, make_icons.py
 ```
@@ -70,6 +71,13 @@ Poker, Blackjack et Roulette entre amis, chacun sur son téléphone, avec 1 000 
 - **Poker** (Texas Hold'em sans limite, 2 à 10 joueurs) : deux cartes secrètes sur ton téléphone, le tapis au centre (flop, turn, river), blindes au choix (5/10, 10/20, 25/50). L'appli gère le bouton, les relances, les tapis, les pots partagés et l'abattage.
 - **Blackjack** : tout le monde contre la banque tenue par l'appli (sabot de 6 jeux, la banque tire jusqu'à 17, blackjack payé 3 pour 2, doubler possible). Gages de soirée au choix : aucun, gorgées ou gages.
 - **Roulette** (européenne, un seul zéro) : chacun pose ses jetons sur le tapis de son téléphone (pleins, rouge/noir, pair/impair, manque/passe, douzaines, colonnes), puis la bille est lancée et la roue tourne en même temps sur tous les téléphones. Historique des derniers numéros, « rejouer mes mises », gages en option.
+
+## Sons et ambiances (La Veillée et Le Tapis)
+Tout est composé en direct par l'appli (synthèse Web Audio, `shared/son.js`) : créations originales, libres de droits, rien à télécharger. Le bouton en bas à droite règle la musique, l'ambiance, les bruitages et le volume.
+- **La Veillée** : valse de guinguette (accordéon et guitare). Pendant le Loup-Garou, ambiance de village provençal en été : la nuit, vent léger, ruisseau au loin, grillons, crapaud et chouette ; le jour, cigales, oiseaux et brise. La cloche de l'église sonne au réveil du village, la chouette à la tombée de la nuit. Le décor (village sur sa colline, cyprès, lavande, ruisseau, étoiles, lucioles) passe du soir à la nuit et au jour.
+- **Le Tapis** : jazz lounge de salle de jeu. Bruit de la roulette (la bille roule, ralentit, rebondit et se pose), cartes distribuées, jetons, gains et pertes.
+- En partie, la musique et l'ambiance jouent sur le téléphone de l'hôte (pour ne pas avoir 20 musiques décalées) ; chaque invité peut les activer chez lui. Les bruitages jouent sur tous les téléphones.
+- Le « ? » de chaque jeu (accueil et en partie) ouvre ses règles ; le nombre de joueurs connectés s'affiche en haut pendant la partie.
 
 ## Fonctionnement en ligne (La Veillée et Le Tapis)
 Chacun installe l'APK de l'appli sur son téléphone. L'hôte crée la partie et donne le code, les autres le tapent : **jusqu'à 20 téléphones par partie**. Connexion internet nécessaire. Le téléphone de l'hôte sert de serveur ; les autres s'y connectent en direct (WebRTC via [PeerJS](https://peerjs.com), inclus dans `shared/`, avec le service gratuit de mise en relation de PeerJS). Un téléphone qui se met en veille se reconnecte tout seul et retrouve sa place ; si l'hôte ferme l'appli, il peut reprendre la partie depuis l'accueil.
