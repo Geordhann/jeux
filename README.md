@@ -62,7 +62,7 @@ Le niveau Sans limite demande une confirmation (tout le monde majeur et d'accord
 
 # La Veillée
 
-Une veillée au cœur de la forêt : décor de village de nuit dans sa clairière (sapins, lune, brume, lucioles, fenêtres allumées), qui passe à l'aube pendant le jour du Loup-Garou. Celui qui crée la partie reçoit un **code à 4 lettres** ; les autres touchent **Rejoindre une partie** et tapent ce code (ou ouvrent un lien `index.html?code=ABCD`).
+Une veillée au cœur de la forêt : décor de village de nuit dans sa clairière (sapins, lune, brume, lucioles, fenêtres allumées), qui passe à l'aube pendant le jour du Loup-Garou. Celui qui crée la partie reçoit un **code à 4 lettres** et un **QR code** ; les autres scannent le QR code avec l'appareil photo (ça ouvre la version web, iPhone compris, avec le code rempli), ou touchent **Rejoindre une partie** puis « Scanner le QR code », ou tapent le code (lien direct : `index.html?code=ABCD`). Chacun peut ajouter **sa photo** en rejoignant : elle s'affiche à côté de son prénom chez tout le monde (et en grand quand c'est son tour à Action ou Vérité).
 
 - **Tu préfères** (début de soirée) : la question s'affiche sur tous les téléphones, chacun vote en secret, les résultats tombent avec les noms, la minorité prend un gage. Niveaux Soft et Piquant.
 - **Loup-Garou, version ultime** : tous les personnages des boîtes en cartes (jeu de base, Nouvelle Lune, Personnages, Le Village : 47 cartes), de 4 à **47 joueurs**, plus le meneur.
@@ -73,19 +73,23 @@ Une veillée au cœur de la forêt : décor de village de nuit dans sa clairièr
   - **Le maire** est élu par vote : il porte une écharpe tricolore bleu-blanc-rouge sur tous les écrans, sa voix compte double et, s'il meurt, il désigne son successeur.
   - Votes secrets sur les téléphones (corbeau, égalité et bouc émissaire, second vote du juge bègue, idiot gracié), victoires de chaque camp détectées (village, loups, amoureux, joueur de flûte, loup blanc, ange, sectaire, pyromane).
 - **Téléphone dessiné** (3 joueurs minimum) : chacun écrit une phrase, le voisin la dessine, le suivant devine le dessin, et ainsi de suite. À la fin, l'hôte fait défiler les albums sur tous les téléphones. Chrono au choix.
-- **Action ou Vérité** (fin de soirée) : chacun son tour, le joueur choisit sur son téléphone, la carte s'affiche chez tout le monde, chacun réagit (😂 🔥 😱 👏), joker = un gage. Niveaux Soft et Piquant, cartes reprises de La Tournée (qui garde sa version sur un seul téléphone).
+- **Action ou Vérité** (fin de soirée) : chacun son tour, le joueur choisit sur son téléphone, la carte s'affiche chez tout le monde, chacun réagit (rire, feu, peur, bravo), joker = un gage. Niveaux Soft et Piquant, cartes reprises de La Tournée (qui garde sa version sur un seul téléphone).
 
 # Le Tapis
 
-Poker, Blackjack et Roulette entre amis, chacun sur son téléphone, avec 1 000 jetons **fictifs** par joueur (recave possible) : jamais d'argent réel. Réservé aux majeurs (confirmation au premier lancement). On peut rejoindre la table entre deux mains.
+Poker, Blackjack, Roulette et Machine à sous entre amis, chacun sur son téléphone, avec 1 000 jetons **fictifs** par joueur (recave possible) : jamais d'argent réel. Réservé aux majeurs (confirmation au premier lancement). On peut rejoindre la table entre deux mains.
 - **Poker** (Texas Hold'em sans limite, 2 à 10 joueurs) : deux cartes secrètes sur ton téléphone, le tapis au centre (flop, turn, river), blindes au choix (5/10, 10/20, 25/50). L'appli gère le bouton, les relances, les tapis, les pots partagés et l'abattage.
 - **Blackjack** : tout le monde contre la banque tenue par l'appli (sabot de 6 jeux, la banque tire jusqu'à 17, blackjack payé 3 pour 2, doubler possible). Gages de soirée au choix : aucun, gorgées ou gages.
 - **Roulette** (européenne, un seul zéro) : chacun pose ses jetons sur le tapis de son téléphone (pleins, rouge/noir, pair/impair, manque/passe, douzaines, colonnes), puis la bille est lancée et la roue tourne en même temps sur tous les téléphones. Historique des derniers numéros, « rejouer mes mises », gages en option.
+- **Machine à sous** : chacun sa machine néon sur son téléphone (mise de 5 à 50, levier, trois rouleaux qui s'arrêtent l'un après l'autre). Trois pareils de 5 à 100 fois la mise, deux cerises 2 fois, trois 7 = **jackpot commun** qui grossit à chaque tirage de n'importe qui et s'annonce sur tous les téléphones. Classement en direct, mode **tournoi** (10, 20 ou 30 tirages chacun, podium à la fin) et gages en option.
+
+## Icônes
+Toutes les icônes sont dessinées pour les applis (SVG dans `shared/icones.js`, `shared/ic-veillee.js` et `shared/ic-tapis.js`), à la place des émojis : style enluminure médiévale pour La Veillée (les 33 personnages du Loup-Garou en médaillons, teintés selon leur camp), néon années 80 pour Le Tapis. Dans un texte, `[[loup]]` devient l'icône à l'affichage. Planche complète : [`docs/icones.png`](docs/icones.png).
 
 ## Sons et ambiances (La Veillée et Le Tapis)
 Tout est composé en direct par l'appli (synthèse Web Audio, `shared/son.js`) : créations originales, libres de droits, rien à télécharger. Le bouton en bas à droite règle la musique, l'ambiance, les bruitages et le volume.
 - **La Veillée** : musique au choix, feu de camp (guitare et flûte) ou guinguette (accordéon). Pendant le Loup-Garou, ambiance de forêt : la nuit, vent dans les arbres, ruisseau, grillons, crapaud, chouette et loups qui hurlent au loin ; le jour, cigales, oiseaux et brise. La cloche sonne au réveil du village, la chouette à la tombée de la nuit, les loups hurlent quand le meneur les appelle, une fanfare salue le nouveau maire.
-- **Le Tapis** : couleurs de Las Vegas années 80 (nuit violette, néons rose et turquoise adoucis, or). Musique au choix : jazz lounge ou Vegas 80 (synthés et boîte à rythmes). Bruit de la roulette (la bille roule, ralentit, rebondit et se pose), cartes distribuées, jetons, gains et pertes.
+- **Le Tapis** : couleurs de Las Vegas années 80 (nuit violette, néons rose et turquoise adoucis, or). Musique au choix : jazz lounge ou Vegas 80 (synthés et boîte à rythmes). Bruit de la roulette (la bille roule, ralentit, rebondit et se pose), levier et rouleaux de la machine à sous, pluie de pièces du jackpot, cartes distribuées, jetons, gains et pertes.
 - En partie, la musique et l'ambiance jouent sur le téléphone de l'hôte (pour ne pas avoir 20 musiques décalées) ; chaque invité peut les activer chez lui. Les bruitages jouent sur tous les téléphones.
 - Le « ? » de chaque jeu (accueil et en partie) ouvre ses règles ; le nombre de joueurs connectés s'affiche en haut pendant la partie.
 
@@ -103,7 +107,7 @@ Les mentions légales propres à chaque appli (public, alcool, absence d'argent 
 
 ## Tester avant de jouer
 
-- **Banc d'essai automatique** : `npm test` (après `npm ci`). Des téléphones virtuels jouent chaque jeu en ligne du début à la fin : Loup-Garou complet (pouvoirs, maire, votes), charge maximale à 47 joueurs, Téléphone dessiné, Tu préfères, Action ou Vérité, Poker (aucun jeton perdu), Blackjack et Roulette (paiements vérifiés, 20 joueurs), reconnexion et sons. Il mesure les temps de réponse et écrit `tests/rapport.md`. `npm test -- lg rl` ne lance que certains essais. Il tourne aussi sur GitHub à chaque modification (onglet Actions, « Banc d'essai des jeux en ligne »).
+- **Banc d'essai automatique** : `npm test` (après `npm ci`). Des téléphones virtuels jouent chaque jeu en ligne du début à la fin : Loup-Garou complet (pouvoirs, maire, votes), charge maximale à 47 joueurs, Téléphone dessiné, Tu préfères, Action ou Vérité, Poker (aucun jeton perdu), Blackjack et Roulette (paiements vérifiés, 20 joueurs), Machine à sous (tournoi à 6, jackpot, taux de gain simulé sur un million de tirages), reconnexion et sons. Il mesure les temps de réponse et écrit `tests/rapport.md`. `npm test -- lg rl` ne lance que certains essais. Il tourne aussi sur GitHub à chaque modification (onglet Actions, « Banc d'essai des jeux en ligne »).
 - **Téléphones virtuels** : `npm run telephones`, puis ouvre l'adresse affichée (http://localhost:8080). Jusqu'à 8 téléphones côte à côte, reliés sans internet : le téléphone 1 crée la partie, les autres la rejoignent (code et prénom déjà remplis), « ⟳ » redémarre un téléphone pour tester la reconnexion.
 
 ## Applis Android

@@ -55,8 +55,8 @@ function home() {
   <h3 class="sec-title"><span>Créer une partie</span><span>chacun son téléphone</span></h3>
   <section class="games">
     ${APP.games.map(g => `<div class="game-row" style="--tile:${g.color || 'var(--gold)'}"><button class="game" data-a="mp-new" data-v="${g.id}">
-      <span class="suit emo" aria-hidden="true">${g.icon}</span>
-      <span>${g.when ? `<small class="when">${g.when}</small>` : ''}<b>${g.name}</b><small>${g.desc}</small><small class="players">👥 ${g.players}</small></span>
+      <span class="suit emo" aria-hidden="true">${ic(g.icon) || g.icon}</span>
+      <span>${g.when ? `<small class="when">${g.when}</small>` : ''}<b>${g.name}</b><small>${g.desc}</small><small class="players">${ic('groupe') || '👥'} ${g.players}</small></span>
       <span class="go" aria-hidden="true">›</span></button>${rulesBtn(g.id)}</div>`).join('')}
   </section>
   <button class="btn big" data-a="mp-joinform">Rejoindre une partie</button>
@@ -85,9 +85,10 @@ function legal() {
   ${sec('Propriété intellectuelle', `<p>Les textes, le design et le code ${APP.of} sont la propriété de l'Éditeur, sauf mention contraire, et ne peuvent être reproduits sans autorisation préalable. Les dessins et textes créés pendant une partie appartiennent à leurs auteurs.</p>
     ${L.ip}
     <p>La musique, les ambiances et les bruitages sont composés en direct par l'application (synthèse sonore) : ce sont des créations originales, sans morceau ni enregistrement d'œuvre tierce.</p>
-    <p>Polices Bagel Fat One, Figtree et Fraunces : licence SIL Open Font License 1.1. Application Android construite avec Capacitor (Ionic), licence MIT. Connexion entre téléphones : PeerJS, licence MIT.</p>`)}
+    <p>Polices Bagel Fat One, Figtree et Fraunces : licence SIL Open Font License 1.1. Application Android construite avec Capacitor (Ionic), licence MIT. Connexion entre téléphones : PeerJS, licence MIT. QR codes : QR Code Generator (Kazuhiko Arase), licence MIT, et jsQR (Cosmo Wolfe), licence Apache 2.0 ; « QR Code » est une marque déposée de DENSO WAVE. Icônes dessinées pour l'application.</p>`)}
   ${sec('Jeu en ligne et données personnelles', `<p>${APP.name} ne collecte aucune donnée personnelle pour l'Éditeur : pas de compte, pas de cookie, pas de publicité, pas de statistiques.</p>
     <p>Pendant une partie, les téléphones se connectent directement entre eux (WebRTC, connexion chiffrée). Le prénom que tu choisis et les actions de jeu${L.dataExtra || ''} circulent uniquement entre les téléphones de la partie. L'Éditeur ne les reçoit pas et ne les conserve pas.</p>
+    <p>Photo de joueur (facultative) : elle est réduite à une petite image sur ton téléphone, gardée seulement sur ce téléphone, et envoyée uniquement aux téléphones de la partie pour s'afficher à côté de ton prénom. Elle disparaît de leurs écrans quand la partie se termine. Tu peux la retirer à tout moment (✕ à côté de la photo). La caméra sert aussi à scanner le QR code d'une partie : l'image n'est ni enregistrée ni envoyée.</p>
     <p>Pour que les téléphones se trouvent, l'application utilise le service gratuit de mise en relation PeerJS (0.peerjs.com), qui voit l'adresse IP de chaque téléphone et un identifiant technique temporaire, mais pas le contenu de la partie. Si une connexion directe est impossible (certains réseaux mobiles), les échanges chiffrés passent par un serveur relais de PeerJS.</p>
     <p>Sur ton téléphone sont enregistrés : ton prénom, tes réglages et, si tu crées la partie, l'état de la partie en cours (6 heures au plus) pour pouvoir la reprendre. Dans la version web, les polices peuvent être chargées depuis Google Fonts, ce qui transmet ton adresse IP à Google.</p>
     <p>Tu peux tout effacer à tout moment avec le bouton ci-dessous, ou en désinstallant l'appli.</p>
@@ -102,7 +103,7 @@ Object.assign(SCREENS, { home, legal, mp, mpjoin });
 let lastScreen = null;
 function render(scroll = true) {
   const s = S.screen;
-  app.innerHTML = S.intro ? intro() : S.info ? rules() : SCREENS[s]();
+  app.innerHTML = icTok(S.intro ? intro() : S.info ? rules() : SCREENS[s]());
   document.body.classList.toggle('on-intro', S.intro);
   // En partie, chaque nouvelle étape (mises, tirage, résultats…) repart du haut de l'écran
   const step = s === 'mp' && MP ? (MP.role === 'host' ? MP.H.step : MP.view && MP.view.step) : '';
@@ -173,7 +174,7 @@ const MP_CID = PHONE ? 'tel' + PHONE : (() => { // identifiant de ce téléphone
 let MP = null, mpLock = null;
 
 const mpCode = () => Array.from({ length: 4 }, () => MP_CHARS[rand(MP_CHARS.length)]).join('');
-const mpCleanName = s => String(s || '').replace(/\s+/g, ' ').trim().slice(0, 20);
+const mpCleanName = s => String(s || '').replace(/[[\]]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
 const mpGameName = id => (APP.games.find(g => g.id === id) || {}).name || 'Partie en ligne';
 function mpLoadLib() {
   if (MP_LOCAL || window.Peer) return Promise.resolve();
@@ -266,7 +267,7 @@ const NET_ERR = "Impossible de joindre le serveur de parties. Vérifie ta connex
 function mpHost(game, opts = {}) {
   mpClose();
   const resume = opts.resume;
-  MP = { role: 'host', game, code: resume ? resume.code : mpCode(), status: 'connecting', conns: new Map(), H: resume ? resume.H : MPG[game].init(opts.name), resumed: !!resume, tries: 0 };
+  MP = { role: 'host', game, code: resume ? resume.code : mpCode(), status: 'connecting', conns: new Map(), photos: store.get('photo', '') ? { [MP_CID]: store.get('photo', '') } : {}, H: resume ? resume.H : MPG[game].init(opts.name), resumed: !!resume, tries: 0 };
   if (resume) { MP.H.players.forEach(p => { p.on = p.cid === MP_CID; }); MPG[game].resume && MPG[game].resume(); }
   S.screen = 'mp'; S.confirm = null; render();
   const m = MP;
@@ -324,6 +325,9 @@ function mpHostRecv(conn, d) {
     const old = MP.conns.get(cid);
     if (old && old !== conn) { old.cid = null; try { old.close(); } catch (e) {} }
     conn.cid = cid; MP.conns.set(cid, conn); p.on = true;
+    const ph = mpPhotoOk(d.photo) ? d.photo : '', changed = (MP.photos[cid] || '') !== ph;
+    if (ph) MP.photos[cid] = ph; else delete MP.photos[cid];
+    if (changed) mpPhotosSend(); else try { conn.send({ t: 'photos', m: mpPhotoMap() }); } catch (e) {}
     mpPush();
     return;
   }
@@ -360,7 +364,7 @@ function mpGuestConnect() {
   peer.on('open', () => {
     if (MP !== m || m.peer !== peer) return;
     const conn = m.conn = peer.connect(MP_PREFIX + m.code, { reliable: true });
-    conn.on('open', () => { if (MP === m && m.conn === conn) conn.send({ t: 'hello', cid: MP_CID, name: m.name }); });
+    conn.on('open', () => { if (MP === m && m.conn === conn) conn.send({ t: 'hello', cid: MP_CID, name: m.name, photo: store.get('photo', '') }); });
     conn.on('data', d => { if (MP === m && m.conn === conn) mpGuestRecv(d); });
     conn.on('close', () => { if (MP === m && m.conn === conn) mpLost(); });
     conn.on('error', () => {});
@@ -401,6 +405,10 @@ function mpGuestRecv(d) {
     m.conn = null; clearTimeout(m.retry);
     try { m.peer.destroy(); } catch (e) {}
     mpRefresh();
+  } else if (d.t === 'photos' && d.m && typeof d.m === 'object') {
+    m.photos = {};
+    Object.entries(d.m).forEach(([n, ph]) => { if (mpPhotoOk(ph)) m.photos[String(n).slice(0, 24)] = ph; });
+    mpRefresh();
   } else if (MPG[m.game] && MPG[m.game].onHost) MPG[m.game].onHost(d);
 }
 // Le téléphone envoie un message à l'hôte (ou se le traite lui-même s'il est l'hôte)
@@ -431,7 +439,7 @@ function mpCount() {
 const mpTop = (title, rules) => {
   const n = mpCount();
   return `<div class="topbar"><button class="back" data-a="mp-quit" aria-label="Quitter la partie">←</button><h2>${title}</h2>
-    ${n ? `<span class="pcount" aria-label="${n} joueur${n > 1 ? 's' : ''} connecté${n > 1 ? 's' : ''}">👥 ${n}<small>/${(MPG[MP.game] || {}).max || 20}</small></span>` : ''}${rules ? rulesBtn(rules) : ''}</div>`;
+    ${n ? `<span class="pcount" aria-label="${n} joueur${n > 1 ? 's' : ''} connecté${n > 1 ? 's' : ''}">${ic('groupe') || '👥'} ${n}<small>/${(MPG[MP.game] || {}).max || 20}</small></span>` : ''}${rules ? rulesBtn(rules) : ''}</div>`;
 };
 function mpSound() {
   const g = MP && MP.game && MPG[MP.game];
@@ -463,6 +471,41 @@ function roomBox(host) {
   return `<section class="room"><small>Code de la partie</small><strong class="code">${esc(m.code)}</strong>
     ${qr ? `<div class="qr" role="img" aria-label="QR code pour rejoindre la partie ${esc(m.code)}">${qr}</div>` : ''}
     <span class="hint">${host ? `Les autres scannent ce QR code avec l'appareil photo, ou ouvrent ${APP.name} › « Rejoindre une partie » et tapent le code.` : 'Tu es dans la partie.'}</span></section>`;
+}
+/* --- Photos des joueurs --- */
+// Petite photo (112 px, quelques Ko) prise au moment de rejoindre, envoyée à l'hôte qui la partage avec la table
+const mpPhotoOk = ph => typeof ph === 'string' && ph.length < 30000 && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(ph);
+function mpPhotoMap() { const o = {}; MP.H.players.forEach(p => { if (MP.photos[p.cid]) o[p.name] = MP.photos[p.cid]; }); return o; }
+function mpPhotosSend() { mpBroadcast({ t: 'photos', m: mpPhotoMap() }); }
+function mpPhotoOf(name) {
+  if (!MP) return '';
+  if (MP.role === 'host') { const p = MP.H.players.find(x => x.name === name); return p && MP.photos[p.cid] || ''; }
+  return MP.photos && MP.photos[name] || '';
+}
+const avatar = (name, cls = '') => { const ph = mpPhotoOf(name); return ph ? `<img class="av ${cls}" src="${ph}" alt="">` : ''; };
+function photoPick() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*'; inp.setAttribute('capture', 'user'); inp.hidden = true;
+  inp.onchange = () => {
+    const f = inp.files && inp.files[0]; inp.remove();
+    if (!f) return;
+    const url = URL.createObjectURL(f), img = new Image();
+    img.onload = () => {
+      const k = Math.min(img.naturalWidth, img.naturalHeight), c = document.createElement('canvas');
+      c.width = c.height = 112;
+      c.getContext('2d').drawImage(img, (img.naturalWidth - k) / 2, (img.naturalHeight - k) / 2, k, k, 0, 0, 112, 112);
+      URL.revokeObjectURL(url);
+      store.set('photo', c.toDataURL('image/jpeg', .72)); sfx('pop'); render(false);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); toast('Photo illisible, réessaie.'); };
+    img.src = url;
+  };
+  document.body.append(inp); inp.click();
+}
+function photoRow() {
+  const ph = store.get('photo', '');
+  return `<div class="ph-row"><button type="button" class="ph-btn" data-a="ph-take" aria-label="${ph ? 'Changer ma photo' : 'Prendre ma photo'}">${ph ? `<img src="${ph}" alt="">` : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>'}</button>
+    <span><b>Ta photo</b><small>${ph ? 'Elle apparaît à côté de ton prénom chez les autres.' : 'Facultatif : ta tête à côté de ton prénom.'}</small></span>${ph ? '<button type="button" class="mini" data-a="ph-del" aria-label="Retirer ma photo">✕</button>' : ''}</div>`;
 }
 /* --- QR code pour rejoindre --- */
 // Le lien ouvre la version web (iPhone compris) directement sur « Rejoindre », avec le code déjà rempli
@@ -563,6 +606,7 @@ function mpjoin() {
     ${host ? '' : `<label class="hint" for="jCode">Code de la partie</label>
     <input id="jCode" class="code-in" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" value="${esc(S.mpCode || (PHONE ? localCode() : ''))}">
     <button class="btn ghost scan-btn" type="button" data-a="mp-scan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/></svg>Scanner le QR code</button>`}
+    ${photoRow()}
     <label class="hint" for="jName">Ton prénom</label>
     <input id="jName" maxlength="20" autocomplete="off" placeholder="Prénom" value="${esc(last.name || (PHONE ? 'Joueur ' + PHONE : ''))}">
     <button class="btn big" type="submit">${host ? 'Créer la partie' : 'Rejoindre'}</button>
@@ -581,6 +625,8 @@ Object.assign(actions, {
     S.mpForm = v; S.screen = 'mpjoin'; render();
   },
   'mp-scan'() { scanStart(); },
+  'ph-take'() { photoPick(); },
+  'ph-del'() { store.set('photo', ''); render(false); },
   'mp-joinform'() { S.mpForm = 'join'; S.screen = 'mpjoin'; render(); },
   'mp-resume'() { const s = mpSaved(); if (s) mpHost(s.game, { resume: s }); else { toast('Partie introuvable.'); render(); } },
   'mp-forget'() { store.set('mpHost', null); render(false); },

@@ -12,7 +12,7 @@ SITE = os.path.join(ROOT, 'site')
 APPS = {
     'tournee': ('La Tournée', 'Tournée', '#10261e', 'android-assets', "Jeux de soirée sur un seul téléphone qui fait le tour de la table."),
     'veillee': ('La Veillée', 'Veillée', '#08161a', 'apps/veillee/android-assets', "Loup-Garou, Téléphone dessiné, Tu préfères, Action ou Vérité : chacun sur son téléphone."),
-    'tapis': ('Le Tapis', 'Tapis', '#120c1e', 'apps/tapis/android-assets', "Poker, Blackjack et Roulette entre amis, jetons fictifs, chacun sur son téléphone."),
+    'tapis': ('Le Tapis', 'Tapis', '#120c1e', 'apps/tapis/android-assets', "Poker, Blackjack, Roulette et Machine à sous entre amis, jetons fictifs, chacun sur son téléphone."),
 }
 VERSION = time.strftime('%Y%m%d%H%M%S')
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#120c1e">
-<meta name="description" content="Poker et Blackjack entre amis, chacun sur son téléphone, avec des jetons fictifs.">
+<meta name="description" content="Poker, Blackjack, Roulette et Machine à sous entre amis, chacun sur son téléphone, avec des jetons fictifs.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Le Tapis">
 <title>Le Tapis</title>
@@ -63,6 +63,53 @@
 .rl-chip { position: absolute; right: -4px; top: -6px; min-width: 24px; height: 24px; padding: 0 4px; border-radius: 999px; background: var(--gold); color: var(--ink); border: 2px dashed #fff; font-size: .7rem; display: grid; place-items: center; z-index: 1; box-shadow: 0 2px 4px rgba(0,0,0,.4); }
 .jeton.j5 { background: #c93a3f; }
 .jeton[aria-pressed="true"] { outline: 3px solid var(--gold); outline-offset: 3px; }
+/* Machine à sous : borne néon années 80 */
+.sl-jack { text-align: center; padding: 10px 14px; border-radius: 16px; background: linear-gradient(180deg, #2a1640, #1a0f2b); box-shadow: 0 0 0 2px var(--gold), 0 0 18px rgba(234,185,78,.35); }
+.sl-jack small { display: block; text-transform: uppercase; letter-spacing: .16em; font-size: .7rem; font-weight: 800; color: var(--neon); }
+.sl-jack strong { font-family: var(--font-display); font-weight: 400; font-size: 2.2rem; line-height: 1.1; color: var(--gold); text-shadow: 0 0 10px rgba(234,185,78,.6); font-variant-numeric: tabular-nums; }
+.sl-feed:empty { display: none; }
+.sl-feed { display: flex; flex-direction: column; gap: 6px; }
+.sl-news { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; background: rgba(63,208,201,.12); border: 1px solid rgba(63,208,201,.45); font-size: .9rem; animation: deal .35s ease-out; }
+.sl-news.jackpot { background: rgba(234,185,78,.18); border-color: var(--gold); }
+.sl-news .icn, .sl-news .sl-sym { width: 30px; height: 30px; flex: none; }
+.sl-cab { position: relative; margin: 2px 26px 0 0; padding: 14px 12px 16px; border-radius: 26px 26px 18px 18px; background: linear-gradient(180deg, #3a1d55, #22123a 60%, #180d29); box-shadow: 0 0 0 3px var(--neon), 0 0 24px rgba(255,95,162,.4), inset 0 2px 0 rgba(255,255,255,.12); }
+.sl-top { text-align: center; font-family: var(--font-display); color: #fff4fb; letter-spacing: .08em; margin-bottom: 10px; text-shadow: 0 0 8px rgba(63,208,201,.8); }
+.sl-reels { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 8px; border-radius: 14px; background: #0d0716; box-shadow: inset 0 0 0 2px var(--gold); }
+.sl-win { position: relative; height: 92px; overflow: hidden; border-radius: 9px; background: #fffaf0; }
+.sl-win::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.45), transparent 26%, transparent 74%, rgba(0,0,0,.45)); }
+.sl-strip { display: flex; flex-direction: column; will-change: transform; }
+.sl-strip .sl-sym { height: 92px; flex: none; display: grid; place-items: center; padding: 10px; font-weight: 900; font-size: 1.6rem; color: var(--ink); }
+.sl-sym .icn { width: 100%; height: 100%; }
+.sl-sym.sm { width: 26px; height: 26px; padding: 0; display: inline-grid; place-items: center; font-size: .7rem; font-weight: 900; }
+.sl-line { position: absolute; left: 4px; right: 4px; top: 50%; height: 2px; background: rgba(214,69,106,.55); pointer-events: none; }
+.sl-lever { position: absolute; right: -26px; top: 46px; width: 14px; height: 74px; border-radius: 7px; background: linear-gradient(90deg, #8d8d99, #e8e8f0, #8d8d99); transform-origin: 50% 100%; }
+.sl-lever i { position: absolute; left: 50%; top: -14px; width: 26px; height: 26px; margin-left: -13px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ff9bc4, var(--neon) 55%, #b02a67); box-shadow: 0 0 10px rgba(255,95,162,.6); }
+.sl-lever.pull { animation: pull .45s ease-in-out; }
+@keyframes pull { 40% { transform: scaleY(-.55); } 100% { transform: none; } }
+.sl-res { text-align: center; font-family: var(--font-display); font-size: 1.5rem; line-height: 1.2; color: var(--muted); padding: 4px 0; }
+.sl-res small { display: block; font-family: var(--font-body); font-size: .9rem; color: var(--teal); font-weight: 800; }
+.sl-res.gold { color: var(--gold); text-shadow: 0 0 12px rgba(234,185,78,.55); }
+.sl-res.jackpot { font-size: 2rem; animation: blink .5s steps(2) 6; }
+@keyframes blink { 50% { color: var(--neon); } }
+.sl-go { background: linear-gradient(180deg, #ff86b8, var(--neon)) !important; color: #2a0b1c; }
+.sl-pay summary { cursor: pointer; font-weight: 800; color: var(--muted); }
+.sl-pay ul { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.sl-pay li { display: flex; align-items: center; gap: 4px; }
+.sl-pay li span:last-child { margin-left: auto; color: var(--gold); font-weight: 800; }
+.sl-rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.sl-rank li { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px; }
+.sl-rank li small { grid-column: 2 / 4; color: var(--muted); font-size: .78rem; margin-top: -4px; }
+.sl-rank li.me { background: rgba(255,95,162,.14); }
+.sl-rank li.off { opacity: .5; }
+.sl-rank .pos { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .8rem; background: rgba(255,255,255,.1); }
+.sl-rank li:first-child .pos { background: var(--gold); color: var(--ink); }
+.podium { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: end; gap: 8px; }
+.podium .pl { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.podium .pl b { overflow-wrap: anywhere; }
+.podium .step { width: 100%; display: grid; place-items: center; border-radius: 10px 10px 0 0; font-family: var(--font-display); font-size: 1.6rem; color: var(--ink); background: var(--paper); }
+.podium .p1 { order: 2; } .podium .p1 .step { height: 92px; background: var(--gold); }
+.podium .p2 { order: 1; } .podium .p2 .step { height: 66px; }
+.podium .p3 { order: 3; } .podium .p3 .step { height: 48px; background: #e0b38a; }
 /* Salle de jeu : moquette bordeaux à losanges dorés, néons */
 body { background-color: var(--felt);
   background-image: linear-gradient(180deg, rgba(255,95,162,.16) 0%, rgba(234,120,80,.10) 18%, transparent 42%),
@@ -91,32 +138,35 @@ body { background-color: var(--felt);
 <script>
 window.APP = {
   id: 'tapis', name: 'Le Tapis', of: 'du Tapis', logo: ['Le', 'Tapis'],
-  tagline: 'Poker, Blackjack et Roulette entre amis, chacun sur son téléphone.',
+  tagline: 'Poker, Blackjack, Roulette et Machine à sous entre amis, chacun sur son téléphone.',
   hooks: ['Faites vos jeux, rien ne va plus.', 'Ce soir, le bluff est obligatoire.', 'Tapis ! Pour la gloire, jamais pour l\'argent.', 'La banque ne perd jamais… ou presque.', 'Garde ton meilleur visage de joueur de poker.'],
   deal: ['♥', '♠', '♦'],
   adult: true,
   adultNote: 'Réservé aux majeurs. Jetons fictifs : aucun argent réel, rien à gagner.',
   homeNote: '<strong>Jetons fictifs :</strong> 1 000 par joueur, qui ne s\'achètent pas, ne se gagnent pas et ne s\'échangent contre rien. On joue pour la gloire.',
   games: [
-    { id: 'pk', name: 'Poker', icon: '♠️', color: '#3fd0c9', players: '2 à 20 joueurs', desc: "Texas Hold'em : tes cartes sur ton téléphone, l'appli gère pot, blindes et abattage." },
-    { id: 'bj', name: 'Blackjack', icon: '🃏', color: '#ff7aa8', players: '1 à 20 joueurs', desc: "Tout le monde contre la banque, tenue par l'appli. Gages de soirée en option." },
-    { id: 'rl', name: 'Roulette', icon: '🎡', color: '#f2c45a', players: '1 à 20 joueurs', desc: "Pose tes jetons sur le tapis depuis ton téléphone, la bille tourne pour tout le monde." },
+    { id: 'pk', name: 'Poker', icon: 'jeu-pk', color: '#3fd0c9', players: '2 à 20 joueurs', desc: "Texas Hold'em : tes cartes sur ton téléphone, l'appli gère pot, blindes et abattage." },
+    { id: 'bj', name: 'Blackjack', icon: 'jeu-bj', color: '#ff7aa8', players: '1 à 20 joueurs', desc: "Tout le monde contre la banque, tenue par l'appli. Gages de soirée en option." },
+    { id: 'rl', name: 'Roulette', icon: 'jeu-rl', color: '#f2c45a', players: '1 à 20 joueurs', desc: "Pose tes jetons sur le tapis depuis ton téléphone, la bille tourne pour tout le monde." },
+    { id: 'sl', name: 'Machine à sous', icon: 'jeu-sl', color: '#b98cff', players: '1 à 20 joueurs', desc: "Chacun sa machine sur son téléphone, un jackpot commun qui grimpe pour tout le monde. Tournoi en option." },
   ],
   legal: {
-    what: 'est un jeu de casino entre amis en ligne (Poker, Blackjack, Roulette) sans argent',
+    what: 'est un jeu de casino entre amis en ligne (Poker, Blackjack, Roulette, Machine à sous) sans argent',
     dataExtra: ' (cartes, mises en jetons fictifs)',
     sections: [
       ['Public concerné', `<p>Le Tapis est réservé aux personnes majeures (18 ans et plus). Une confirmation est demandée au premier lancement.</p>`],
       ['Aucun argent réel', `<p>Le Tapis est un jeu de simulation, sans argent. Les jetons sont fictifs : ils sont distribués gratuitement, ne peuvent pas être achetés, ni gagnés, ni échangés contre de l'argent, un lot ou un avantage quelconque. Aucun paiement n'est possible dans l'application.</p>
         <p>Il est interdit d'utiliser Le Tapis comme support à des paris ou des mises en argent entre joueurs.</p>
         <p>Les jeux d'argent comportent des risques : endettement, dépendance… Si tu ressens le besoin d'en parler, Joueurs Info Service répond au 09 74 75 13 13 (appel non surtaxé).</p>`],
-      ['Alcool', `<p>L'option « gorgées » du Blackjack et de la Roulette est facultative. L'abus d'alcool est dangereux pour la santé, à consommer avec modération. L'option « gages » ou « aucun » permet de jouer sans alcool.</p>`],
+      ['Alcool', `<p>L'option « gorgées » du Blackjack, de la Roulette et de la Machine à sous est facultative. L'abus d'alcool est dangereux pour la santé, à consommer avec modération. L'option « gages » ou « aucun » permet de jouer sans alcool.</p>`],
     ],
-    ip: `<p>Le Poker (Texas Hold'em), le Blackjack et la Roulette sont des jeux traditionnels dont les règles sont libres. Les tirages (cartes, numéro de la roulette) sont faits au hasard par le téléphone de l'hôte. Le Tapis n'est affilié à aucun casino, opérateur de jeux ou site de poker.</p>`,
+    ip: `<p>Le Poker (Texas Hold'em), le Blackjack, la Roulette et la machine à sous sont des jeux traditionnels dont les règles sont libres. Les tirages (cartes, numéro de la roulette, rouleaux de la machine) sont faits au hasard par le téléphone de l'hôte. Le Tapis n'est affilié à aucun casino, opérateur de jeux ou site de poker.</p>`,
   },
 };
 </script>
 <script src="shared/qrcode.min.js"></script>
+<script src="shared/icones.js"></script>
+<script src="shared/ic-tapis.js"></script>
 <script src="shared/salon.js"></script>
 <script src="shared/son.js"></script>
 <script>
@@ -137,12 +187,12 @@ const casinoNew = p => Object.assign(p, { chips: CASINO_STACK, re: 0 });
 function casinoRebuy(p) { if (p && p.chips < 10) { p.chips = CASINO_STACK; p.re = (p.re || 0) + 1; mpPush(); } }
 const casinoLobby = (v, opts) => {
   if (MP.role !== 'host') return `${roomBox(false)}<section class="panel"><h3><span>À la table</span><span>${v.players.length}</span></h3>
-    <div class="chips">${v.players.map(p => `<span class="chip tap">${esc(p.name)}</span>`).join('')}</div></section>
+    <div class="chips">${v.players.map(p => `<span class="chip tap">${avatar(p.name)}${esc(p.name)}</span>`).join('')}</div></section>
     <p class="howto">L'hôte va ouvrir la table. Chacun commence avec ${chipsTxt(CASINO_STACK)} (fictifs).</p>`;
   const H = MP.H, n = H.players.filter(p => p.on).length;
   return `${roomBox(true)}
   <section class="panel"><h3><span>À la table</span><span>${H.players.length}</span></h3>
-    <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
+    <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${avatar(p.name)}${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
     <p class="hint">On peut aussi rejoindre la table en cours de partie, entre deux mains.</p>
   </section>
   ${opts.panel}
@@ -285,13 +335,13 @@ function bjScreen(v) {
       <button class="btn big" data-a="bj-bet" data-v="${bet}" ${bet < 10 ? 'disabled' : ''}>${bet < 10 ? 'Mise minimum : 10' : `Miser ${bet}`}</button>`;
     }
     return `<div class="turn"><small>Main ${v.n + 1}</small><strong>Faites vos jeux</strong></div>${stack}${mine}
-      <section class="panel"><h3><span>La table</span><span>${ready} prêt${ready > 1 ? 's' : ''}</span></h3><div class="chips">${v.players.map(p => `<span class="chip tap ${p.ready ? 'on' : ''} ${p.on ? '' : 'off'}">${p.ready ? '✓ ' : ''}${esc(p.name)}<span class="n">${p.ready ? p.bet : p.chips}</span></span>`).join('')}</div></section>
+      <section class="panel"><h3><span>La table</span><span>${ready} prêt${ready > 1 ? 's' : ''}</span></h3><div class="chips">${v.players.map(p => `<span class="chip tap ${p.ready ? 'on' : ''} ${p.on ? '' : 'off'}">${p.ready ? '✓ ' : ''}${avatar(p.name)}${esc(p.name)}<span class="n">${p.ready ? p.bet : p.chips}</span></span>`).join('')}</div></section>
       ${host ? `<button class="btn" data-a="bj-deal" ${ready ? '' : 'disabled'}>Distribuer sans attendre les autres</button>` : ''}`;
   }
   // Main en cours ou résultats
   const dealer = `<div class="felt-table"><small>La banque</small>${pcards(v.dealer.cards)}${v.dealer.t != null ? `<span class="pot">${v.dealer.t > 21 ? 'Sautée !' : v.dealer.t}</span>` : ''}</div>`;
   const seats = `<ul class="plist">${v.players.filter(p => p.inHand).map(p => `<li class="${v.turn === p.name ? 'now' : ''} ${p.res === 'lose' ? 'dead' : ''}">
-      <span class="nm"><b>${esc(p.name)}${p.me ? ' (toi)' : ''}</b><small>Mise ${p.bet} · ${v.step === 'result' ? `${BJ_RES[p.res]} ${p.gain > 0 ? '+' + p.gain : p.gain < 0 ? p.gain : ''}` : BJ_ST[p.st] || ''}</small></span>
+      <span class="nm"><b>${avatar(p.name)}${esc(p.name)}${p.me ? ' (toi)' : ''}</b><small>Mise ${p.bet} · ${v.step === 'result' ? `${BJ_RES[p.res]} ${p.gain > 0 ? '+' + p.gain : p.gain < 0 ? p.gain : ''}` : BJ_ST[p.st] || ''}</small></span>
       ${pcards(p.hand, 'sm')}<b class="chipline">${p.t}</b></li>`).join('')}</ul>`;
   const myTurn = v.step === 'play' && v.turn === me.name;
   let zone = '';
@@ -497,7 +547,7 @@ function pkScreen(v) {
   const table = `<div class="felt-table"><small>${v.step === 'show' ? 'Fin de la main' : PK_STREET[v.street]} · main ${v.n + (v.step === 'show' ? 0 : 1)}</small><span class="pcs">${slots}</span><span class="pot">Pot ${v.pot}</span>${v.last ? `<span class="hint">${esc(v.last)}</span>` : ''}</div>`;
   const res = v.res ? `<div class="card compact"><p class="kind">${v.res.showdown ? 'Abattage' : 'Tout le monde s\'est couché'}</p>${v.res.lines.map(l => `<p class="text">${esc(l.name)} gagne <em>${l.amount}</em>${l.hn ? `<br><span class="sub">avec ${l.hn === 'Brelan' || l.hn === 'Carré' || l.hn === 'Full' ? 'un' : 'une'} ${l.hn.toLowerCase()}</span>` : ''}</p>`).join('')}</div>` : '';
   const seats = `<ul class="plist">${v.seats.map(s => `<li class="${s.turn ? 'now' : ''} ${s.folded ? 'dead' : ''}">
-      <span class="nm"><b>${esc(s.name)}${s.btn ? '<span class="badge d">D</span>' : ''}${s.sb ? '<span class="badge">PB</span>' : ''}${s.bb ? '<span class="badge">GB</span>' : ''}</b>
+      <span class="nm"><b>${avatar(s.name)}${esc(s.name)}${s.btn ? '<span class="badge d">D</span>' : ''}${s.sb ? '<span class="badge">PB</span>' : ''}${s.bb ? '<span class="badge">GB</span>' : ''}</b>
       <small>${s.chips} jetons${s.bet ? ` · mise ${s.bet}` : ''}${s.folded ? ' · couché·e' : s.allin ? ' · tapis' : ''}${s.turn ? ' · réfléchit…' : ''}${s.on ? '' : ' · déconnecté·e'}${s.hn ? ` · ${s.hn}` : ''}</small></span>
       ${s.folded ? '' : s.cards ? pcards(s.cards, 'sm') : pcards([null, null], 'sm')}</li>`).join('')}</ul>`;
   let zone = '';
@@ -686,7 +736,7 @@ function rlScreen(v) {
   const stack = `<p class="howto"><span class="chipline">${chipsTxt(me.chips)}</span>${me.re ? ` · ${me.re} recave${me.re > 1 ? 's' : ''}` : ''}</p>`;
   const hist = v.hist.length ? `<div class="rl-hist" aria-label="Derniers numéros">${v.hist.map(rlNum).join('')}</div>` : '';
   const table = `<section class="panel"><h3><span>La table</span><span>${v.players.filter(p => p.ready).length} prêt·s</span></h3>
-    <div class="chips">${v.players.map(p => `<span class="chip tap ${p.ready ? 'on' : ''} ${p.on ? '' : 'off'}">${p.ready ? '✓ ' : ''}${esc(p.name)}<span class="n">${v.step === 'result' && p.stake ? (p.gain > 0 ? '+' + p.gain : p.gain) : p.ready ? p.stake : p.chips}</span></span>`).join('')}</div></section>`;
+    <div class="chips">${v.players.map(p => `<span class="chip tap ${p.ready ? 'on' : ''} ${p.on ? '' : 'off'}">${p.ready ? '✓ ' : ''}${avatar(p.name)}${esc(p.name)}<span class="n">${v.step === 'result' && p.stake ? (p.gain > 0 ? '+' + p.gain : p.gain) : p.ready ? p.stake : p.chips}</span></span>`).join('')}</div></section>`;
   if (v.step === 'bet') {
     let zone;
     if (me.ready) zone = `<div class="card compact"><p class="kind">Tes mises</p><p class="text big-result">${rlSum(v.bets)}</p>
@@ -751,6 +801,217 @@ Object.assign(actions, {
   },
 });
 
+/* ---------- Machine à sous ---------- */
+// Chacun sa machine sur son téléphone, tirée au hasard par l'hôte. Un jackpot commun grimpe à chaque partie.
+const SL_SYM = ['cerise', 'citron', 'cloche', 'bar', 'etoile', 'diamant', 'sept'];
+const SL_W = [22, 24, 18, 15, 11, 7, 3]; // chances sur 100, pour chaque rouleau
+const SL_PAY = { cerise: 5, citron: 10, cloche: 15, bar: 25, etoile: 50, diamant: 100, sept: 200 };
+const SL_NAME = { cerise: 'Cerise', citron: 'Citron', cloche: 'Cloche', bar: 'BAR', etoile: 'Étoile', diamant: 'Diamant', sept: '7' };
+const SL_BETS = [5, 10, 25, 50], SL_JACK = 500, SL_SPIN = 2200, SL_REEL = [1250, 1700, 2150];
+function slPick() { let r = rand(100); for (let i = 0; i < SL_SYM.length; i++) if ((r -= SL_W[i]) < 0) return SL_SYM[i]; return SL_SYM[0]; }
+// Gains (mise comprise) : trois pareils, deux cerises, ou une cerise sur le premier rouleau
+function slWin(reels, bet) {
+  const [a, b, c] = reels;
+  if (a === b && b === c) return { win: bet * SL_PAY[a], kind: a === 'sept' ? 'jackpot' : 'trois' };
+  const cer = reels.filter(x => x === 'cerise').length;
+  if (cer === 2) return { win: bet * 2, kind: 'deux' };
+  if (a === 'cerise' && cer === 1) return { win: bet, kind: 'une' };
+  return { win: 0, kind: '' };
+}
+const slSym = (k, cls = '') => `<span class="sl-sym ${cls}" aria-label="${SL_NAME[k]}">${ic('sl-' + k) || SL_NAME[k]}</span>`;
+MPG.sl = {
+  lateJoin: true,
+  rules: () => ({ title: 'Machine à sous', steps: [
+    "Un joueur crée la partie et donne le code ; les autres la rejoignent. Chacun a sa propre machine sur son téléphone et 1 000 jetons fictifs.",
+    "Choisis ta mise (5, 10, 25 ou 50), puis tire le levier. Les trois rouleaux s'arrêtent l'un après l'autre.",
+    "Trois symboles pareils : de 5 fois (cerises) à 100 fois la mise (diamants). Deux cerises : 2 fois. Une cerise sur le premier rouleau : mise remboursée.",
+    "Trois 7 : JACKPOT ! Tu gagnes 200 fois ta mise plus le jackpot commun, qui grossit à chaque partie de n'importe quel joueur.",
+    "En mode tournoi, chacun a le même nombre de tirages : le plus gros tapis à la fin gagne.",
+  ], tips: [
+    "Les gros gains et les jackpots s'affichent sur tous les téléphones.",
+    "Gages de soirée (au choix de l'hôte) : trois symboles pareils = 2 à distribuer, jackpot = 5 ; en tournoi, le dernier prend un gage.",
+    "Jetons fictifs uniquement : on joue pour la gloire, jamais d'argent.",
+  ] }),
+  init: name => ({ step: 'lobby', players: [MPG.sl.join({ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true })], cfg: { mode: store.get('slMode', 'libre'), spins: store.get('slSpins', 20), gages: store.get('slGages', 'sips') }, jack: SL_JACK, feed: [], n: 0 }),
+  join: p => Object.assign(casinoNew(p), { left: MP && MP.H && MP.H.cfg ? MP.H.cfg.spins : 20, last: null, best: 0, busy: 0 }),
+  act(cid, d) {
+    const H = MP.H, p = mpP(cid);
+    if (!p) return;
+    if (d.t === 'sl-spin' && H.step === 'play') {
+      const bet = +d.bet, now = Date.now(), tour = H.cfg.mode === 'tournoi';
+      if (!SL_BETS.includes(bet) || bet > p.chips || now < p.busy || (tour && p.left <= 0)) return;
+      const reels = [slPick(), slPick(), slPick()], r = slWin(reels, bet);
+      p.chips -= bet; H.jack += Math.ceil(bet / 10);
+      let win = r.win;
+      if (r.kind === 'jackpot') { win += H.jack; H.jack = SL_JACK; }
+      p.chips += win; p.best = Math.max(p.best || 0, win - bet);
+      if (tour) p.left--;
+      p.last = { id: ++H.n, reels, bet, win, kind: r.kind };
+      p.busy = now + SL_SPIN - 150;
+      if (r.kind === 'jackpot' || r.kind === 'trois' && SL_PAY[reels[0]] >= 25) H.feed = [{ id: H.n, name: p.name, kind: r.kind, sym: reels[0], win, at: now + SL_SPIN }].concat(H.feed).slice(0, 4);
+      if (tour && H.players.every(x => !x.on || x.left <= 0)) mpTimer('slEnd', () => { if (MP.H.step === 'play') { MP.H.step = 'end'; mpPush(); } }, SL_SPIN + 900);
+      mpPush();
+    } else if (d.t === 'sl-rebuy' && H.cfg.mode !== 'tournoi') casinoRebuy(p);
+  },
+  view(cid) {
+    const H = MP.H, p = mpP(cid) || {}, now = Date.now();
+    const rank = H.players.slice().sort((a, b) => b.chips - a.chips);
+    return { game: 'sl', step: H.step, mode: H.cfg.mode, spins: H.cfg.spins, gages: H.cfg.gages !== 'off', gm: H.cfg.gages, alc: H.cfg.gages === 'sips', jack: H.jack,
+      // Un gain n'apparaît chez les autres qu'une fois les rouleaux arrêtés
+      feed: H.feed.map(f => ({ ...f, wait: Math.max(0, f.at - now) })),
+      me: { chips: p.chips || 0, left: p.left || 0, last: p.last || null, re: p.re || 0 },
+      players: rank.map(x => ({ name: x.name, on: !!x.on, chips: x.chips - (x.last && x.cid !== cid && now < x.busy ? x.last.win - x.last.bet : 0), left: x.left, me: x.cid === cid, best: x.best || 0 })) };
+  },
+  // Chez les invités, l'attente reçue devient une heure locale
+  notify(prev, v) { const now = Date.now(); (v.feed || []).forEach(f => { f.until = now + f.wait; }); },
+  patch: () => slPatch(),
+  after: () => slAfter(),
+  screen() { return slScreen(MP.role === 'host' ? MPG.sl.view(MP_CID) : MP.view); },
+};
+const slView = () => MP.role === 'host' ? MPG.sl.view(MP_CID) : MP.view;
+// Pendant que les rouleaux tournent, le tapis affiché reste celui d'avant le tirage
+const slSpinning = v => v && v.me.last && MP.slAnim && MP.slAnim.id === v.me.last.id && Date.now() - MP.slAnim.at < SL_SPIN;
+const slChips = v => v.me.chips - (slSpinning(v) ? v.me.last.win : 0);
+function slBoard(v) {
+  const tour = v.mode === 'tournoi';
+  return `<h3><span>Classement</span><span>${tour ? `${v.spins} tirages` : 'partie libre'}</span></h3>
+    <ol class="sl-rank">${v.players.map((p, i) => `<li class="${p.me ? 'me' : ''} ${p.on ? '' : 'off'}"><span class="pos">${i + 1}</span><b>${avatar(p.name)}${esc(p.name)}</b><span class="chipline">${p.chips.toLocaleString('fr-FR')}</span>${tour ? `<small>${p.left} restant${p.left > 1 ? 's' : ''}</small>` : ''}</li>`).join('')}</ol>`;
+}
+const slLeft = f => f.until ? Math.max(0, f.until - Date.now()) : f.wait;
+function slFeed(v) {
+  const f = v.feed.filter(x => !slLeft(x));
+  return f.length ? f.map(x => `<div class="sl-news ${x.kind}">${x.kind === 'jackpot' ? ic('jackpot') : slSym(x.sym, 'sm')}<span><b>${esc(x.name)}</b> ${x.kind === 'jackpot' ? 'décroche le JACKPOT' : `aligne trois ${SL_NAME[x.sym]}`} : +${x.win.toLocaleString('fr-FR')}</span></div>`).join('') : '';
+}
+function slMeLine(v) {
+  return `<span class="chipline">${chipsTxt(slChips(v))}</span>${v.mode === 'tournoi' ? ` · ${v.me.left} tirage${v.me.left > 1 ? 's' : ''} restant${v.me.left > 1 ? 's' : ''}` : v.me.re ? ` · ${v.me.re} recave${v.me.re > 1 ? 's' : ''}` : ''}`;
+}
+function slResult(v) {
+  const l = v.me.last;
+  if (!l || slSpinning(v)) return '';
+  const gain = l.win - l.bet;
+  const txt = l.kind === 'jackpot' ? `JACKPOT ! +${l.win.toLocaleString('fr-FR')}` : l.kind === 'trois' ? `Trois ${SL_NAME[l.reels[0]]} ! +${l.win}` : l.kind === 'deux' ? `Deux cerises : +${l.win}` : l.kind === 'une' ? 'Une cerise : mise remboursée' : 'Pas cette fois…';
+  const g = v.gages && (l.kind === 'trois' || l.kind === 'jackpot') ? `<small>${l.kind === 'jackpot' ? 5 : 2} ${v.alc ? 'gorgées' : 'gages'} à distribuer !</small>` : '';
+  return `<div class="sl-res ${gain > 0 ? 'gold' : ''} ${l.kind}">${txt}${g}</div>`;
+}
+function slScreen(v) {
+  const host = MP.role === 'host';
+  if (v.step === 'lobby') return casinoLobby(v, { start: 'sl-open', min: 1, panel: `<section class="panel"><h3><span>Mode de jeu</span></h3>
+    <div class="levels two" role="group" aria-label="Mode de jeu">${[['libre', 'Partie libre'], ['tournoi', 'Tournoi']].map(([k, l]) => `<button data-a="sl-mode" data-v="${k}" aria-pressed="${v.mode === k}">${l}</button>`).join('')}</div>
+    ${v.mode === 'tournoi' ? `<div class="levels three" role="group" aria-label="Nombre de tirages">${[10, 20, 30].map(n => `<button data-a="sl-spins" data-v="${n}" aria-pressed="${v.spins === n}">${n} tirages</button>`).join('')}</div>` : ''}
+    <p class="hint">${v.mode === 'tournoi' ? 'Même nombre de tirages pour tout le monde : le plus gros tapis gagne.' : 'Chacun joue à son rythme, le classement est en direct.'}</p></section>
+    <section class="panel"><h3><span>Gages de soirée</span></h3>
+    <div class="levels three" role="group" aria-label="Gages de soirée">${[['off', 'Aucun'], ['sips', 'Gorgées'], ['gages', 'Gages']].map(([k, l]) => `<button data-a="sl-gages" data-v="${k}" aria-pressed="${v.gm === k}">${l}</button>`).join('')}</div></section>` });
+  if (v.step === 'end') {
+    const top = v.players.slice(0, 3), last = v.players[v.players.length - 1];
+    return `<div class="turn"><small>Fin du tournoi</small><strong>${esc(top[0].name)} gagne !</strong></div>
+      <div class="podium">${top.map((p, i) => `<div class="pl p${i + 1}"><b>${avatar(p.name)}${esc(p.name)}</b><span class="chipline">${p.chips.toLocaleString('fr-FR')}</span><span class="step">${i + 1}</span></div>`).join('')}</div>
+      ${v.gages && v.players.length > 1 ? `<p class="howto">${esc(last.name)}, dernier·e : ${v.alc ? 'trois gorgées' : 'un gage'} !</p>` : ''}
+      <section class="panel">${slBoard(v)}</section>
+      ${host ? `<div class="row"><button class="btn big" data-a="sl-again">Nouveau tournoi</button><button class="btn ghost" data-a="sl-libre">Partie libre</button></div>` : `<p class="howto">L'hôte peut relancer un tournoi.</p>`}`;
+  }
+  const bet = MP.slBet && SL_BETS.includes(MP.slBet) ? MP.slBet : 10, l = v.me.last;
+  const reels = (l ? l.reels : MP.slIdle || (MP.slIdle = [slPick(), slPick(), slPick()])).map((k, i) => `<div class="sl-win"><div class="sl-strip" id="slR${i}">${slSym(k)}</div></div>`).join('');
+  const out = v.mode === 'tournoi' && v.me.left <= 0, broke = v.me.chips < SL_BETS[0];
+  return `<div class="sl-jack" id="slJack"><small>Jackpot commun</small><strong>${v.jack.toLocaleString('fr-FR')}</strong></div>
+    <div class="sl-feed" id="slFeed" aria-live="polite">${slFeed(v)}</div>
+    <div class="sl-cab" id="slCab">
+      <div class="sl-top">Le Tapis · 777</div>
+      <div class="sl-reels">${reels}<span class="sl-line" aria-hidden="true"></span></div>
+      <div class="sl-lever" id="slLever" aria-hidden="true"><i></i></div>
+    </div>
+    <div id="slRes">${slResult(v)}</div>
+    <p class="howto" id="slMe">${slMeLine(v)}</p>
+    ${out ? `<div class="banner">Tu as fait tous tes tirages. Attends les autres…</div>` : broke && v.mode !== 'tournoi' ? `<button class="btn big" data-a="sl-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>` : broke ? `<div class="banner">Plus de jetons : fin du tournoi pour toi.</div>` : `
+    <div class="betbar" role="group" aria-label="Mise">${SL_BETS.map(k => `<button class="jeton j${k === 50 ? 500 : k}" data-a="sl-bet" data-v="${k}" aria-pressed="${bet === k}" aria-label="Miser ${k}">${k}</button>`).join('')}</div>
+    <button class="btn big sl-go" data-a="sl-spin" id="slGo">Tirer le levier (${bet})</button>`}
+    <details class="panel sl-pay"><summary>Table des gains</summary><ul>
+      ${SL_SYM.slice().reverse().map(k => `<li>${slSym(k, 'sm')}${slSym(k, 'sm')}${slSym(k, 'sm')}<span>${k === 'sept' ? `×200 + jackpot` : `×${SL_PAY[k]}`}</span></li>`).join('')}
+      <li>${slSym('cerise', 'sm')}${slSym('cerise', 'sm')}<span>×2</span></li><li>${slSym('cerise', 'sm')}<span>×1 (1er rouleau)</span></li></ul></details>
+    <section class="panel" id="slBoard">${slBoard(v)}</section>
+    ${host ? `<button class="btn ghost" data-a="sl-stop">${v.mode === 'tournoi' ? 'Terminer le tournoi' : 'Fermer la machine'}</button>` : ''}`;
+}
+// Mise à jour légère : on ne redessine pas les rouleaux pendant qu'ils tournent
+function slPatch() {
+  const v = slView();
+  if (!v || v.step !== 'play' || !document.getElementById('slCab')) return false;
+  const prevOut = !document.getElementById('slGo');
+  const out = (v.mode === 'tournoi' && v.me.left <= 0) || v.me.chips < SL_BETS[0];
+  if (!slSpinning(v) && prevOut !== out) return false;
+  document.getElementById('slJack').querySelector('strong').textContent = v.jack.toLocaleString('fr-FR');
+  document.getElementById('slFeed').innerHTML = slFeed(v);
+  document.getElementById('slBoard').innerHTML = slBoard(v);
+  document.getElementById('slMe').innerHTML = slMeLine(v);
+  if (!slSpinning(v)) document.getElementById('slRes').innerHTML = slResult(v);
+  slAfter();
+  return true;
+}
+function slAfter() {
+  const v = slView();
+  if (!v || v.step !== 'play') return;
+  // Les gains des autres s'affichent quand leurs rouleaux s'arrêtent
+  // Le jackpot d'un autre joueur sonne chez tout le monde quand ses rouleaux s'arrêtent
+  const jn = v.feed.find(f => f.kind === 'jackpot' && !slLeft(f)), jid = jn ? jn.id : 0;
+  if (!('slJack' in MP)) MP.slJack = jid;
+  else if (jid && jid !== MP.slJack) { MP.slJack = jid; if (!(v.me.last && v.me.last.id === jid)) { sfx('tada'); buzz(200); } }
+  const next = v.feed.map(slLeft).filter(Boolean);
+  if (next.length) mpTimer('slFeedT', () => mpRefresh(), Math.min(...next) + 30);
+  const a = MP.slAnim, l = v.me.last;
+  if (!a || !l || a.id !== l.id || a.done) return;
+  a.done = true;
+  const t0 = Date.now() - a.at;
+  if (t0 >= SL_SPIN) return;
+  const lever = document.getElementById('slLever');
+  if (lever) { lever.classList.remove('pull'); void lever.offsetWidth; lever.classList.add('pull'); }
+  const go = document.getElementById('slGo'); if (go) go.disabled = true;
+  l.reels.forEach((k, i) => {
+    const el = document.getElementById('slR' + i);
+    if (!el) return;
+    const cells = Array.from({ length: 12 + i * 4 }, () => slPick()).concat(k);
+    el.innerHTML = cells.map(c => slSym(c)).join('');
+    const h = el.firstElementChild.getBoundingClientRect().height, dur = Math.max(200, SL_REEL[i] - t0);
+    const anim = el.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${-(cells.length - 1) * h - 10}px)`, offset: .93 }, { transform: `translateY(${-(cells.length - 1) * h}px)` }],
+      { duration: dur, easing: 'cubic-bezier(.2,.6,.3,1)', fill: 'forwards' });
+    anim.onfinish = () => { el.innerHTML = slSym(k); anim.cancel(); };
+  });
+  setTimeout(() => {
+    const go = document.getElementById('slGo'); if (go) go.disabled = false;
+    const r = document.getElementById('slRes'); if (r) r.innerHTML = slResult(slView());
+    const m = document.getElementById('slMe'); if (m) m.innerHTML = slMeLine(slView());
+    const w = l.win - l.bet;
+    if (l.kind === 'jackpot') { sfx('jackpot'); buzz([100, 60, 100, 60, 300]); }
+    else if (l.kind === 'trois') { sfx('coins', 14); buzz([80, 60, 160]); }
+    else if (w > 0) sfx('coins', 4);
+    else if (l.kind === 'une') sfx('chip');
+  }, Math.max(0, SL_SPIN - t0));
+}
+Object.assign(actions, {
+  'sl-mode'(k) { MP.H.cfg.mode = k; store.set('slMode', k); mpPush(); },
+  'sl-spins'(n) { MP.H.cfg.spins = +n; store.set('slSpins', +n); mpPush(); },
+  'sl-gages'(k) { MP.H.cfg.gages = k; store.set('slGages', k); mpPush(); },
+  'sl-open'() { const H = MP.H; H.players.forEach(p => { p.left = H.cfg.spins; p.last = null; }); H.step = 'play'; mpPush(); },
+  'sl-bet'(k) {
+    MP.slBet = +k; sfx('chip');
+    document.querySelectorAll('[data-a=sl-bet]').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === String(k)));
+    const go = document.getElementById('slGo'); if (go) go.textContent = `Tirer le levier (${k})`;
+  },
+  'sl-spin'() {
+    const v = slView();
+    if (slSpinning(v)) return;
+    const bet = MP.slBet && SL_BETS.includes(MP.slBet) ? MP.slBet : 10;
+    if (bet > v.me.chips) { toast('Pas assez de jetons pour cette mise.'); return; }
+    const go = document.getElementById('slGo'), id = v.me.last && v.me.last.id;
+    if (go) go.disabled = true;
+    sfx('lever');
+    mpSend({ t: 'sl-spin', bet });
+    // Si l'hôte n'a pas répondu (tirage refusé, connexion lente), le levier se débloque
+    setTimeout(() => { const w = slView(), g = document.getElementById('slGo'); if (g && w && !slSpinning(w) && (w.me.last && w.me.last.id) === id) g.disabled = false; }, 1500);
+  },
+  'sl-rebuy'() { mpSend({ t: 'sl-rebuy' }); },
+  'sl-stop'() { const H = MP.H; if (H.cfg.mode === 'tournoi') H.step = 'end'; else H.step = 'lobby'; mpPush(); },
+  'sl-again'() { const H = MP.H; H.cfg.mode = 'tournoi'; H.players.forEach(p => Object.assign(p, { chips: CASINO_STACK, re: 0, left: H.cfg.spins, last: null, best: 0 })); H.step = 'play'; mpPush(); },
+  'sl-libre'() { const H = MP.H; H.cfg.mode = 'libre'; H.players.forEach(p => { p.last = null; }); H.step = 'play'; mpPush(); },
+});
+
 /* ---------- Musique : jazz lounge de salle de jeu ---------- */
 // Grille ii-V-I-VI en do : contrebasse qui marche, piano électrique, balais et vibraphone
 const TP_PROG = [[50, [3, 7, 10, 14]], [43, [4, 10, 14, 16]], [48, [4, 7, 11, 14]], [45, [4, 10, 13, 16]]];
@@ -812,6 +1073,28 @@ MPG.rl.sound = (prev, v) => {
   if (v.step === 'spin' && prev.step !== 'spin' && v.spin) sfx('roulette', v.spin.left);
   if (v.step === 'result' && prev.step !== 'result') { const me = tpMe(v); if (me.stake) sfx(me.gain > 0 ? 'win' : me.gain < 0 ? 'lose' : 'chip'); }
 };
+
+MPG.sl.sound = (prev, v) => {
+  const l = v.me && v.me.last, pl = prev.me && prev.me.last;
+  if (l && (!pl || pl.id !== l.id)) { MP.slAnim = { id: l.id, at: Date.now() }; sfx('reels'); }
+  if (v.step === 'end' && prev.step !== 'end') sfx('fanfare');
+};
+// Bruitages de la machine à sous
+Object.assign(SFX, {
+  lever(t) { hiss('sfx', t, .18, .25, { f: 900, to: 300, q: 2 }); tone('sfx', t + .16, 140, .12, .12, { to: 80 }); },
+  // Les rouleaux tournent (cliquetis), puis s'arrêtent un par un avec un « clonk »
+  reels(t) {
+    const end = SL_REEL.map(ms => ms / 1000);
+    for (let s = 0; s < end[2]; s += .055) { const n = end.filter(e => e > s).length; hiss('sfx', t + s, .02, .05 * n, { f: 2400, q: 4 }); }
+    end.forEach((e, i) => { tone('sfx', t + e, 180 - i * 20, .12, .16, { to: 90, type: 'triangle' }); hiss('sfx', t + e, .05, .2, { f: 1200, q: 2 }); });
+  },
+  coins(t, n = 6) { for (let i = 0; i < n; i++) { const s = t + i * .075 + Math.random() * .02; tone('sfx', s, 2200 + rand(900), .14, .05, { type: 'triangle', fx: .3 }); tone('sfx', s, 3300 + rand(700), .08, .025); } },
+  jackpot(t) {
+    SFX.tada(t);
+    for (let i = 0; i < 4; i++) [72, 76, 79, 84].forEach((m, k) => tone('sfx', t + .5 + i * .32 + k * .06, mtof(m + (i % 2) * 2), .18, .045, { type: 'square', fx: .3 }));
+    SFX.coins(t + .3, 30);
+  },
+});
 
 start();
 </script>

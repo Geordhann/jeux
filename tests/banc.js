@@ -283,6 +283,38 @@ async function run() {
     }
   });
 
+  await scenario('sl', 'Machine à sous : tournoi à 6, jackpot commun, gains vérifiés', 'tapis', async t => {
+    // Les gains de la machine sont justes et pas trop généreux (simulation d'un million de tirages)
+    const [host, code] = await t.host('sl');
+    const rtp = await t.eval(host, () => { let bet = 0, win = 0; for (let i = 0; i < 1e6; i++) { const r = slWin([slPick(), slPick(), slPick()], 10); bet += 10; win += r.win; } return win / bet; });
+    t.metric('retour aux joueurs (hors jackpot)', Math.round(rtp * 100) + ' %');
+    t.check(rtp > .7 && rtp < 1, 'machine trop ou pas assez généreuse : ' + rtp);
+    const ps = [host];
+    for (let i = 2; i <= 6; i++) ps.push((await t.join(i, code, 'Joueur ' + i))[0]);
+    await host.click('[data-a=sl-mode][data-v=tournoi]'); await host.click('[data-a=sl-spins][data-v="10"]');
+    await host.click('[data-a=sl-open]');
+    await t.until(ps, () => !!document.getElementById('slGo'));
+    // Tirages forcés : un jackpot pour le joueur 2, puis des tirages au hasard
+    await t.eval(host, () => { const pick = slPick; let n = 0; window.slPick = () => n++ < 3 ? 'sept' : pick(); });
+    const jack0 = await t.eval(host, () => MP.H.jack);
+    await ps[1].click('[data-a=sl-bet][data-v="10"]'); await ps[1].click('#slGo');
+    await t.until([host], () => MP.H.n === 1);
+    const [won, chips] = await t.eval(host, () => [MP.H.players[1].last.win, MP.H.players[1].chips]);
+    t.check(won === 10 * 200 + jack0 + 1 && chips === 1000 - 10 + won, `jackpot mal payé (${won}, ${chips})`);
+    const seen = await t.until(ps.filter((_, i) => i !== 1), () => !!document.querySelector('.sl-news.jackpot'), null, 6000);
+    t.metric('jackpot annoncé sur les autres téléphones', seen + ' ms');
+    let spins = 1;
+    for (let round = 0; round < 10; round++) {
+      await Promise.all(ps.map(async p => { const ok = await p.$('#slGo:not([disabled])'); if (ok && await p.click('#slGo', { timeout: 2000 }).then(() => true, () => false)) spins++; }));
+      await ps[0].waitForTimeout(2300);
+    }
+    await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'end', null, 8000);
+    const st = await t.eval(host, () => ({ n: MP.H.n, left: MP.H.players.map(p => p.left), neg: MP.H.players.some(p => p.chips < 0) }));
+    t.check(st.n === 60 && st.left.every(x => x === 0) && !st.neg, 'tournoi incomplet : ' + JSON.stringify(st));
+    t.check(await ps[3].$('.podium') !== null, 'pas de podium chez les invités');
+    t.metric('tirages joués', st.n);
+  });
+
   await scenario('reco', 'Reconnexion : un joueur redémarre son téléphone et retrouve sa carte', 'veillee', async t => {
     const [mj, code] = await t.host('lg', true);
     const ps = [];

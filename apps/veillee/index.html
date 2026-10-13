@@ -36,6 +36,8 @@
 .step-mj .mini { border: 1px solid var(--paper-edge); background: #fff; }
 .step-mj .mini.red { border-color: var(--red); background: var(--red); }
 .card .role-ic { font-size: 4.2rem; line-height: 1; text-align: center; }
+.card .role-ic svg.icn { width: 120px; height: 120px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.25)); }
+.mini-card svg.icn { width: 52px; height: 52px; }
 .card.dead { filter: grayscale(.85); }
 .card.verso.shuffle { animation: shuffle .45s ease-in-out infinite alternate; }
 @keyframes shuffle { from { transform: rotate(-4deg) scale(.98); } to { transform: rotate(4deg) scale(1.02); } }
@@ -161,12 +163,12 @@ window.APP = {
   id: 'veillee', name: 'La Veillée', of: 'de La Veillée', logo: ['La', 'Veillée'],
   tagline: 'Une veillée au cœur de la forêt, chacun sur son téléphone.',
   hooks: ['La nuit tombe sur la forêt…', 'Qui est le loup ? Personne ne le sait.', 'Ton dessin va finir en catastrophe. Et c\'est le but.', 'Ce soir, on ne fait confiance à personne.', 'Au loin, un loup hurle. Ou alors c\'est Kevin.', 'Allumez le feu, la veillée commence.'],
-  deal: ['🌙', '🐺', '🌲'],
+  deal: ['[[lune]]', '[[loup]]', '[[sapin]]'],
   games: [
-    { id: 'tp', name: 'Tu préfères', icon: '⚖️', color: '#7fe0b0', players: '2 à 20 joueurs', when: 'Début de soirée', desc: "Une question, deux choix : chacun vote en secret, la minorité prend un gage." },
-    { id: 'lg', name: 'Loup-Garou', icon: '🐺', color: '#8fb6ff', players: '4 à 47 joueurs + le meneur', when: 'Le grand jeu', desc: "Tu es le maître du jeu : la roue distribue une carte secrète sur le téléphone de chacun." },
-    { id: 'gp', name: 'Téléphone dessiné', icon: '✏️', color: '#ffb36b', players: '3 à 20 joueurs', when: 'Pour rire', desc: "Écris, dessine, devine : la phrase passe de téléphone en téléphone et se déforme." },
-    { id: 'av', name: 'Action ou Vérité', icon: '🎲', color: '#d39cff', players: '2 à 20 joueurs', when: 'Fin de soirée', desc: "Chacun son tour, la carte s'affiche sur tous les téléphones et tout le monde réagit." },
+    { id: 'tp', name: 'Tu préfères', icon: 'jeu-tp', color: '#7fe0b0', players: '2 à 20 joueurs', when: 'Début de soirée', desc: "Une question, deux choix : chacun vote en secret, la minorité prend un gage." },
+    { id: 'lg', name: 'Loup-Garou', icon: 'jeu-lg', color: '#8fb6ff', players: '4 à 47 joueurs + le meneur', when: 'Le grand jeu', desc: "Tu es le maître du jeu : la roue distribue une carte secrète sur le téléphone de chacun." },
+    { id: 'gp', name: 'Téléphone dessiné', icon: 'jeu-gp', color: '#ffb36b', players: '3 à 20 joueurs', when: 'Pour rire', desc: "Écris, dessine, devine : la phrase passe de téléphone en téléphone et se déforme." },
+    { id: 'av', name: 'Action ou Vérité', icon: 'jeu-av', color: '#d39cff', players: '2 à 20 joueurs', when: 'Fin de soirée', desc: "Chacun son tour, la carte s'affiche sur tous les téléphones et tout le monde réagit." },
   ],
   legal: {
     what: 'est un recueil de jeux de soirée en ligne (Loup-Garou, Téléphone dessiné, Tu préfères, Action ou Vérité)',
@@ -181,6 +183,8 @@ window.APP = {
 };
 </script>
 <script src="shared/qrcode.min.js"></script>
+<script src="shared/icones.js"></script>
+<script src="shared/ic-veillee.js"></script>
 <script src="shared/salon.js"></script>
 <script src="shared/son.js"></script>
 <script>
@@ -209,42 +213,42 @@ function wheelSvg(segs, angle) {
 const LG_MAX = 47;
 const LG = {
   // Le village
-  villageois: { name: 'Simple villageois', short: 'Villageois', icon: '🧑‍🌾', camp: 'village', box: 9, desc: "Aucun pouvoir, juste ton flair et ta voix au vote. Démasque les loups avant qu'il ne soit trop tard." },
-  villvill: { name: 'Villageois-Villageois', short: 'Villageois-Villageois', icon: '😇', camp: 'village', box: 1, desc: "Ta carte a deux faces Villageois : tout le monde sait que tu es innocent. Sers-t'en pour guider le village." },
-  voyante: { name: 'Voyante', short: 'Voyante', icon: '🔮', camp: 'village', box: 1, desc: "Chaque nuit, tu découvres sur ton téléphone la vraie carte d'un joueur de ton choix." },
-  sorciere: { name: 'Sorcière', short: 'Sorcière', icon: '🧪', camp: 'village', box: 1, desc: "Deux potions, une seule fois chacune : la potion de vie sauve la victime des loups, la potion de mort élimine qui tu veux." },
-  chasseur: { name: 'Chasseur', short: 'Chasseur', icon: '🏹', camp: 'village', box: 1, desc: "Si tu meurs, tu tires une dernière balle : tu emportes immédiatement le joueur de ton choix." },
-  cupidon: { name: 'Cupidon', short: 'Cupidon', icon: '💘', camp: 'village', box: 1, desc: "La première nuit, tu désignes deux amoureux (toi compris si tu veux). Si l'un meurt, l'autre meurt de chagrin." },
-  petitefille: { name: 'Petite fille', short: 'Petite fille', icon: '👧', camp: 'village', box: 1, desc: "Pendant le tour des loups, tu peux entrouvrir les yeux pour les espionner. S'ils te surprennent, tu deviens leur proie." },
-  salvateur: { name: 'Salvateur', short: 'Salvateur', icon: '🛡️', camp: 'village', box: 1, desc: "Chaque nuit, tu protèges un joueur de l'attaque des loups (toi compris), jamais le même deux nuits de suite." },
-  ancien: { name: 'Ancien', short: 'Ancien', icon: '👴', camp: 'village', box: 1, desc: "Tu survis à la première attaque des loups. Mais si le village t'élimine, les villageois perdent tous leurs pouvoirs." },
-  idiot: { name: 'Idiot du village', short: 'Idiot', icon: '🤪', camp: 'village', box: 1, desc: "Si le village vote contre toi, tu montres ta carte et tu restes en vie… mais tu ne votes plus." },
-  bouc: { name: 'Bouc émissaire', short: 'Bouc émissaire', icon: '🐐', camp: 'village', box: 1, desc: "En cas d'égalité au vote, c'est toi qui meurs. Avant de partir, tu choisis qui aura le droit de voter le lendemain." },
-  soeurs: { name: 'Deux sœurs', short: 'Deux sœurs', icon: '👭', camp: 'village', box: 2, desc: "Vous êtes deux. Vous vous reconnaissez et pouvez vous concerter en silence certaines nuits." },
-  freres: { name: 'Trois frères', short: 'Trois frères', icon: '👬', camp: 'village', box: 3, desc: "Vous êtes trois. Vous vous reconnaissez et pouvez vous concerter en silence certaines nuits." },
-  renard: { name: 'Renard', short: 'Renard', icon: '🦊', camp: 'village', box: 1, desc: "Chaque nuit, tu désignes trois joueurs : ton téléphone te dit si un loup se cache parmi eux. Si ce n'est pas le cas, tu perds ton flair." },
-  montreur: { name: "Montreur d'ours", short: "Montreur d'ours", icon: '🐻', camp: 'village', box: 1, desc: "Chaque matin, si un loup est assis juste à côté de toi, ton ours grogne (le meneur grogne pour lui)." },
-  juge: { name: 'Juge bègue', short: 'Juge bègue', icon: '⚖️', camp: 'village', box: 1, desc: "Une fois dans la partie, en faisant le signe convenu avec le meneur, tu déclenches un second vote juste après le premier." },
-  chevalier: { name: "Chevalier à l'épée rouillée", short: 'Chevalier', icon: '⚔️', camp: 'village', box: 1, desc: "Si les loups te dévorent, ton épée rouillée infecte le premier loup assis à ta gauche : il meurt la nuit suivante." },
-  servante: { name: 'Servante dévouée', short: 'Servante', icon: '🧹', camp: 'village', box: 1, desc: "Quand un joueur est éliminé, tu peux te dévoiler et prendre sa carte, son rôle et ses secrets." },
-  corbeau: { name: 'Corbeau', short: 'Corbeau', icon: '🪶', camp: 'village', box: 1, desc: "Chaque nuit, tu désignes un joueur : le lendemain, il aura deux voix contre lui au vote." },
-  gitane: { name: 'Gitane', short: 'Gitane', icon: '🧿', camp: 'village', box: 1, desc: "Certaines nuits, tu désignes un spirite : le matin, il pose ta question à un mort, qui répond par oui ou par non." },
-  garde: { name: 'Garde champêtre', short: 'Garde champêtre', icon: '📯', camp: 'village', box: 1, desc: "Chaque matin, tu peux faire une annonce publique : le meneur lit un événement qui change les règles pour la journée." },
+  villageois: { name: 'Simple villageois', short: 'Villageois', icon: '[[villageois]]', camp: 'village', box: 9, desc: "Aucun pouvoir, juste ton flair et ta voix au vote. Démasque les loups avant qu'il ne soit trop tard." },
+  villvill: { name: 'Villageois-Villageois', short: 'Villageois-Villageois', icon: '[[villvill]]', camp: 'village', box: 1, desc: "Ta carte a deux faces Villageois : tout le monde sait que tu es innocent. Sers-t'en pour guider le village." },
+  voyante: { name: 'Voyante', short: 'Voyante', icon: '[[voyante]]', camp: 'village', box: 1, desc: "Chaque nuit, tu découvres sur ton téléphone la vraie carte d'un joueur de ton choix." },
+  sorciere: { name: 'Sorcière', short: 'Sorcière', icon: '[[sorciere]]', camp: 'village', box: 1, desc: "Deux potions, une seule fois chacune : la potion de vie sauve la victime des loups, la potion de mort élimine qui tu veux." },
+  chasseur: { name: 'Chasseur', short: 'Chasseur', icon: '[[chasseur]]', camp: 'village', box: 1, desc: "Si tu meurs, tu tires une dernière balle : tu emportes immédiatement le joueur de ton choix." },
+  cupidon: { name: 'Cupidon', short: 'Cupidon', icon: '[[cupidon]]', camp: 'village', box: 1, desc: "La première nuit, tu désignes deux amoureux (toi compris si tu veux). Si l'un meurt, l'autre meurt de chagrin." },
+  petitefille: { name: 'Petite fille', short: 'Petite fille', icon: '[[petitefille]]', camp: 'village', box: 1, desc: "Pendant le tour des loups, tu peux entrouvrir les yeux pour les espionner. S'ils te surprennent, tu deviens leur proie." },
+  salvateur: { name: 'Salvateur', short: 'Salvateur', icon: '[[salvateur]]', camp: 'village', box: 1, desc: "Chaque nuit, tu protèges un joueur de l'attaque des loups (toi compris), jamais le même deux nuits de suite." },
+  ancien: { name: 'Ancien', short: 'Ancien', icon: '[[ancien]]', camp: 'village', box: 1, desc: "Tu survis à la première attaque des loups. Mais si le village t'élimine, les villageois perdent tous leurs pouvoirs." },
+  idiot: { name: 'Idiot du village', short: 'Idiot', icon: '[[idiot]]', camp: 'village', box: 1, desc: "Si le village vote contre toi, tu montres ta carte et tu restes en vie… mais tu ne votes plus." },
+  bouc: { name: 'Bouc émissaire', short: 'Bouc émissaire', icon: '[[bouc]]', camp: 'village', box: 1, desc: "En cas d'égalité au vote, c'est toi qui meurs. Avant de partir, tu choisis qui aura le droit de voter le lendemain." },
+  soeurs: { name: 'Deux sœurs', short: 'Deux sœurs', icon: '[[soeurs]]', camp: 'village', box: 2, desc: "Vous êtes deux. Vous vous reconnaissez et pouvez vous concerter en silence certaines nuits." },
+  freres: { name: 'Trois frères', short: 'Trois frères', icon: '[[freres]]', camp: 'village', box: 3, desc: "Vous êtes trois. Vous vous reconnaissez et pouvez vous concerter en silence certaines nuits." },
+  renard: { name: 'Renard', short: 'Renard', icon: '[[renard]]', camp: 'village', box: 1, desc: "Chaque nuit, tu désignes trois joueurs : ton téléphone te dit si un loup se cache parmi eux. Si ce n'est pas le cas, tu perds ton flair." },
+  montreur: { name: "Montreur d'ours", short: "Montreur d'ours", icon: '[[montreur]]', camp: 'village', box: 1, desc: "Chaque matin, si un loup est assis juste à côté de toi, ton ours grogne (le meneur grogne pour lui)." },
+  juge: { name: 'Juge bègue', short: 'Juge bègue', icon: '[[juge]]', camp: 'village', box: 1, desc: "Une fois dans la partie, en faisant le signe convenu avec le meneur, tu déclenches un second vote juste après le premier." },
+  chevalier: { name: "Chevalier à l'épée rouillée", short: 'Chevalier', icon: '[[chevalier]]', camp: 'village', box: 1, desc: "Si les loups te dévorent, ton épée rouillée infecte le premier loup assis à ta gauche : il meurt la nuit suivante." },
+  servante: { name: 'Servante dévouée', short: 'Servante', icon: '[[servante]]', camp: 'village', box: 1, desc: "Quand un joueur est éliminé, tu peux te dévoiler et prendre sa carte, son rôle et ses secrets." },
+  corbeau: { name: 'Corbeau', short: 'Corbeau', icon: '[[corbeau]]', camp: 'village', box: 1, desc: "Chaque nuit, tu désignes un joueur : le lendemain, il aura deux voix contre lui au vote." },
+  gitane: { name: 'Gitane', short: 'Gitane', icon: '[[gitane]]', camp: 'village', box: 1, desc: "Certaines nuits, tu désignes un spirite : le matin, il pose ta question à un mort, qui répond par oui ou par non." },
+  garde: { name: 'Garde champêtre', short: 'Garde champêtre', icon: '[[garde]]', camp: 'village', box: 1, desc: "Chaque matin, tu peux faire une annonce publique : le meneur lit un événement qui change les règles pour la journée." },
   // Les loups
-  loup: { name: 'Loup-Garou', short: 'Loup', icon: '🐺', camp: 'loups', box: 4, desc: "Chaque nuit, avec les autres loups, tu choisis une victime. Le jour, fais-toi passer pour un innocent villageois." },
-  gml: { name: 'Grand méchant loup', short: 'Grand méchant loup', icon: '👹', camp: 'loups', box: 1, desc: "Tu chasses avec les loups, puis, tant qu'aucun loup n'est mort, tu dévores seul une deuxième victime." },
-  ipl: { name: 'Infect père des loups', short: 'Infect père', icon: '🧛', camp: 'loups', box: 1, desc: "Une fois dans la partie, tu peux infecter la victime des loups au lieu de la tuer : elle devient loup-garou en secret." },
-  loupblanc: { name: 'Loup blanc', short: 'Loup blanc', icon: '❄️', camp: 'solo', box: 1, desc: "Tu te réveilles avec les loups, mais une nuit sur deux tu peux dévorer l'un d'eux. Tu gagnes seul : sois le dernier debout." },
+  loup: { name: 'Loup-Garou', short: 'Loup', icon: '[[loup]]', camp: 'loups', box: 4, desc: "Chaque nuit, avec les autres loups, tu choisis une victime. Le jour, fais-toi passer pour un innocent villageois." },
+  gml: { name: 'Grand méchant loup', short: 'Grand méchant loup', icon: '[[gml]]', camp: 'loups', box: 1, desc: "Tu chasses avec les loups, puis, tant qu'aucun loup n'est mort, tu dévores seul une deuxième victime." },
+  ipl: { name: 'Infect père des loups', short: 'Infect père', icon: '[[ipl]]', camp: 'loups', box: 1, desc: "Une fois dans la partie, tu peux infecter la victime des loups au lieu de la tuer : elle devient loup-garou en secret." },
+  loupblanc: { name: 'Loup blanc', short: 'Loup blanc', icon: '[[loupblanc]]', camp: 'solo', box: 1, desc: "Tu te réveilles avec les loups, mais une nuit sur deux tu peux dévorer l'un d'eux. Tu gagnes seul : sois le dernier debout." },
   // Les ambigus
-  voleur: { name: 'Voleur', short: 'Voleur', icon: '🦹', camp: 'ambigu', box: 1, desc: "La première nuit, ton téléphone te montre les deux cartes restées au centre : tu peux échanger la tienne contre l'une d'elles." },
-  comedien: { name: 'Comédien', short: 'Comédien', icon: '🎭', camp: 'ambigu', box: 1, desc: "Trois rôles t'attendent. Chaque nuit, tu en choisis un et tu joues son pouvoir, jusqu'à les avoir tous utilisés." },
-  chienloup: { name: 'Chien-loup', short: 'Chien-loup', icon: '🐕', camp: 'ambigu', box: 1, desc: "La première nuit, tu choisis ton camp : fidèle chien du village, ou loup-garou. Pour toute la partie." },
-  enfant: { name: 'Enfant sauvage', short: 'Enfant sauvage', icon: '🧒', camp: 'ambigu', box: 1, desc: "La première nuit, tu choisis un modèle. Tant qu'il vit, tu es villageois. S'il meurt, tu deviens loup-garou." },
+  voleur: { name: 'Voleur', short: 'Voleur', icon: '[[voleur]]', camp: 'ambigu', box: 1, desc: "La première nuit, ton téléphone te montre les deux cartes restées au centre : tu peux échanger la tienne contre l'une d'elles." },
+  comedien: { name: 'Comédien', short: 'Comédien', icon: '[[comedien]]', camp: 'ambigu', box: 1, desc: "Trois rôles t'attendent. Chaque nuit, tu en choisis un et tu joues son pouvoir, jusqu'à les avoir tous utilisés." },
+  chienloup: { name: 'Chien-loup', short: 'Chien-loup', icon: '[[chienloup]]', camp: 'ambigu', box: 1, desc: "La première nuit, tu choisis ton camp : fidèle chien du village, ou loup-garou. Pour toute la partie." },
+  enfant: { name: 'Enfant sauvage', short: 'Enfant sauvage', icon: '[[enfant]]', camp: 'ambigu', box: 1, desc: "La première nuit, tu choisis un modèle. Tant qu'il vit, tu es villageois. S'il meurt, tu deviens loup-garou." },
   // Les solitaires
-  flute: { name: 'Joueur de flûte', short: 'Joueur de flûte', icon: '🎶', camp: 'solo', box: 1, desc: "Chaque nuit, tu charmes deux joueurs. Tu gagnes seul quand tous les vivants sont charmés." },
-  sectaire: { name: 'Abominable sectaire', short: 'Sectaire', icon: '🕯️', camp: 'solo', box: 1, desc: "Le village est coupé en deux groupes (affichés sur les téléphones). Tu gagnes seul quand tout le groupe d'en face est éliminé." },
-  ange: { name: 'Ange', short: 'Ange', icon: '👼', camp: 'solo', box: 1, desc: "Tu gagnes tout de suite si tu es le premier éliminé, au premier vote ou la première nuit. Sinon, tu deviens simple villageois." },
-  pyromane: { name: 'Pyromane', short: 'Pyromane', icon: '🔥', camp: 'solo', box: 1, desc: "Chaque nuit, tu asperges d'huile la maison d'un joueur… ou tu mets le feu : tous les joueurs aspergés brûlent. Tu gagnes seul." },
+  flute: { name: 'Joueur de flûte', short: 'Joueur de flûte', icon: '[[flute]]', camp: 'solo', box: 1, desc: "Chaque nuit, tu charmes deux joueurs. Tu gagnes seul quand tous les vivants sont charmés." },
+  sectaire: { name: 'Abominable sectaire', short: 'Sectaire', icon: '[[sectaire]]', camp: 'solo', box: 1, desc: "Le village est coupé en deux groupes (affichés sur les téléphones). Tu gagnes seul quand tout le groupe d'en face est éliminé." },
+  ange: { name: 'Ange', short: 'Ange', icon: '[[ange]]', camp: 'solo', box: 1, desc: "Tu gagnes tout de suite si tu es le premier éliminé, au premier vote ou la première nuit. Sinon, tu deviens simple villageois." },
+  pyromane: { name: 'Pyromane', short: 'Pyromane', icon: '[[pyromane]]', camp: 'solo', box: 1, desc: "Chaque nuit, tu asperges d'huile la maison d'un joueur… ou tu mets le feu : tous les joueurs aspergés brûlent. Tu gagnes seul." },
 };
 const LG_CAMPS = [['village', 'Le village'], ['loups', 'Les loups-garous'], ['ambigu', 'Les ambigus'], ['solo', 'Les solitaires']];
 const LG_SPECIALS = Object.keys(LG).filter(r => !['villageois', 'loup'].includes(r));
@@ -447,14 +451,14 @@ function lgDo(cid, d) {
       res = `Tu es maintenant ${lgRole(taken).name} ${lgRole(taken).icon}`; log = `Le voleur a pris la carte ${lgRole(taken).name}.`; break;
     }
     case 'comedien': if (!ask.cards.includes(d.card)) return; H.comUsed.push(d.card); H.comNight = d.card; res = `Cette nuit, tu es ${lgRole(d.card).name}. Le meneur t'appellera à son tour.`; log = `Le comédien joue ${lgRole(d.card).name} cette nuit.`; break;
-    case 'cupidon': if (!okPicks) return; H.lovers = P.map(x => x.cid); res = `Tu as uni ${names}. 💘`; log = `Amoureux : ${names}.`; break;
-    case 'chienloup': if (!['village', 'loup'].includes(d.camp)) return; p.dog = d.camp; res = d.camp === 'loup' ? 'Tu rejoins la meute. 🐺' : 'Tu restes le fidèle chien du village. 🐕'; log = `Le chien-loup a choisi : ${d.camp === 'loup' ? 'loup-garou' : 'village'}.`; break;
+    case 'cupidon': if (!okPicks) return; H.lovers = P.map(x => x.cid); res = `Tu as uni ${names}. [[coeur]]`; log = `Amoureux : ${names}.`; break;
+    case 'chienloup': if (!['village', 'loup'].includes(d.camp)) return; p.dog = d.camp; res = d.camp === 'loup' ? 'Tu rejoins la meute. [[loup]]' : 'Tu restes le fidèle chien du village. [[chienloup]]'; log = `Le chien-loup a choisi : ${d.camp === 'loup' ? 'loup-garou' : 'village'}.`; break;
     case 'voyante': if (!okPicks) return; res = `${names} est ${lgRole(P[0].role).name} ${lgRole(P[0].role).icon}`; log = `La voyante a sondé ${names} (${lgRole(P[0].role).name}).`; break;
     case 'renard': {
       if (!okPicks) return;
       const yes = P.some(lgWolf);
       if (!yes) H.foxBlind = true;
-      res = yes ? `🐺 Un loup se cache parmi ${names} !` : `Aucun loup parmi ${names}. Ton flair s'éteint.`; log = `Le renard a flairé ${names} : ${yes ? 'oui' : 'non (il perd son pouvoir)'}.`; break;
+      res = yes ? `[[loup]] Un loup se cache parmi ${names} !` : `Aucun loup parmi ${names}. Ton flair s'éteint.`; log = `Le renard a flairé ${names} : ${yes ? 'oui' : 'non (il perd son pouvoir)'}.`; break;
     }
     case 'enfant': if (!okPicks) return; p.model = P[0].cid; res = `Ton modèle est ${names}. Tant qu'il vit, tu es du village.`; log = `L'enfant sauvage a choisi ${names} comme modèle.`; break;
     case 'corbeau': if (!okPicks) return; H.crow = P[0].cid; res = `${names} aura deux voix contre lui demain.`; log = `Le corbeau a désigné ${names}.`; break;
@@ -462,9 +466,9 @@ function lgDo(cid, d) {
     case 'gml': case 'loupblanc':
       if (d.skip) { res = 'Tu laisses passer cette nuit.'; log = `${ask.id === 'gml' ? 'Le grand méchant loup' : 'Le loup blanc'} n'a dévoré personne.`; break; }
       if (!okPicks) return; H.pending.push([P[0].cid, ask.id]); res = `Tu dévores ${names}.`; log = `${ask.id === 'gml' ? 'Le grand méchant loup' : 'Le loup blanc'} dévore ${names}.`; break;
-    case 'flute': if (!okPicks) return; P.forEach(x => { x.charmed = true; }); res = `Tu as charmé ${names}. 🎶`; log = `Le joueur de flûte a charmé ${names}.`; break;
+    case 'flute': if (!okPicks) return; P.forEach(x => { x.charmed = true; }); res = `Tu as charmé ${names}. [[charme]]`; log = `Le joueur de flûte a charmé ${names}.`; break;
     case 'pyromane':
-      if (d.fire) { const burn = lgAlive(H).filter(x => x.oiled); if (!burn.length) return; burn.forEach(x => { H.pending.push([x.cid, 'feu']); x.oiled = false; }); res = '🔥 Tout brûle !'; log = `Le pyromane met le feu : ${burn.map(x => x.name).join(', ')}.`; break; }
+      if (d.fire) { const burn = lgAlive(H).filter(x => x.oiled); if (!burn.length) return; burn.forEach(x => { H.pending.push([x.cid, 'feu']); x.oiled = false; }); res = '[[feu]] Tout brûle !'; log = `Le pyromane met le feu : ${burn.map(x => x.name).join(', ')}.`; break; }
       if (picks.length !== 1 || !ask.choices.includes(picks[0])) return; P[0].oiled = true; res = `Tu as aspergé la maison de ${names}.`; log = `Le pyromane asperge ${names}.`; break;
     case 'sorciere': {
       const out = [];
@@ -485,7 +489,7 @@ function lgTally(H) {
     const w = v.kind === 'exil' && H.mayor === from ? 2 : 1;
     score[to] = (score[to] || 0) + w; (voters[to] = voters[to] || []).push((mpP(from) || {}).name + (w > 1 ? ' (×2)' : ''));
   });
-  if (v.kind === 'exil' && H.crow && mpP(H.crow) && mpP(H.crow).alive) { score[H.crow] = (score[H.crow] || 0) + 2; (voters[H.crow] = voters[H.crow] || []).push('🪶 le corbeau (×2)'); }
+  if (v.kind === 'exil' && H.crow && mpP(H.crow) && mpP(H.crow).alive) { score[H.crow] = (score[H.crow] || 0) + 2; (voters[H.crow] = voters[H.crow] || []).push('[[plume]] le corbeau (×2)'); }
   const rows = Object.keys(score).map(c => ({ cid: c, name: mpP(c).name, votes: score[c], voters: voters[c] })).sort((a, b) => b.votes - a.votes);
   const top = rows.length ? rows.filter(r => r.votes === rows[0].votes) : [];
   return { rows, top };
@@ -504,7 +508,7 @@ MPG.lg = {
     "Au réveil, les morts sont annoncés sur tous les téléphones. Le village élit son maire (écharpe tricolore, voix double), débat, puis vote sur les téléphones. Le meneur élimine le condamné.",
     "Le village gagne quand tous les loups sont morts. Les loups gagnent quand il ne reste qu'eux. Amoureux, joueur de flûte, loup blanc, ange, sectaire et pyromane ont leur propre victoire.",
   ], tips: [
-    "« 📖 Tous les rôles » explique les 33 personnages.",
+    "« [[livre]] Tous les rôles » explique les 33 personnages.",
     "Le meneur appelle aussi les personnages morts, en silence, pour ne rien trahir.",
     "Les morts se taisent jusqu'à la fin de la partie (même si c'est dur).",
     "Si un téléphone se met en veille, il se reconnecte tout seul et retrouve sa carte. Si le téléphone du meneur redémarre, il reprend la partie depuis l'accueil.",
@@ -571,18 +575,18 @@ function lgSpinAnim() {
 
 /* --- Petits morceaux d'affichage --- */
 const sash = big => `<span class="sash ${big ? 'big' : ''}" aria-label="Maire"><b>MAIRE</b></span>`;
-const lgTags = (x, mj) => [x.mayor ? sash() : '', x.pure ? '<span class="tag-i" title="Villageois-Villageois">😇</span>' : '', x.crow ? '<span class="tag-i" title="Désigné par le corbeau">🪶</span>' : '', x.idiot ? '<span class="tag-i" title="Idiot gracié">🤪</span>' : '', x.group ? `<span class="tag-i">${x.group === 'lune' ? '🌙' : '☀️'}</span>` : ''].join('');
-const lgRevealList = list => `<div class="roles">${list.map(x => `<div class="${x.wolf ? 'imp' : ''}"><span>${x.alive ? '' : '☠ '}${esc(x.name)}${x.mayor ? ' 🎖️' : ''}</span><span>${lgRole(x.role).icon} ${lgRole(x.role).name}${x.wolf && !LG_WOLF_CARDS.includes(x.role) ? ' (loup)' : ''}</span></div>`).join('')}</div>`;
+const lgTags = (x, mj) => [x.mayor ? sash() : '', x.pure ? '<span class="tag-i" title="Villageois-Villageois">[[villvill]]</span>' : '', x.crow ? '<span class="tag-i" title="Désigné par le corbeau">[[plume]]</span>' : '', x.idiot ? '<span class="tag-i" title="Idiot gracié">[[idiot]]</span>' : '', x.group ? `<span class="tag-i">${x.group === 'lune' ? '[[lune]]' : '[[soleil]]'}</span>` : ''].join('');
+const lgRevealList = list => `<div class="roles">${list.map(x => `<div class="${x.wolf ? 'imp' : ''}"><span>${x.alive ? '' : '[[crane]] '}${esc(x.name)}${x.mayor ? ' [[maire]]' : ''}</span><span>${lgRole(x.role).icon} ${lgRole(x.role).name}${x.wolf && !LG_WOLF_CARDS.includes(x.role) ? ' (loup)' : ''}</span></div>`).join('')}</div>`;
 function lgNewsCard(news) {
   if (!news) return '';
   const lines = news.lines.length ? news.lines.map(d => `<p class="text">${esc(d.name)}${d.how === 'love' ? ' meurt de chagrin' : ' est mort·e'}${d.mayor ? ' (c\'était le maire !)' : ''}.<br><em>${lgRole(d.role).icon} ${lgRole(d.role).name}</em></p>${d.fun ? `<p class="sub">${esc(d.fun)}</p>` : ''}`).join('')
     : `<p class="text">${esc(news.empty || "Personne n'est mort.")}</p>`;
-  return `<div class="card compact news">${cardIdx('☾')}<p class="kind">${esc(news.title)}</p>${lines}</div>`;
+  return `<div class="card compact news">${cardIdx('[[lune]]')}<p class="kind">${esc(news.title)}</p>${lines}</div>`;
 }
 function lgVoteBox(v, host) {
   const vt = v.vote;
   if (!vt) return '';
-  const title = vt.kind === 'maire' ? '🎖️ Élection du maire' : `🗳️ Vote du village${vt.round > 1 ? ' (second vote)' : ''}`;
+  const title = vt.kind === 'maire' ? '[[maire]] Élection du maire' : `[[vote]] Vote du village${vt.round > 1 ? ' (second vote)' : ''}`;
   if (vt.revealed) return `<section class="panel vote-box"><h3><span>${title}</span><span>résultats</span></h3>
     ${vt.rows.length ? `<ul class="tally">${vt.rows.map((r, i) => `<li class="${i === 0 ? 'top' : ''}"><b>${esc(r.name)}</b><span class="bar"><i style="width:${Math.round(100 * r.votes / vt.rows[0].votes)}%"></i></span><b>${r.votes}</b><small>${esc(r.voters.join(', '))}</small></li>`).join('')}</ul>` : '<p class="hint">Personne n\'a voté.</p>'}</section>`;
   const head = `<section class="panel vote-box"><h3><span>${title}</span><span>${vt.count} / ${vt.of} votes</span></h3>`;
@@ -602,16 +606,16 @@ function lgHost() {
     };
     return `${roomBox(true)}
     <section class="panel"><h3><span>Joueurs connectés</span><span>${n} / ${LG_MAX}</span></h3>
-      ${n ? `<ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${esc(p.name)}</b>${p.on ? '' : '<small>déconnecté·e</small>'}</span><button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button></li>`).join('')}</ul>`
+      ${n ? `<ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${avatar(p.name)}${esc(p.name)}</b>${p.on ? '' : '<small>déconnecté·e</small>'}</span><button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button></li>`).join('')}</ul>`
         : `<p class="hint">En attente des joueurs… Toi, tu es le meneur : tu ne joues pas, tu racontes. De 4 à ${LG_MAX} joueurs, comme la boîte complète.</p>`}
     </section>
     <section class="panel"><h3><span>Les cartes</span><span>${d.cards.length} / ${LG_MAX}</span></h3>
       <div class="levels four" role="group" aria-label="Composition rapide">${[['decouverte', 'Découverte'], ['classique', 'Classique'], ['complet', 'Complet'], ['ultime', 'Ultime']].map(([k, l]) => `<button data-a="lg-preset" data-v="${k}">${l}</button>`).join('')}</div>
       <p class="hint">Composition rapide selon le nombre de joueurs, puis ajuste à la main.</p>
-      <div class="stepper"><span><b>🐺 Simples loups-garous</b><br><span class="hint">Conseillé : ${lgCount(n)} pour ${n} joueur${n > 1 ? 's' : ''}</span></span>
+      <div class="stepper"><span><b>[[loup]] Simples loups-garous</b><br><span class="hint">Conseillé : ${lgCount(n)} pour ${n} joueur${n > 1 ? 's' : ''}</span></span>
         <span class="ctl"><button data-a="lg-w" data-v="-1" aria-label="Moins de loups" ${c.loups <= 0 ? 'disabled' : ''}>−</button><output>${c.loups}</output><button data-a="lg-w" data-v="1" aria-label="Plus de loups" ${c.loups >= 8 ? 'disabled' : ''}>+</button></span></div>
       ${LG_CAMPS.map(([camp, label]) => `<p class="camp-t">${label}</p><div class="chips">${LG_SPECIALS.filter(r => LG[r].camp === camp).map(chip).join('')}</div>`).join('')}
-      <button class="btn ghost" data-a="info" data-v="lgroles">📖 Tous les rôles expliqués</button>
+      <button class="btn ghost" data-a="info" data-v="lgroles">[[livre]] Tous les rôles expliqués</button>
       <p class="hint">${d.cards.filter(r => r !== 'villageois').length} cartes spéciales et loups · ${d.vil} simple${d.vil > 1 ? 's' : ''} villageois${c.roles.includes('voleur') ? ' · 2 cartes de côté pour le voleur' : ''}${c.roles.includes('comedien') ? ' · 3 rôles pour le comédien' : ''}</p>
       ${d.err ? `<p class="warn">${d.err}</p>` : ''}
     </section>
@@ -625,11 +629,11 @@ function lgHost() {
   if (H.step === 'spin') return `<div class="turn"><small>La roue distribue</small><strong>${n} cartes</strong></div>${wheelSvg(H.cards.slice(0, 24).map(r => ({ label: lgRole(r).short })), H.spin.from)}<p class="howto">Chacun reçoit sa carte en secret sur son téléphone.</p>`;
   const tags = p => [lgRole(p.role).name + (p.role !== p.card ? ` (était ${lgRole(p.card).short})` : ''),
     p.infected ? 'infecté' : '', p.role === 'chienloup' && p.dog ? (p.dog === 'loup' ? 'devenu loup' : 'reste chien') : '', p.wild ? 'devenu loup' : '',
-    H.lovers.includes(p.cid) ? '💘' : '', p.charmed ? '🎶 charmé' : '', p.oiled ? '🛢️ huilé' : '', H.protect === p.cid ? '🛡️ protégé' : '', p.group ? (p.group === 'lune' ? '🌙' : '☀️') : '',
-    H.pending.some(([c]) => c === p.cid) ? '☠ ' + H.pending.filter(([c]) => c === p.cid).map(([, b]) => ({ loups: 'loups', gml: 'grand méchant loup', loupblanc: 'loup blanc', poison: 'poison', feu: 'feu', mj: 'meneur' }[b])).join(', ') : '',
+    H.lovers.includes(p.cid) ? '[[coeur]]' : '', p.charmed ? '[[charme]] charmé' : '', p.oiled ? '[[huile]] huilé' : '', H.protect === p.cid ? '[[bouclier]] protégé' : '', p.group ? (p.group === 'lune' ? '[[lune]]' : '[[soleil]]') : '',
+    H.pending.some(([c]) => c === p.cid) ? '[[crane]] ' + H.pending.filter(([c]) => c === p.cid).map(([, b]) => ({ loups: 'loups', gml: 'grand méchant loup', loupblanc: 'loup blanc', poison: 'poison', feu: 'feu', mj: 'meneur' }[b])).join(', ') : '',
     p.on ? '' : 'déconnecté·e', H.step === 'deal' && !p.seen ? 'carte pas encore vue' : ''].filter(Boolean).join(' · ');
   const list = acts => `<ul class="plist">${H.players.map(p => `<li class="${p.alive ? '' : 'dead'} ${H.pending.some(([c]) => c === p.cid) ? 'target' : ''}"><span class="ic" aria-hidden="true">${lgRole(p.role).icon}</span>
-    <span class="nm"><b>${esc(p.name)}${H.mayor === p.cid ? ' ' + sash() : ''}</b><small>${tags(p)}</small></span>${acts ? acts(p) : ''}</li>`).join('')}</ul>`;
+    <span class="nm"><b>${avatar(p.name)}${esc(p.name)}${H.mayor === p.cid ? ' ' + sash() : ''}</b><small>${tags(p)}</small></span>${acts ? acts(p) : ''}</li>`).join('')}</ul>`;
   if (H.step === 'deal') {
     const seen = H.players.filter(p => p.seen).length;
     return `<div class="turn"><small>Cartes distribuées</small><strong>${seen} / ${n} vues</strong></div>
@@ -637,11 +641,11 @@ function lgHost() {
     ${H.extra.length ? `<p class="howto">Cartes du voleur : ${H.extra.map(r => lgRole(r).icon + ' ' + lgRole(r).name).join(' et ')}</p>` : ''}
     ${H.comRoles.length && lgHas(H, 'comedien') ? `<p class="howto">Rôles du comédien : ${H.comRoles.map(r => lgRole(r).icon + ' ' + lgRole(r).name).join(', ')}</p>` : ''}
     <section class="panel"><h3><span>Les cartes</span></h3>${list()}</section>
-    <button class="btn big" data-a="lg-start">🌙 La nuit tombe</button>
+    <button class="btn big" data-a="lg-start">[[lune]] La nuit tombe</button>
     <button class="btn ghost" data-a="lg-respin">Relancer la roue</button>`;
   }
   if (H.step === 'end') return `<div class="turn"><small>Fin de partie</small><strong>${LG_WIN[H.winner || '']}</strong></div>
-    <div class="card">${cardIdx('☾')}<p class="kind">Toutes les cartes</p>${lgRevealList(MPG.lg.view(MP_CID).reveal)}</div>
+    <div class="card">${cardIdx('[[lune]]')}<p class="kind">Toutes les cartes</p>${lgRevealList(MPG.lg.view(MP_CID).reveal)}</div>
     <div class="row"><button class="btn" data-a="lg-again">Nouvelle partie</button><button class="btn ghost" data-a="mp-quit">Fermer</button></div>`;
   // Partie en cours
   const night = H.phase === 'night', win = lgWinner(H), alive = lgAlive(H).length;
@@ -651,11 +655,11 @@ function lgHost() {
     const steps = lgSteps(H), cur = steps.find(s => s.id === H.cur);
     const curCard = cur ? (() => {
       const actor = lgActor(H, cur), dead = !H.players.some(p => p.alive && (cur.wolves ? lgWolf(p) : p.role === (cur.need || cur.role)));
-      const wait = actor && !H.done[cur.id] ? `<p class="sub wait-dot">⏳ En attente du choix sur le téléphone de ${esc(actor.name)}…</p>` : '';
+      const wait = actor && !H.done[cur.id] ? `<p class="sub wait-dot">[[sablier]] En attente du choix sur le téléphone de ${esc(actor.name)}…</p>` : '';
       const done = H.log[cur.id] ? `<p class="sub done-l">✓ ${esc(H.log[cur.id])}</p>` : '';
       let extra = '';
-      if (cur.id === 'loups' && lgHas(H, 'petitefille')) extra += `<p class="sub">👧 La petite fille peut espionner en entrouvrant les yeux.</p>`;
-      if (cur.id === 'loups') extra += `<p class="sub">Touche ☠ sur la victime dans la liste des joueurs.</p>`;
+      if (cur.id === 'loups' && lgHas(H, 'petitefille')) extra += `<p class="sub">[[petitefille]] La petite fille peut espionner en entrouvrant les yeux.</p>`;
+      if (cur.id === 'loups') extra += `<p class="sub">Touche [[crane]] sur la victime dans la liste des joueurs.</p>`;
       if (cur.id === 'infect') { const vic = H.pending.find(([, b]) => b === 'loups'); extra += vic ? `<button class="btn paper" data-a="lg-infect">${H.infectOn ? 'Annuler l\'infection' : `Infecter ${esc(mpP(vic[0]).name)}`}</button>` : '<p class="sub">Pas encore de victime des loups.</p>'; }
       if (cur.id === 'comedien' && H.comNight) extra += `<p class="sub">Appelle le comédien au tour de : ${lgRole(H.comNight).name}.</p>`;
       return `<div class="card compact call"><p class="kind">${cur.title}${dead ? ' · mort·e : appelle quand même' : ''}</p><p class="text call-t">« ${cur.text} »</p>${wait}${done}${extra}
@@ -669,31 +673,31 @@ function lgHost() {
         ${lgHas(H, 'sorciere') ? `<p class="hint">Potions de la sorcière : vie ${H.potions.vie ? 'disponible' : 'utilisée'}, mort ${H.potions.mort ? 'disponible' : 'utilisée'}.</p>` : ''}</section>`;
   } else {
     const t = H.vote ? lgTally(H) : null;
-    const voteCtl = !H.vote ? `<div class="row">${!H.mayor ? `<button class="btn paper" data-a="lg-vote-start" data-v="maire">🎖️ Élire le maire</button>` : ''}<button class="btn" data-a="lg-vote-start" data-v="exil">🗳️ Lancer le vote</button></div>`
+    const voteCtl = !H.vote ? `<div class="row">${!H.mayor ? `<button class="btn paper" data-a="lg-vote-start" data-v="maire">[[maire]] Élire le maire</button>` : ''}<button class="btn" data-a="lg-vote-start" data-v="exil">[[vote]] Lancer le vote</button></div>`
       : !H.vote.revealed ? `<button class="btn" data-a="lg-vote-reveal">Révéler le vote (${Object.keys(H.vote.ballots).length} / ${H.players.filter(x => lgCanVote(H, x)).length})</button>`
-      : `<div class="row">${t.top.length === 1 ? (H.vote.kind === 'maire' ? `<button class="btn" data-a="lg-mayor" data-v="${esc(t.top[0].cid)}">🎖️ ${esc(t.top[0].name)} devient maire</button>` : `<button class="btn red" data-a="lg-kill" data-v="${esc(t.top[0].cid)}">Éliminer ${esc(t.top[0].name)}</button>`)
+      : `<div class="row">${t.top.length === 1 ? (H.vote.kind === 'maire' ? `<button class="btn" data-a="lg-mayor" data-v="${esc(t.top[0].cid)}">[[maire]] ${esc(t.top[0].name)} devient maire</button>` : `<button class="btn red" data-a="lg-kill" data-v="${esc(t.top[0].cid)}">Éliminer ${esc(t.top[0].name)}</button>`)
           : t.top.length ? `<p class="howto">Égalité entre ${esc(t.top.map(r => r.name).join(' et '))}. ${H.mayor ? 'Le maire tranche.' : 'On revote.'}</p>${t.top.map(r => H.vote.kind === 'maire' ? `<button class="btn paper" data-a="lg-mayor" data-v="${esc(r.cid)}">${esc(r.name)}</button>` : `<button class="btn ghost" data-a="lg-kill" data-v="${esc(r.cid)}">${esc(r.name)}</button>`).join('')}` : ''}
         ${H.vote.kind === 'exil' && t.top.length > 1 && H.players.some(p => p.alive && p.role === 'bouc') ? `<button class="btn red" data-a="lg-bouc">Égalité : le bouc émissaire meurt</button>` : ''}
-        ${H.vote.kind === 'exil' && lgHas(H, 'juge') && !H.judgeUsed ? `<button class="btn ghost" data-a="lg-judge">⚖️ Le juge bègue demande un second vote</button>` : ''}
+        ${H.vote.kind === 'exil' && lgHas(H, 'juge') && !H.judgeUsed ? `<button class="btn ghost" data-a="lg-judge">[[juge]] Le juge bègue demande un second vote</button>` : ''}
         <button class="btn ghost" data-a="lg-vote-close">Fermer le vote</button></div>`;
-    const tips = [lgHas(H, 'montreur') && H.players.some(p => p.alive && p.role === 'montreur') ? "🐻 Un loup est-il assis à côté du montreur d'ours ? Si oui, grogne !" : '', lgHas(H, 'garde') ? '📯 Le garde champêtre veut-il faire une annonce ?' : '', lgHas(H, 'gitane') ? '🧿 Le spirite de la gitane pose-t-il sa question à un mort ?' : '', ...(H.mjNotes || [])].filter(Boolean);
+    const tips = [lgHas(H, 'montreur') && H.players.some(p => p.alive && p.role === 'montreur') ? "[[montreur]] Un loup est-il assis à côté du montreur d'ours ? Si oui, grogne !" : '', lgHas(H, 'garde') ? '[[garde]] Le garde champêtre veut-il faire une annonce ?' : '', lgHas(H, 'gitane') ? '[[gitane]] Le spirite de la gitane pose-t-il sa question à un mort ?' : '', ...(H.mjNotes || [])].filter(Boolean);
     body = `${lgNewsCard(H.news)}${tips.length ? `<section class="panel"><h3><span>Pour le meneur</span></h3>${tips.map(x => `<p class="hint">${esc(x)}</p>`).join('')}</section>` : ''}
       ${H.cfg.phoneVote ? `${lgVoteBox(MPG.lg.view(MP_CID), true)}${voteCtl}` : `<p class="howto">Le village débat, puis vote à main levée. Touche « Éliminer » sur le condamné.</p>`}`;
   }
   const acts = p => {
     if (!p.alive) return `<span class="acts"><button class="mini" data-a="lg-revive" data-v="${esc(p.cid)}">Ramener</button></span>`;
     const pend = H.pending.some(([c, b]) => c === p.cid && b === 'mj' || c === p.cid && b === 'loups');
-    let b = night ? `<button class="mini ${pend ? 'red' : ''}" data-a="lg-target" data-v="${esc(p.cid)}" aria-pressed="${pend}" aria-label="Victime de la nuit">☠</button>`
+    let b = night ? `<button class="mini ${pend ? 'red' : ''}" data-a="lg-target" data-v="${esc(p.cid)}" aria-pressed="${pend}" aria-label="Victime de la nuit">[[crane]]</button>`
       : `<button class="mini red" data-a="lg-kill" data-v="${esc(p.cid)}">Éliminer</button>`;
-    if (!night) b = `<button class="mini ${H.mayor === p.cid ? 'on' : ''}" data-a="lg-mayor" data-v="${esc(p.cid)}" aria-label="Nommer maire">🎖️</button>` + b;
+    if (!night) b = `<button class="mini ${H.mayor === p.cid ? 'on' : ''}" data-a="lg-mayor" data-v="${esc(p.cid)}" aria-label="Nommer maire">[[maire]]</button>` + b;
     return `<span class="acts">${b}</span>`;
   };
-  return `<div class="phase ${H.phase}"><small>${night ? 'Nuit' : 'Jour'} ${H.n} · ${alive} en vie</small><strong>${night ? '🌙 Le village dort' : '☀️ Le village débat'}</strong></div>
+  return `<div class="phase ${H.phase}"><small>${night ? 'Nuit' : 'Jour'} ${H.n} · ${alive} en vie</small><strong>${night ? '[[lune]] Le village dort' : '[[soleil]] Le village débat'}</strong></div>
     ${win ? `<div class="banner gold"><b>${LG_WIN[win]}</b> <button class="mini" data-a="lg-end" data-v="${win}">Annoncer la fin</button></div>` : ''}
-    ${H.needMayor ? `<div class="banner">Le maire est mort : il désigne son successeur. Touche 🎖️ sur le nouveau maire.</div>` : ''}
+    ${H.needMayor ? `<div class="banner">Le maire est mort : il désigne son successeur. Touche [[maire]] sur le nouveau maire.</div>` : ''}
     ${alerts}${body}
     <section class="panel"><h3><span>Les joueurs</span><span>${alive} / ${n}</span></h3>${list(acts)}</section>
-    <button class="btn big ${night ? '' : 'red'}" data-a="${night ? 'lg-dawn' : 'lg-night'}">${night ? '☀️ Le village se réveille' : '🌙 La nuit tombe'}</button>
+    <button class="btn big ${night ? '' : 'red'}" data-a="${night ? 'lg-dawn' : 'lg-night'}">${night ? '[[soleil]] Le village se réveille' : '[[lune]] La nuit tombe'}</button>
     <button class="btn ghost" data-a="lg-end" data-v="">Arrêter et révéler les cartes</button>`;
 }
 
@@ -704,44 +708,44 @@ function lgAskBox(a) {
   let body = '';
   if (a.kind === 'pick') body = `${names(a.choices)}<div class="row">${a.skip ? `<button class="btn ghost" data-a="lg-do-skip">Personne cette nuit</button>` : ''}<button class="btn" data-a="lg-do" ${pick.length === a.count ? '' : 'disabled'}>${a.count > 1 ? `Valider (${pick.length} / ${a.count})` : 'Valider'}</button></div>`;
   else if (a.kind === 'cards' || a.kind === 'roles') body = `<div class="pick-cards">${a.cards.map((r, i) => `<button class="mini-card" data-a="lg-card" data-v="${a.kind === 'cards' ? i : r}"><span>${lgRole(r).icon}</span><b>${lgRole(r).name}</b></button>`).join('')}</div>${a.kind === 'cards' && !a.must ? `<button class="btn ghost" data-a="lg-card" data-v="keep">Garder ma carte</button>` : a.must ? '<p class="hint">Deux loups : tu dois en prendre un.</p>' : ''}`;
-  else if (a.kind === 'camp') body = `<div class="row"><button class="btn paper" data-a="lg-camp" data-v="village">🐕 Chien du village</button><button class="btn red" data-a="lg-camp" data-v="loup">🐺 Loup-garou</button></div>`;
-  else if (a.kind === 'fire') body = `${a.oiled.length ? `<button class="btn red" data-a="lg-fire">🔥 Mettre le feu (${esc(a.oiled.join(', '))})</button>` : ''}<p class="hint">Ou asperge une maison d'huile :</p>${names(a.choices)}<button class="btn" data-a="lg-do" ${pick.length === 1 ? '' : 'disabled'}>Asperger</button>`;
+  else if (a.kind === 'camp') body = `<div class="row"><button class="btn paper" data-a="lg-camp" data-v="village">[[chienloup]] Chien du village</button><button class="btn red" data-a="lg-camp" data-v="loup">[[loup]] Loup-garou</button></div>`;
+  else if (a.kind === 'fire') body = `${a.oiled.length ? `<button class="btn red" data-a="lg-fire">[[feu]] Mettre le feu (${esc(a.oiled.join(', '))})</button>` : ''}<p class="hint">Ou asperge une maison d'huile :</p>${names(a.choices)}<button class="btn" data-a="lg-do" ${pick.length === 1 ? '' : 'disabled'}>Asperger</button>`;
   else if (a.kind === 'witch') body = `<p class="hint">${a.victims.length ? `Victime${a.victims.length > 1 ? 's' : ''} de cette nuit : <b>${esc(a.victims.join(', '))}</b>` : 'Pas de victime des loups cette nuit.'}</p>
-    ${a.vie && a.victims.length ? `<div class="row">${a.victims.map(n => `<button class="btn paper" data-a="lg-save" data-v="${esc(n)}" aria-pressed="${MP.save === n}">💚 Sauver ${esc(n)}</button>`).join('')}</div>` : `<p class="hint">${a.vie ? '' : 'Potion de vie déjà utilisée.'}</p>`}
-    ${a.mort ? `<p class="hint">☠ Potion de mort sur :</p>${names(a.choices)}` : '<p class="hint">Potion de mort déjà utilisée.</p>'}
+    ${a.vie && a.victims.length ? `<div class="row">${a.victims.map(n => `<button class="btn paper" data-a="lg-save" data-v="${esc(n)}" aria-pressed="${MP.save === n}">[[coeur]] Sauver ${esc(n)}</button>`).join('')}</div>` : `<p class="hint">${a.vie ? '' : 'Potion de vie déjà utilisée.'}</p>`}
+    ${a.mort ? `<p class="hint">[[crane]] Potion de mort sur :</p>${names(a.choices)}` : '<p class="hint">Potion de mort déjà utilisée.</p>'}
     <button class="btn" data-a="lg-witch">${MP.save || pick.length ? 'Valider' : 'Ne rien faire'}</button>`;
-  return `<section class="panel ask"><h3><span>🌙 À toi de jouer</span><span>en secret</span></h3><p class="ask-t">${esc(a.title)}</p>${body}</section>`;
+  return `<section class="panel ask"><h3><span>[[lune]] À toi de jouer</span><span>en secret</span></h3><p class="ask-t">${esc(a.title)}</p>${body}</section>`;
 }
 function lgGuest(v) {
-  const others = v.players.map(p => `<span class="chip tap ${p.alive ? '' : 'off'}">${p.alive ? '' : '☠ '}${esc(p.name)}${lgTags(p)}</span>`).join('');
+  const others = v.players.map(p => `<span class="chip tap ${p.alive ? '' : 'off'}">${p.alive ? '' : '[[crane]] '}${avatar(p.name)}${esc(p.name)}${lgTags(p)}</span>`).join('');
   if (v.step === 'lobby') return `${roomBox(false)}
     <section class="panel"><h3><span>Dans la partie</span><span>${v.players.length}</span></h3><div class="chips">${others}</div></section>
     <p class="howto">Le meneur prépare les cartes. Garde ton téléphone près de toi : ta carte va arriver.</p>`;
   if (v.step === 'spin') return `<div class="turn"><small>Loup-Garou</small><strong>La roue tourne…</strong></div><div class="card verso shuffle"><p class="text">Ta carte arrive</p></div>`;
   if (v.step === 'end') return `<div class="turn"><small>Fin de partie</small><strong>${LG_WIN[v.winner || '']}</strong></div>
-    <div class="card">${cardIdx('☾')}<p class="kind">Toutes les cartes</p>${lgRevealList(v.reveal)}</div>
+    <div class="card">${cardIdx('[[lune]]')}<p class="kind">Toutes les cartes</p>${lgRevealList(v.reveal)}</div>
     <p class="howto">Le meneur peut relancer une partie : reste connecté·e.</p>`;
   const me = v.me || { role: 'villageois', alive: true }, R = lgRole(me.role);
   const phase = v.step === 'deal' ? `<div class="phase night"><small>Loup-Garou</small><strong>Découvre ta carte en secret</strong></div>`
-    : v.phase === 'night' ? `<div class="phase night"><small>Nuit ${v.n}</small><strong>🌙 Ferme les yeux</strong></div>`
-    : `<div class="phase day"><small>Jour ${v.n}</small><strong>☀️ Débattez et votez</strong></div>`;
+    : v.phase === 'night' ? `<div class="phase night"><small>Nuit ${v.n}</small><strong>[[lune]] Ferme les yeux</strong></div>`
+    : `<div class="phase day"><small>Jour ${v.n}</small><strong>[[soleil]] Débattez et votez</strong></div>`;
   const facts = [
     me.mayor ? `${sash(true)}<b>Tu es le maire !</b> Ta voix compte double. Si tu meurs, tu désignes ton successeur.` : '',
-    me.infected ? '🧛 Tu as été infecté·e : tu es maintenant un loup-garou, en secret.' : '',
-    me.wild ? '🧒 Ton modèle est mort : tu es maintenant un loup-garou.' : '',
-    me.role === 'chienloup' && me.dog ? (me.dog === 'loup' ? '🐺 Tu as rejoint la meute.' : '🐕 Tu es le fidèle chien du village.') : '',
-    v.mates ? (v.mates.length ? `🐺 Tes complices : <b>${esc(v.mates.join(', '))}</b>` : '🐺 Tu es le seul loup encore en vie.') : '',
-    v.lover ? `💘 Tu es amoureux·se de <b>${esc(v.lover)}</b>. Si l'un meurt, l'autre aussi.` : '',
+    me.infected ? '[[ipl]] Tu as été infecté·e : tu es maintenant un loup-garou, en secret.' : '',
+    me.wild ? '[[enfant]] Ton modèle est mort : tu es maintenant un loup-garou.' : '',
+    me.role === 'chienloup' && me.dog ? (me.dog === 'loup' ? '[[loup]] Tu as rejoint la meute.' : '[[chienloup]] Tu es le fidèle chien du village.') : '',
+    v.mates ? (v.mates.length ? `[[loup]] Tes complices : <b>${esc(v.mates.join(', '))}</b>` : '[[loup]] Tu es le seul loup encore en vie.') : '',
+    v.lover ? `[[coeur]] Tu es amoureux·se de <b>${esc(v.lover)}</b>. Si l'un meurt, l'autre aussi.` : '',
     v.kin ? `${R.icon} ${me.role === 'soeurs' ? 'Ta sœur' : 'Tes frères'} : <b>${esc(v.kin.join(', '))}</b>` : '',
-    me.charmed ? `🎶 Tu es charmé·e${v.charmed && v.charmed.length ? `, comme <b>${esc(v.charmed.join(', '))}</b>` : ''}.` : '',
-    me.group ? `${me.group === 'lune' ? '🌙 Tu es du groupe de la Lune' : '☀️ Tu es du groupe du Soleil'}.` : '',
-    v.model ? `🧒 Ton modèle : <b>${esc(v.model)}</b>` : '',
-    v.com ? `🎭 Tes rôles : ${v.com.map(c => `${c.used ? '<s>' : ''}${lgRole(c.r).icon} ${lgRole(c.r).name}${c.used ? '</s>' : ''}`).join(', ')}` : '',
+    me.charmed ? `[[charme]] Tu es charmé·e${v.charmed && v.charmed.length ? `, comme <b>${esc(v.charmed.join(', '))}</b>` : ''}.` : '',
+    me.group ? `${me.group === 'lune' ? '[[lune]] Tu es du groupe de la Lune' : '[[soleil]] Tu es du groupe du Soleil'}.` : '',
+    v.model ? `[[enfant]] Ton modèle : <b>${esc(v.model)}</b>` : '',
+    v.com ? `[[comedien]] Tes rôles : ${v.com.map(c => `${c.used ? '<s>' : ''}${lgRole(c.r).icon} ${lgRole(c.r).name}${c.used ? '</s>' : ''}`).join(', ')}` : '',
   ].filter(Boolean).map(x => `<p class="sub">${x}</p>`).join('');
   const face = MP.peek
     ? `<div class="card ${me.alive ? '' : 'dead'} ${me.mayor ? 'has-sash' : ''}" role="button" tabindex="0" data-a="lg-peek" aria-label="Cacher ma carte">${me.mayor ? sash(true) : ''}${cardIdx(R.icon)}<p class="kind">Ta carte</p><p class="role-ic" aria-hidden="true">${R.icon}</p><p class="text">${R.name}</p><p class="sub">${R.desc}</p>${facts}<p class="sub">Touche pour cacher.</p></div>`
-    : `<div class="card verso" role="button" tabindex="0" data-a="lg-peek" aria-label="Voir ma carte"><p class="text">Touche pour voir ta carte</p><p class="sub">${me.mayor ? '🎖️ Tu es le maire' : 'Personne ne doit voir ton écran'}</p></div>`;
-  return `${phase}${me.alive ? '' : `<div class="banner">☠ Tu es mort·e. Chut ! Tu peux suivre la partie en silence.</div>`}
+    : `<div class="card verso" role="button" tabindex="0" data-a="lg-peek" aria-label="Voir ma carte"><p class="text">Touche pour voir ta carte</p><p class="sub">${me.mayor ? '[[maire]] Tu es le maire' : 'Personne ne doit voir ton écran'}</p></div>`;
+  return `${phase}${me.alive ? '' : `<div class="banner">[[crane]] Tu es mort·e. Chut ! Tu peux suivre la partie en silence.</div>`}
     ${me.mayor && !MP.peek ? `<div class="mayor-band">${sash(true)}<span>Monsieur ou Madame le Maire</span></div>` : ''}
     ${v.ask && me.alive ? lgAskBox(v.ask) : v.res && v.phase === 'night' ? `<div class="banner gold">${esc(v.res)}</div>` : ''}
     ${lgNewsCard(v.news)}${v.phase === 'day' ? lgVoteBox(v, false) : ''}${face}
@@ -958,7 +962,7 @@ function gpSend(forced) {
 }
 function gpStatus(v) {
   const done = v.players.filter(p => p.done).length;
-  return `<div class="chips">${v.players.map(p => `<span class="chip tap ${p.done ? 'on' : ''} ${p.on ? '' : 'off'}">${p.done ? '✓ ' : ''}${esc(p.name)}</span>`).join('')}</div>
+  return `<div class="chips">${v.players.map(p => `<span class="chip tap ${p.done ? 'on' : ''} ${p.on ? '' : 'off'}">${p.done ? '✓ ' : ''}${avatar(p.name)}${esc(p.name)}</span>`).join('')}</div>
     <p class="hint">${done} / ${v.players.length} ont envoyé.</p>`;
 }
 const gpLeft = () => MP.role === 'host' ? MP.H.end : MP.deadline;
@@ -988,11 +992,11 @@ function gpScreen(v) {
   const host = MP.role === 'host', H = MP.H;
   if (v.step === 'lobby') {
     const n = v.players.filter(p => p.on).length;
-    if (!host) return `${roomBox(false)}<section class="panel"><h3><span>Dans la partie</span><span>${v.players.length}</span></h3><div class="chips">${v.players.map(p => `<span class="chip tap">${esc(p.name)}</span>`).join('')}</div></section>
+    if (!host) return `${roomBox(false)}<section class="panel"><h3><span>Dans la partie</span><span>${v.players.length}</span></h3><div class="chips">${v.players.map(p => `<span class="chip tap">${avatar(p.name)}${esc(p.name)}</span>`).join('')}</div></section>
       <p class="howto">L'hôte va lancer la partie. Prépare ton plus beau coup de crayon !</p>`;
     return `${roomBox(true)}
     <section class="panel"><h3><span>Joueurs</span><span>${v.players.length}</span></h3>
-      <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
+      <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${avatar(p.name)}${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
     </section>
     <section class="panel"><h3><span>Temps pour dessiner</span></h3>
       <div class="levels four" role="group" aria-label="Temps pour dessiner">${GP_TIMES.map(([s, l]) => `<button data-a="gp-secs" data-v="${s}" aria-pressed="${H.cfg.secs === s}">${l}</button>`).join('')}</div>
@@ -1010,7 +1014,7 @@ function gpScreen(v) {
       <canvas class="gp-canvas" id="gpCanvas" width="600" height="600" aria-label="Zone de dessin"></canvas>
       <div class="gp-tools">${GP_COLORS.map(c => `<button class="swatch" style="background:${c}" data-a="gp-color" data-v="${c}" aria-pressed="${!GPD.eraser && GPD.color === c}" aria-label="Couleur ${c}"></button>`).join('')}</div>
       <div class="gp-tools">${GP_SIZES.map(s => `<button class="tool-b" data-a="gp-size" data-v="${s}" aria-pressed="${GPD.size === s}" aria-label="Épaisseur ${s}"><span class="size-dot" style="width:${Math.round(s / 1.6) + 4}px;height:${Math.round(s / 1.6) + 4}px"></span></button>`).join('')}
-        <button class="tool-b" data-a="gp-eraser" aria-pressed="${GPD.eraser}">Gomme</button><button class="tool-b" data-a="gp-undo">↶ Annuler</button><button class="tool-b" data-a="gp-clear">Effacer</button></div>
+        <button class="tool-b" data-a="gp-eraser" aria-pressed="${GPD.eraser}">Gomme</button><button class="tool-b" data-a="gp-undo">[[annuler]] Annuler</button><button class="tool-b" data-a="gp-clear">Effacer</button></div>
       <button class="btn big" data-a="gp-send">Envoyer mon dessin</button>`;
     else body = `${t.kind === 'guess' ? (t.prompt && t.prompt.v ? gpShow(t.prompt) : `<div class="gp-prompt">Pas de dessin cette fois : invente !</div>`) : `<p class="howto">Une phrase farfelue que le joueur suivant devra dessiner.</p>`}
       <textarea id="gpText" rows="2" maxlength="100" autocomplete="off" placeholder="${t.kind === 'write' ? 'Ex : un pingouin qui fait du ski' : 'Je pense que c\'est…'}" aria-label="Ta réponse">${esc(GPD.text)}</textarea>
@@ -1101,6 +1105,7 @@ const VG_GAGES = ["Fais 10 pompes ou 15 squats.","Chante un refrain choisi par l
 /* ---------- Début et fin de soirée : Tu préfères et Action ou Vérité, chacun son téléphone ---------- */
 const VG_LEVELS = [['soft', 'Soft'], ['piquant', 'Piquant']];
 const VG_REACT = ['😂', '🔥', '😱', '👏'];
+const VG_IC = { '😂': 'rire', '🔥': 'feu', '😱': 'peur', '👏': 'bravo' };
 // Pioche sans répétition dans la partie, puis on remélange
 function vgDraw(H, key, list) {
   H.used = H.used || {};
@@ -1117,11 +1122,11 @@ const vgLevelBox = (lvl, a) => `<div class="levels two" role="group" aria-label=
 // Salon commun aux deux jeux : l'hôte joue aussi
 function vgLobby(v, start, extra) {
   if (MP.role !== 'host') return `${roomBox(false)}<section class="panel"><h3><span>Dans la partie</span><span>${v.players.length}</span></h3>
-    <div class="chips">${v.players.map(p => `<span class="chip tap">${esc(p.name)}</span>`).join('')}</div></section><p class="howto">L'hôte va lancer la partie.</p>`;
+    <div class="chips">${v.players.map(p => `<span class="chip tap">${avatar(p.name)}${esc(p.name)}</span>`).join('')}</div></section><p class="howto">L'hôte va lancer la partie.</p>`;
   const H = MP.H, n = H.players.filter(p => p.on).length;
   return `${roomBox(true)}
   <section class="panel"><h3><span>Joueurs</span><span>${H.players.length} / 20</span></h3>
-    <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
+    <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${avatar(p.name)}${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
     <p class="hint">On peut aussi rejoindre en cours de partie.</p></section>
   ${extra}
   <button class="btn big" data-a="${start}" ${n < 2 || MP.status !== 'open' ? 'disabled' : ''}>${n < 2 ? 'Il faut au moins 2 joueurs' : `C'est parti (${n} joueurs)`}</button>`;
@@ -1177,7 +1182,7 @@ function tpScreen(v) {
       <button class="tp-opt b" data-a="tp-vote" data-v="1" aria-pressed="${v.mine === 1}"><span>${esc(B)}</span></button>
     </div>
     <p class="howto">${v.mine === undefined ? 'Vote en secret : personne ne voit ton choix avant la fin.' : 'Vote enregistré, tu peux encore changer d\'avis.'} ${v.voted} / ${v.of} ont voté.</p>
-    <div class="chips qs">${v.players.map(p => `<span class="chip tap ${p.voted ? 'on' : ''}">${p.voted ? '✓ ' : ''}${esc(p.name)}</span>`).join('')}</div>
+    <div class="chips qs">${v.players.map(p => `<span class="chip tap ${p.voted ? 'on' : ''}">${p.voted ? '✓ ' : ''}${avatar(p.name)}${esc(p.name)}</span>`).join('')}</div>
     ${host ? `<button class="btn ghost" data-a="tp-reveal" ${v.voted ? '' : 'disabled'}>Révéler sans attendre</button>` : ''}`;
   const tot = v.sides[0].length + v.sides[1].length || 1, pct = i => Math.round(100 * v.sides[i].length / tot);
   const minor = v.sides[0].length === v.sides[1].length ? null : v.sides[0].length < v.sides[1].length ? 0 : 1;
@@ -1193,7 +1198,7 @@ MPG.av = {
   rules: () => ({ title: 'Action ou Vérité', steps: [
     "Pour finir la soirée en beauté. L'hôte crée la partie et donne le code, les autres le rejoignent. L'hôte joue aussi.",
     "L'appli désigne à qui c'est le tour. Sur son téléphone, ce joueur choisit Action, Vérité ou le hasard.",
-    "La carte s'affiche sur tous les téléphones : tout le monde peut réagir 😂 🔥 😱 👏.",
+    "La carte s'affiche sur tous les téléphones : tout le monde peut réagir [[rire]] [[feu]] [[peur]] [[bravo]].",
     "Le joueur répond ou fait le défi, puis touche « Fait ». Pas envie ? Joker : il prend un gage à la place.",
   ], tips: ['Niveau Soft pour tout le monde, Piquant pour les soirées entre adultes.', 'Règle d\'or : chacun peut refuser, sans se justifier.'] }),
   init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('avLevel', 'soft'), order: [], turn: 0, card: null, react: {}, n: 0 }),
@@ -1237,19 +1242,19 @@ function avEnd(how) {
 function avScreen(v) {
   const host = MP.role === 'host';
   if (v.step === 'lobby') return vgLobby(v, 'av-start', `<section class="panel"><h3><span>Niveau</span></h3>${vgLevelBox(v.level, 'av-level')}<p class="hint">Soft pour tout le monde, Piquant pour les grands.</p></section>`);
-  const scores = `<section class="panel"><h3><span>Les braves</span><span>défis · jokers</span></h3><div class="chips">${v.players.slice().sort((a, b) => b.done - a.done).map(p => `<span class="chip tap ${p.name === v.turn ? 'on' : ''}">${esc(p.name)}<span class="n">${p.done}${p.jokers ? ` · ${p.jokers}🃏` : ''}</span></span>`).join('')}</div></section>`;
-  const head = `<div class="turn"><small>Tour ${v.n + 1}</small><strong>${v.myTurn ? 'À toi !' : esc(v.turn || '…')}</strong></div>`;
+  const scores = `<section class="panel"><h3><span>Les braves</span><span>défis · jokers</span></h3><div class="chips">${v.players.slice().sort((a, b) => b.done - a.done).map(p => `<span class="chip tap ${p.name === v.turn ? 'on' : ''}">${avatar(p.name)}${esc(p.name)}<span class="n">${p.done}${p.jokers ? ` · ${p.jokers}[[jeu-av]]` : ''}</span></span>`).join('')}</div></section>`;
+  const head = `<div class="turn">${avatar(v.turn, 'big')}<small>Tour ${v.n + 1}</small><strong>${v.myTurn ? 'À toi !' : esc(v.turn || '…')}</strong></div>`;
   if (v.step === 'choose') return `${head}
-    ${v.myTurn ? `<div class="av-pick"><button class="btn big" data-a="av-pick" data-v="action">Action</button><button class="btn big red" data-a="av-pick" data-v="verite">Vérité</button></div><button class="btn ghost" data-a="av-pick" data-v="random">🎲 Au hasard</button>`
+    ${v.myTurn ? `<div class="av-pick"><button class="btn big" data-a="av-pick" data-v="action">Action</button><button class="btn big red" data-a="av-pick" data-v="verite">Vérité</button></div><button class="btn ghost" data-a="av-pick" data-v="random">[[jeu-av]] Au hasard</button>`
       : `<div class="card verso"><p class="text">${esc(v.turn)} choisit…</p><p class="sub">Action ou Vérité ?</p></div>`}
     ${host && !v.myTurn ? `<button class="btn ghost" data-a="av-skip">Passer ce joueur</button>` : ''}${scores}`;
   const card = v.card ? `<div class="card ${v.card.kind === 'verite' ? 'black' : ''}">${cardIdx(v.card.kind === 'action' ? 'A' : 'V')}<p class="kind">${v.card.kind === 'action' ? 'Action' : 'Vérité'} pour ${esc(v.turn)}</p><p class="text">${v.card.html}</p></div>` : '';
-  const reacts = `<div class="reacts">${VG_REACT.map(e => `<button data-a="av-react" data-v="${e}" aria-label="Réagir ${e}">${e}<b>${v.react[e] || ''}</b></button>`).join('')}</div>`;
+  const reacts = `<div class="reacts">${VG_REACT.map(e => `<button data-a="av-react" data-v="${e}" aria-label="Réagir : ${VG_IC[e]}">[[${VG_IC[e]}]]<b>${v.react[e] || ''}</b></button>`).join('')}</div>`;
   if (v.step === 'card') return `${head}${card}${reacts}
     ${v.myTurn ? `<div class="row"><button class="btn" data-a="av-done">Fait ✓</button><button class="btn ghost" data-a="av-joker">Joker (un gage)</button></div>` : `<p class="howto">On attend que ${esc(v.turn)} relève le défi…</p>`}
     ${host && !v.myTurn ? `<button class="btn ghost" data-a="av-force">Valider pour ${esc(v.turn)}</button>` : ''}${scores}`;
   return `${head}${card}
-    ${v.gage ? `<div class="card compact"><p class="kind">Joker ! Gage pour ${esc(v.turn)}</p><p class="text">${esc(v.gage)}</p></div>` : `<div class="banner gold">Bravo ${esc(v.turn)} ! 👏</div>`}
+    ${v.gage ? `<div class="card compact"><p class="kind">Joker ! Gage pour ${esc(v.turn)}</p><p class="text">${esc(v.gage)}</p></div>` : `<div class="banner gold">Bravo ${esc(v.turn)} ! [[bravo]]</div>`}
     ${host ? `<button class="btn big" data-a="av-next">Joueur suivant</button>${vgLevelBox(v.level, 'av-level')}` : `<p class="howto">L'hôte passe au joueur suivant.</p>`}${scores}`;
 }
 Object.assign(actions, {
