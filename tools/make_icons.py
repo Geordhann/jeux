@@ -109,6 +109,24 @@ def splash(w=1080, h=1920):
     return img.convert('RGB')
 
 
+def square(size):
+    # iPhone et web : icône carrée et opaque, iOS arrondit lui-même les coins
+    big = 1024
+    bg = Image.new('RGBA', (big, big), BG + (255,))
+    bg.alpha_composite(card(int(big * .86)), (int(big * .07), int(big * .07)))
+    return bg.convert('RGB').resize((size, size), Image.LANCZOS)
+
+
+def splash_square(s=2732):
+    # Écran de démarrage iOS (carré, recadré par le système selon l'appareil)
+    img = Image.new('RGBA', (s, s), BG + (255,))
+    art = card(700)
+    img.alpha_composite(art, ((s - 700) // 2, int(s * .36)))
+    d = ImageDraw.Draw(img)
+    d.text((s / 2, s * .66), TITLE, font=ImageFont.truetype(DISPLAY, 170), fill=GOLD, anchor='mm')
+    return img.convert('RGB')
+
+
 DENSITIES = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
 for dens, k in DENSITIES.items():
     folder = os.path.join(OUT, f'mipmap-{dens}')
@@ -118,4 +136,7 @@ for dens, k in DENSITIES.items():
     foreground(int(108 * k)).save(os.path.join(folder, 'ic_launcher_foreground.png'))
 full_icon(512).save(os.path.join(OUT, 'icon-512.png'))
 splash().save(os.path.join(OUT, 'splash.png'))
+for n in (180, 192, 512, 1024):
+    square(n).save(os.path.join(OUT, f'icon-square-{n}.png'))
+splash_square().save(os.path.join(OUT, 'splash-ios.png'), optimize=True)
 print('ok')

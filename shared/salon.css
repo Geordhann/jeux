@@ -28,7 +28,7 @@ body {
   font: 16px/1.5 var(--font-body);
   -webkit-tap-highlight-color: transparent;
 }
-#app { max-width: 480px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 96px; display: flex; flex-direction: column; gap: 18px; }
+#app { max-width: 480px; margin: 0 auto; padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); padding-block: max(12px, env(safe-area-inset-top)) calc(96px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 18px; }
 button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
 button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 h1, h2, h3 { margin: 0; text-wrap: balance; }

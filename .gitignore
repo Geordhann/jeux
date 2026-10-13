@@ -4,3 +4,4 @@ android/
 build/
 *.png.tmp
 tests/rapport.md
+site/

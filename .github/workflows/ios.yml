@@ -1,0 +1,85 @@
+name: Applis iOS
+
+# Compile les trois applis pour iPhone sur un Mac de GitHub et publie les fichiers .ipa dans les Releases.
+# Les .ipa ne sont pas signés : pour les installer, il faut les signer avec un identifiant Apple
+# (Sideloadly ou AltStore, gratuit, à refaire tous les 7 jours) ou passer par TestFlight / l'App Store
+# avec un compte développeur Apple. Le plus simple pour jouer sur iPhone reste la version web.
+on:
+  push:
+    branches: [claude/sweet-dirac-7wcg8q, claude/new-multiplayer-games-j4imit, main, master]
+    paths:
+      - index.html
+      - apps/**
+      - shared/**
+      - fonts/**
+      - android-assets/**
+      - tools/**
+      - package.json
+      - package-lock.json
+      - capacitor.config.json
+      - .github/workflows/ios.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ipa:
+    runs-on: macos-14
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { app: tournee, title: La Tournée, file: La-Tournee, assets: android-assets }
+          - { app: veillee, title: La Veillée, file: La-Veillee, assets: apps/veillee/android-assets }
+          - { app: tapis, title: Le Tapis, file: Le-Tapis, assets: apps/tapis/android-assets }
+    name: ${{ matrix.title }} (iOS)
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Préparer l'appli
+        run: tools/build-www.sh ${{ matrix.app }}
+
+      - name: Générer le projet iOS
+        working-directory: build/${{ matrix.app }}
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+        run: |
+          npm ci
+          npx cap add ios
+          ../../tools/prepare-ios.sh ${{ matrix.assets }}
+          npx cap sync ios
+
+      - name: Compiler pour iPhone (sans signature)
+        working-directory: build/${{ matrix.app }}/ios/App
+        run: |
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -sdk iphoneos \
+            -derivedDataPath dd CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            MARKETING_VERSION=1.0.${{ github.run_number }} CURRENT_PROJECT_VERSION=${{ github.run_number }} build | tail -n 20
+          mkdir -p Payload && cp -R dd/Build/Products/Release-iphoneos/App.app Payload/
+          zip -qr "$GITHUB_WORKSPACE/${{ matrix.file }}-iOS.ipa" Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.file }}-iOS
+          path: ${{ matrix.file }}-iOS.ipa
+
+      - name: Publier la version
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ matrix.app }}-ios-v1.0.${{ github.run_number }}
+          name: ${{ matrix.title }} iOS 1.0.${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          make_latest: false
+          files: ${{ matrix.file }}-iOS.ipa
+          body: |
+            Version iPhone de ${{ matrix.title }} (fichier .ipa non signé).
+
+            **Le plus simple sur iPhone : la version web.** Ouvre https://geordhann.github.io/jeux/ dans Safari, touche l'appli, puis Partager › « Sur l'écran d'accueil ».
+
+            Pour installer ce fichier .ipa, il faut le signer avec ton identifiant Apple depuis un ordinateur : Sideloadly ou AltStore (gratuit, à refaire tous les 7 jours). Pour une installation durable ou l'App Store, il faut un compte développeur Apple (TestFlight).

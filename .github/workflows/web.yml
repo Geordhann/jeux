@@ -1,0 +1,44 @@
+name: Version web (iPhone et navigateurs)
+
+# Publie les trois applis sur GitHub Pages : https://geordhann.github.io/jeux/
+# Sur iPhone, Safari › Partager › « Sur l'écran d'accueil » les installe comme de vraies applis.
+on:
+  push:
+    branches: [claude/sweet-dirac-7wcg8q, claude/new-multiplayer-games-j4imit, main, master]
+    paths:
+      - index.html
+      - apps/**
+      - shared/**
+      - fonts/**
+      - android-assets/**
+      - web/**
+      - tools/build-www.sh
+      - tools/build-web.py
+      - .github/workflows/web.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Préparer la version web
+        run: python3 tools/build-web.py
+
+      - name: Publier sur la branche gh-pages
+        run: |
+          cd site
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "Version web ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages

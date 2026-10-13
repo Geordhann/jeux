@@ -96,6 +96,11 @@ Pour tester sur un ordinateur : `tools/build-www.sh veillee` (ou `tapis`), puis 
 
 Les mentions légales propres à chaque appli (public, alcool, absence d'argent réel pour Le Tapis…) se trouvent dans `window.APP.legal` de sa page ; l'éditeur et le contact, communs, dans la constante `LEGAL` de `shared/salon.js`.
 
+## Sur iPhone
+
+- **Version web (le plus simple, gratuit)** : https://geordhann.github.io/jeux/ — ouvre la page dans Safari, touche une appli, puis Partager › « Sur l'écran d'accueil ». L'appli s'ouvre en plein écran avec son icône, et les iPhone jouent avec les Android dans les mêmes parties. Publiée automatiquement à chaque modification (`.github/workflows/web.yml`, branche `gh-pages`, préparée par `tools/build-web.py`).
+- **Appli iOS native** : GitHub compile les trois applis pour iPhone sur un Mac (`.github/workflows/ios.yml`) et publie des fichiers `.ipa` **non signés** dans les Releases (`veillee-ios-v1.0.N`…). Apple n'autorise pas l'installation d'une appli non signée : il faut la signer avec un identifiant Apple depuis un ordinateur (Sideloadly ou AltStore, gratuit, à refaire tous les 7 jours), ou passer par TestFlight / l'App Store avec un compte développeur Apple (99 € par an). Icônes et écran de démarrage : `make_icons.py`, `tools/prepare-ios.sh`.
+
 ## Tester avant de jouer
 
 - **Banc d'essai automatique** : `npm test` (après `npm ci`). Des téléphones virtuels jouent chaque jeu en ligne du début à la fin : Loup-Garou complet (pouvoirs, maire, votes), charge maximale à 47 joueurs, Téléphone dessiné, Tu préfères, Action ou Vérité, Poker (aucun jeton perdu), Blackjack et Roulette (paiements vérifiés, 20 joueurs), reconnexion et sons. Il mesure les temps de réponse et écrit `tests/rapport.md`. `npm test -- lg rl` ne lance que certains essais. Il tourne aussi sur GitHub à chaque modification (onglet Actions, « Banc d'essai des jeux en ligne »).

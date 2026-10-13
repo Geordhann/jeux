@@ -78,7 +78,7 @@ function legal() {
   <div class="legal-wrap">
   ${sec('Mentions légales', `<p>L'application ${APP.name} (version Android et version web) ${L.what}, gratuite et non commerciale, éditée à titre personnel par ${esc(LEGAL.editor)} (ci-après « l'Éditeur »).</p>
     <p>Éditeur : ${esc(LEGAL.editor)}, particulier</p><p>Contact : ${esc(LEGAL.contact)}</p><p>Statut : projet personnel, sans activité commerciale</p>
-    <p>Hébergement du code et des fichiers d'installation : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis (github.com)</p>`)}
+    <p>Hébergement du code, des fichiers d'installation et de la version web : GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis (github.com, geordhann.github.io/jeux)</p>`)}
   ${L.sections.map(([h, b]) => sec(h, b)).join('')}
   ${sec('Responsabilité', `<p>${APP.name} est un divertissement destiné à un usage privé entre amis. Chaque joueur reste seul responsable de ses actes et du respect de la loi.</p>
     <p>Le jeu en ligne dépend de la connexion internet des joueurs et de services tiers gratuits (mise en relation). L'Éditeur ne peut être tenu responsable de l'usage fait de l'application, ni des éventuelles erreurs, coupures ou indisponibilités.</p>`)}
