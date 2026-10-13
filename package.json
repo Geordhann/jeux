@@ -4,7 +4,7 @@
   "private": true,
   "description": "Jeux de soirée sur un seul téléphone (appli Android avec Capacitor)",
   "scripts": {
-    "www": "rm -rf www && mkdir www && cp index.html www/ && cp -r fonts www/ && sed -i '/fonts.googleapis.com\\|fonts.gstatic.com/d' www/index.html"
+    "www": "rm -rf www && mkdir www && cp index.html www/ && cp -r fonts vendor www/ && sed -i '/fonts.googleapis.com\\|fonts.gstatic.com/d' www/index.html"
   },
   "dependencies": {
     "@capacitor/android": "6.2.0",

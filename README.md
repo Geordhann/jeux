@@ -14,6 +14,13 @@ Intro animée au lancement, puis 4 onglets en bas de l'écran : **Jeux** (la lis
 - **La Roue** : roue des gages (selon niveau, lieu, alcool), « qui paie la tournée ? » ou roue perso.
 - **Je n'ai jamais**, **Qui pourrait…**, **Tu préfères** : paquets de cartes en 5 niveaux, avec « Qui boit ? » pour compter les gorgées.
 
+## Chacun son téléphone (en ligne)
+Deux jeux où chaque joueur utilise son propre téléphone. Celui qui crée la partie reçoit un **code à 4 lettres** ; les autres ouvrent La Tournée › Jeux › **Rejoindre une partie** et tapent ce code (ou ouvrent un lien `index.html?code=ABCD`).
+- **Loup-Garou** : le créateur est le maître du jeu (il ne joue pas). Il choisit les cartes (loups automatiques ou à la main, Voyante, Sorcière, Chasseur, Cupidon, Petite fille, Salvateur, Ancien, Idiot du village, Loup blanc), lance la roue, et chacun reçoit sa carte en secret sur son téléphone. Le MJ pilote ensuite la partie : déroulé de la nuit à lire à voix haute, victimes (☠), amoureux (💘), potions, réveil du village avec annonce des morts, votes, et révélation de toutes les cartes à la fin. Les loups voient leurs complices et les amoureux leur partenaire sur leur téléphone (désactivable).
+- **Téléphone dessiné** (façon Gartic Phone, 3 joueurs minimum) : chacun écrit une phrase, la passe à son voisin qui la dessine, le suivant devine le dessin, et ainsi de suite. À la fin, l'hôte fait défiler les albums sur tous les téléphones. Chrono optionnel (1 min à 2 min).
+
+Fonctionnement : connexion internet nécessaire. Le téléphone de l'hôte sert de serveur ; les autres s'y connectent en direct (WebRTC via [PeerJS](https://peerjs.com), bibliothèque incluse dans `vendor/`, serveur de mise en relation gratuit de PeerJS). Un téléphone qui se met en veille se reconnecte tout seul et retrouve sa carte ; si l'hôte ferme l'appli, il peut reprendre la partie depuis l'onglet Jeux. Pour tester sans réseau, ouvre plusieurs onglets avec `index.html?local`.
+
 ## Réglages
 - **Musique d'ambiance** : Chill, Soirée, Sensuel ou Auto (suit le niveau). Composée en direct par l'appli (synthèse Web Audio) : création originale libre de droits, aucun fichier, fonctionne hors ligne. Bouton flottant en bas à droite pour lancer ou couper.
 - **Qui conduit ?** : le conducteur ne boit jamais. Ses défis et jokers passent en version sans alcool, ses gorgées deviennent des points de gage.
@@ -44,4 +51,4 @@ Chaque modification du jeu compile automatiquement un APK (GitHub Actions, `.git
 2. Ouvre le fichier et autorise l'installation depuis cette source si Android le demande.
 3. L'appli fonctionne ensuite sans connexion (polices incluses). Pour mettre à jour, installe la nouvelle version par-dessus : joueurs et réglages sont conservés.
 
-Fichiers liés : `capacitor.config.json`, `package.json`, `fonts/`, `android-assets/` (icônes, écran de démarrage, clé de signature de l'APK) et `tools/` (`make_icons.py` régénère les icônes, `prepare-android.sh` personnalise le projet Android).
+Fichiers liés : `capacitor.config.json`, `package.json`, `fonts/`, `vendor/` (PeerJS), `android-assets/` (icônes, écran de démarrage, clé de signature de l'APK) et `tools/` (`make_icons.py` régénère les icônes, `prepare-android.sh` personnalise le projet Android).
