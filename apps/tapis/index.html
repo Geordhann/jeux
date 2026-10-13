@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1a1012">
+<meta name="theme-color" content="#120c1e">
 <meta name="description" content="Poker et Blackjack entre amis, chacun sur son téléphone, avec des jetons fictifs.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Le Tapis">
@@ -14,8 +14,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&display=swap">
 <link rel="stylesheet" href="shared/salon.css">
 <style>
-/* Le Tapis : bordeaux et noir de salle de jeu, tables en feutre vert */
-:root { --felt: #1a1012; --felt-2: #2c181d; --felt-line: #4d2c33; --muted: #c9afb4; }
+/* Le Tapis : nuit de Las Vegas années 80, néons adoucis et or ; tables en feutre vert */
+:root { --felt: #120c1e; --felt-2: #1f1533; --felt-line: #3d2c5a; --muted: #c3b3d9; --red: #d6456a; --gold: #eab94e; --neon: #ff5fa2; --teal: #3fd0c9; }
 .pcs { display: inline-flex; gap: 5px; flex-wrap: wrap; justify-content: center; flex: none; }
 .pc { width: 44px; height: 62px; border-radius: 7px; background: #fff; color: var(--ink); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; font-weight: 800; box-shadow: 0 2px 0 var(--paper-edge), 0 4px 10px rgba(0,0,0,.3); animation: deal .3s ease-out; }
 .pc b { font-size: 1.15rem; }
@@ -65,8 +65,23 @@
 .jeton[aria-pressed="true"] { outline: 3px solid var(--gold); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .rl-wheel { transition: none !important; } }
 /* Salle de jeu : moquette bordeaux à losanges dorés, néons */
-body { background-color: var(--felt); background-image: radial-gradient(120% 70% at 50% 0%, rgba(231,181,82,.18), transparent 60%), repeating-linear-gradient(45deg, rgba(231,181,82,.06) 0 2px, transparent 2px 26px), repeating-linear-gradient(-45deg, rgba(231,181,82,.06) 0 2px, transparent 2px 26px); background-attachment: fixed; }
-.logo { text-shadow: 0 0 18px rgba(231,181,82,.55); }
+body { background-color: var(--felt);
+  background-image: linear-gradient(180deg, rgba(255,95,162,.16) 0%, rgba(234,120,80,.10) 18%, transparent 42%),
+    linear-gradient(0deg, rgba(63,208,201,.10), transparent 30%),
+    repeating-linear-gradient(45deg, rgba(234,185,78,.05) 0 2px, transparent 2px 28px), repeating-linear-gradient(-45deg, rgba(234,185,78,.05) 0 2px, transparent 2px 28px);
+  background-attachment: fixed; }
+/* Enseigne au néon, façon Las Vegas des années 80 */
+.logo { color: var(--gold); text-shadow: 0 0 6px rgba(255,95,162,.55), 0 0 18px rgba(255,95,162,.35); }
+.logo span { color: #fff4fb; text-shadow: 0 0 6px rgba(63,208,201,.6), 0 0 18px rgba(63,208,201,.35); }
+.home-head::after { content: ""; display: block; height: 3px; margin-top: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--neon), var(--gold), var(--teal)); box-shadow: 0 0 10px rgba(255,95,162,.5); }
+.sec-title span:last-child { color: var(--teal); }
+.btn { background: var(--gold); }
+.btn.big { background: linear-gradient(180deg, #f3c862, #e0a63c); }
+.panel { border-color: #4a3570; background: rgba(20,12,34,.55); }
+.son-fab { border-color: var(--neon); } .son-fab svg { stroke: var(--neon); } .son-fab svg path:first-child { fill: var(--neon); }
+.son-fab.on { background: var(--neon); }
+.room { box-shadow: 0 0 0 3px var(--neon), 0 0 22px rgba(255,95,162,.35); }
+.turn strong { color: var(--gold); text-shadow: 0 0 12px rgba(255,95,162,.45); }
 .felt-table, .rl-board { box-shadow: inset 0 0 30px rgba(0,0,0,.45), 0 0 0 2px rgba(231,181,82,.5), 0 12px 30px rgba(0,0,0,.45); }
 .banner.gold { box-shadow: 0 0 20px rgba(231,181,82,.45); }
 </style>
@@ -84,8 +99,8 @@ window.APP = {
   adultNote: 'Réservé aux majeurs. Jetons fictifs : aucun argent réel, rien à gagner.',
   homeNote: '<strong>Jetons fictifs :</strong> 1 000 par joueur, qui ne s\'achètent pas, ne se gagnent pas et ne s\'échangent contre rien. On joue pour la gloire.',
   games: [
-    { id: 'pk', name: 'Poker', icon: '♠️', color: '#57c08a', players: '2 à 20 joueurs', desc: "Texas Hold'em : tes cartes sur ton téléphone, l'appli gère pot, blindes et abattage." },
-    { id: 'bj', name: 'Blackjack', icon: '🃏', color: '#ef6f6f', players: '1 à 20 joueurs', desc: "Tout le monde contre la banque, tenue par l'appli. Gages de soirée en option." },
+    { id: 'pk', name: 'Poker', icon: '♠️', color: '#3fd0c9', players: '2 à 20 joueurs', desc: "Texas Hold'em : tes cartes sur ton téléphone, l'appli gère pot, blindes et abattage." },
+    { id: 'bj', name: 'Blackjack', icon: '🃏', color: '#ff7aa8', players: '1 à 20 joueurs', desc: "Tout le monde contre la banque, tenue par l'appli. Gages de soirée en option." },
     { id: 'rl', name: 'Roulette', icon: '🎡', color: '#f2c45a', players: '1 à 20 joueurs', desc: "Pose tes jetons sur le tapis depuis ton téléphone, la bille tourne pour tout le monde." },
   ],
   legal: {
@@ -740,11 +755,22 @@ Object.assign(actions, {
 // Grille ii-V-I-VI en do : contrebasse qui marche, piano électrique, balais et vibraphone
 const TP_PROG = [[50, [3, 7, 10, 14]], [43, [4, 10, 14, 16]], [48, [4, 7, 11, 14]], [45, [4, 10, 13, 16]]];
 const C_MAJ = [0, 2, 4, 5, 7, 9, 11];
+const V80_PROG = [[45, [0, 3, 7, 10]], [41, [0, 4, 7, 11]], [48, [0, 4, 7, 11]], [43, [0, 4, 7, 10]]];
 Object.assign(APP, {
-  tuneLabel: 'Jazz lounge de salle de jeu',
+  tuneLabel: 'Jazz lounge ou Vegas 80',
   sfxLabel: 'Cartes, jetons, roulette, gains…',
   tunes: {
-    lounge: { bpm: 94, div: 2, play(step, t, sd) {
+    // Vegas 80 : synthés, arpège et boîte à rythmes, comme un néon qui clignote
+    vegas: { label: 'Vegas 80', bpm: 106, div: 4, play(step, t, sd) {
+      const s = step % 16, barN = Math.floor(step / 16), [root, iv] = V80_PROG[barN % 4];
+      if (s % 8 === 0) INST.kick(t, .28);
+      if (s === 4 || s === 12) INST.snare(t, .07);
+      if (s % 2 === 0) INST.hat(t, s % 4 === 2 ? .03 : .018);
+      if (s % 4 === 0) INST.bass(t, root - 12 + (s === 8 ? 12 : 0), sd * 2.6, .16);
+      if (s === 0) iv.forEach(i => INST.saw(t, root + 12 + i, sd * 15, .014, 900));
+      if (barN % 8 >= 2) { const arp = iv.concat(iv[0] + 12); tone('music', t, mtof(root + 24 + arp[s % arp.length]), sd * .9, .02, { type: 'square', fx: .35 }); }
+    } },
+    lounge: { label: 'Jazz lounge', bpm: 94, div: 2, play(step, t, sd) {
       const s = step % 8, barN = Math.floor(step / 8), bar = barN % 4, [root, iv] = TP_PROG[bar], next = TP_PROG[(bar + 1) % 4][0];
       const sw = s % 2 ? sd * .34 : 0, at = t + sw; // swing : les croches du contretemps sont retardées
       if (s % 2 === 0) { // contrebasse : une noire par temps, et une note d'approche vers l'accord suivant
@@ -762,7 +788,6 @@ Object.assign(APP, {
       }
     } },
   },
-  tune: () => 'lounge',
 });
 const tpMe = v => v.players.find(p => p.me) || {};
 const readyCount = v => v.players.filter(p => p.ready).length;

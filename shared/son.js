@@ -5,7 +5,7 @@
 const SON = {
   ctx: null, out: null, bus: {}, fx: null, noise: null, brown: null,
   music: store.get('sonMusic', true), sfx: store.get('sonSfx', true), amb: store.get('sonAmb', true),
-  guest: store.get('sonGuest', false), vol: store.get('sonVol', .7),
+  guest: store.get('sonGuest', false), vol: store.get('sonVol', .7), tuneSel: store.get('sonTune', null),
   playing: null, step: 0, next: 0, timer: null, scene: null, sceneNode: null, open: false,
 };
 const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -99,6 +99,10 @@ const INST = {
   brush: (t, dur, v) => hiss('music', t, dur, v, { f: 5200, q: .6, a: .04, to: 3500 }),
   ride: (t, v) => { hiss('music', t, .16, v, { type: 'highpass', f: 7500 }); tone('music', t, 5200, .12, v * .25); },
   kick: (t, v) => tone('music', t, 120, .25, v, { to: 45 }),
+  flute(t, m, dur, v) { note(t, m, dur, v, { type: 'sine', cut: 3000, a: .08, rel: .3, fx: .55, vib: 9 }); hiss('music', t, dur * .6, v * .25, { f: mtof(m) * 2, q: 3, a: .06 }); },
+  snare: (t, v) => { hiss('music', t, .16, v, { f: 1900, q: .8 }); tone('music', t, 190, .08, v * .5, { to: 140 }); },
+  hat: (t, v) => hiss('music', t, .035, v, { type: 'highpass', f: 8000 }),
+  saw: (t, m, dur, v, cut = 1400) => note(t, m, dur, v, { type: 'sawtooth', cut, a: .02, rel: .2, fx: .35, detune: 8 }),
 };
 
 /* ---------- Bruitages ---------- */
@@ -162,6 +166,26 @@ const SFX = {
   owl(t, bus = 'sfx', v = 1) {
     const hoo = (s, d, a) => tone(bus, s, 392, d, a * v, { to: 355, a: .08, fx: .5, pan: -.4 });
     hoo(t, .45, .13); hoo(t + .75, .18, .085); hoo(t + .98, .5, .115);
+  },
+  // Hurlement de loup : deux loups qui se répondent au loin
+  howl(t, bus = 'sfx', v = 1) {
+    const c = SON.ctx;
+    [[0, 1, -.35], [.55, 1.13, .4]].forEach(([d, k, pan]) => {
+      const s = t + d, o = c.createOscillator(), f = c.createBiquadFilter(), g = c.createGain(), lfo = c.createOscillator(), dep = c.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(330 * k, s); o.frequency.exponentialRampToValueAtTime(560 * k, s + .7);
+      o.frequency.setValueAtTime(560 * k, s + 1.4); o.frequency.exponentialRampToValueAtTime(390 * k, s + 2.4);
+      lfo.frequency.value = 5; dep.gain.value = 9; lfo.connect(dep); dep.connect(o.detune);
+      f.type = 'lowpass'; f.frequency.value = 1500;
+      g.gain.setValueAtTime(.0001, s); g.gain.exponentialRampToValueAtTime(.09 * v, s + .35);
+      g.gain.setValueAtTime(.09 * v, s + 1.6); g.gain.exponentialRampToValueAtTime(.0001, s + 2.5);
+      o.connect(f); f.connect(g); route(g, bus, .6, pan);
+      o.start(s); o.stop(s + 2.6); lfo.start(s); lfo.stop(s + 2.6);
+    });
+  },
+  // Petite fanfare de village (élection du maire)
+  fanfare(t) {
+    [[67, .13], [72, .13], [76, .13], [79, .6]].reduce((s, [m, d]) => { note(s, m, d, .05, { type: 'sawtooth', cut: 2200, a: .02, rel: .15, fx: .3, bus: 'sfx', detune: 6 }); note(s, m - 12, d, .03, { type: 'square', cut: 1200, a: .02, rel: .15, bus: 'sfx' }); return s + d + .03; }, t);
   },
   death(t) {
     [55, 82.4, 110, 164.8].forEach((f, i) => tone('sfx', t, f, 2.6 - i * .4, .15 / (i + 1), { a: .01, fx: .3 }));
@@ -236,7 +260,7 @@ function sonUpdate() {
   const guest = S.screen === 'mp' && MP && MP.role === 'guest';
   const allowed = !S.intro && (!guest || SON.guest);
   const scene = allowed && SON.amb && APP.scene ? APP.scene() : null;
-  const tune = allowed && SON.music && !scene && APP.tune ? APP.tune() : null;
+  const tune = allowed && SON.music && !scene && APP.tunes ? (APP.tunes[SON.tuneSel] ? SON.tuneSel : Object.keys(APP.tunes)[0]) : null;
   if (scene !== SON.scene) sonScene(scene);
   if (tune !== SON.playing) { musicStop(); if (tune) musicStart(tune); }
   sonFab();
@@ -266,6 +290,7 @@ function sonSheet() {
   const row = (k, label, hint) => `<div class="toggle"><span><b>${label}</b><br><span class="hint">${hint}</span></span><button data-s="${k}" aria-pressed="${!!SON[k]}" aria-label="${label}"></button></div>`;
   sheet.innerHTML = `<div class="son-head"><b>Sons</b><button class="x" data-s="close" aria-label="Fermer">✕</button></div>
     ${row('music', 'Musique', APP.tuneLabel || 'Musique d\'ambiance')}
+    ${APP.tunes && Object.keys(APP.tunes).length > 1 ? `<div class="levels ${Object.keys(APP.tunes).length > 2 ? 'three' : 'two'}" role="group" aria-label="Choix de la musique">${Object.entries(APP.tunes).map(([k, t], i) => `<button data-t="${k}" aria-pressed="${(APP.tunes[SON.tuneSel] ? SON.tuneSel : Object.keys(APP.tunes)[0]) === k}">${t.label}</button>`).join('')}</div>` : ''}
     ${APP.ambiances ? row('amb', 'Ambiance', APP.ambLabel || 'Bruits de fond') : ''}
     ${row('sfx', 'Bruitages', APP.sfxLabel || 'Cartes, jetons, roue…')}
     ${guest ? row('guest', 'Musique sur ce téléphone aussi', "En partie, la musique joue d'habitude seulement chez l'hôte.") : ''}
@@ -274,6 +299,8 @@ function sonSheet() {
 }
 fab.addEventListener('click', () => { sonInit(); SON.open = !SON.open; sheet.hidden = !SON.open; if (SON.open) sonSheet(); sonUpdate(); });
 sheet.addEventListener('click', e => {
+  const tb = e.target.closest('[data-t]');
+  if (tb) { SON.tuneSel = tb.dataset.t; store.set('sonTune', SON.tuneSel); SON.music = true; store.set('sonMusic', true); sonInit(); musicStop(); sonUpdate(); sonSheet(); return; }
   const b = e.target.closest('[data-s]');
   if (!b) return;
   const k = b.dataset.s;

@@ -42,7 +42,7 @@ jobs:
             assets: apps/veillee/android-assets
             bg: '#121A33'
             latest: false
-            about: Loup-Garou et Téléphone dessiné, chacun sur son téléphone (connexion internet nécessaire).
+            about: Tu préfères, Loup-Garou version ultime (jusqu'à 47 joueurs), Téléphone dessiné et Action ou Vérité, chacun sur son téléphone (connexion internet nécessaire).
           - app: tapis
             title: Le Tapis
             file: Le-Tapis

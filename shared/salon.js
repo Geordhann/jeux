@@ -53,7 +53,7 @@ function home() {
   <section class="games">
     ${APP.games.map(g => `<div class="game-row" style="--tile:${g.color || 'var(--gold)'}"><button class="game" data-a="mp-new" data-v="${g.id}">
       <span class="suit emo" aria-hidden="true">${g.icon}</span>
-      <span><b>${g.name}</b><small>${g.desc}</small><small class="players">👥 ${g.players}</small></span>
+      <span>${g.when ? `<small class="when">${g.when}</small>` : ''}<b>${g.name}</b><small>${g.desc}</small><small class="players">👥 ${g.players}</small></span>
       <span class="go" aria-hidden="true">›</span></button>${rulesBtn(g.id)}</div>`).join('')}
   </section>
   <button class="btn big" data-a="mp-joinform">Rejoindre une partie</button>
@@ -62,7 +62,7 @@ function home() {
   <footer class="foot"><button class="link" data-a="open" data-v="legal">Mentions légales</button><span>${LEGAL.year} © ${APP.name}. Tous droits réservés.</span></footer>`;
 }
 function rules() {
-  const r = MPG[S.info].rules();
+  const r = (MPG[S.info] ? MPG[S.info].rules : APP.rules[S.info])();
   return `<div class="topbar"><button class="back" data-a="info-close" aria-label="Fermer les règles">←</button><h2>Règles</h2></div>
   <div class="card legal-card"><p class="kind">Comment jouer</p><h3 class="rules-title">${r.title}</h3>
     <ol class="steps">${r.steps.map(t => `<li>${esc(t)}</li>`).join('')}</ol>
@@ -291,7 +291,8 @@ function mpHostRecv(conn, d) {
     let p = mpP(cid);
     if (!p) {
       if (H.step !== 'lobby' && !MPG[MP.game].lateJoin) return mpRefuse(conn, 'La partie a déjà commencé. Attends la prochaine !');
-      if (H.players.length >= 20) return mpRefuse(conn, 'La partie est complète (20 joueurs maximum).');
+      const max = MPG[MP.game].max || 20;
+      if (H.players.length >= max) return mpRefuse(conn, `La partie est complète (${max} joueurs maximum).`);
       let nm = name, k = 2;
       while (H.players.some(x => x.name.toLowerCase() === nm.toLowerCase())) nm = `${name} ${k++}`;
       p = { cid, name: nm }; MPG[MP.game].join && MPG[MP.game].join(p); H.players.push(p);
@@ -407,7 +408,7 @@ function mpCount() {
 const mpTop = (title, rules) => {
   const n = mpCount();
   return `<div class="topbar"><button class="back" data-a="mp-quit" aria-label="Quitter la partie">←</button><h2>${title}</h2>
-    ${n ? `<span class="pcount" aria-label="${n} joueur${n > 1 ? 's' : ''} connecté${n > 1 ? 's' : ''}">👥 ${n}<small>/20</small></span>` : ''}${rules ? rulesBtn(rules) : ''}</div>`;
+    ${n ? `<span class="pcount" aria-label="${n} joueur${n > 1 ? 's' : ''} connecté${n > 1 ? 's' : ''}">👥 ${n}<small>/${(MPG[MP.game] || {}).max || 20}</small></span>` : ''}${rules ? rulesBtn(rules) : ''}</div>`;
 };
 function mpSound() {
   const g = MP && MP.game && MPG[MP.game];

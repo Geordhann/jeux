@@ -5,7 +5,7 @@ Trois applis, un seul dépôt :
 | Appli | Jeux | Comment on joue |
 | --- | --- | --- |
 | **La Tournée** | Action ou Vérité, Undercover, Paranoïa, La Roue… | Un seul téléphone qui fait le tour de la table, hors ligne |
-| **La Veillée** | Loup-Garou, Téléphone dessiné | Chacun sur son téléphone, en ligne |
+| **La Veillée** | Tu préfères, Loup-Garou (version ultime, jusqu'à 47 joueurs), Téléphone dessiné, Action ou Vérité | Chacun sur son téléphone, en ligne |
 | **Le Tapis** | Poker, Blackjack, Roulette (jetons fictifs, 18+) | Chacun sur son téléphone, en ligne |
 
 Chaque appli a son icône, son APK et ses mentions légales.
@@ -61,9 +61,18 @@ Le niveau Sans limite demande une confirmation (tout le monde majeur et d'accord
 
 # La Veillée
 
-Jeux où chaque joueur utilise son propre téléphone. Celui qui crée la partie reçoit un **code à 4 lettres** ; les autres ouvrent La Veillée › **Rejoindre une partie** et tapent ce code (ou ouvrent un lien `index.html?code=ABCD`).
-- **Loup-Garou** : le créateur est le maître du jeu (il ne joue pas). Il choisit les cartes (loups automatiques ou à la main, Voyante, Sorcière, Chasseur, Cupidon, Petite fille, Salvateur, Ancien, Idiot du village, Loup blanc), lance la roue, et chacun reçoit sa carte en secret sur son téléphone. Le MJ pilote ensuite la partie : déroulé de la nuit à lire à voix haute, victimes (☠), amoureux (💘), potions, réveil du village avec annonce des morts, votes, et révélation de toutes les cartes à la fin. Les loups voient leurs complices et les amoureux leur partenaire (désactivable).
+Une veillée au cœur de la forêt : décor de village de nuit dans sa clairière (sapins, lune, brume, lucioles, fenêtres allumées), qui passe à l'aube pendant le jour du Loup-Garou. Celui qui crée la partie reçoit un **code à 4 lettres** ; les autres touchent **Rejoindre une partie** et tapent ce code (ou ouvrent un lien `index.html?code=ABCD`).
+
+- **Tu préfères** (début de soirée) : la question s'affiche sur tous les téléphones, chacun vote en secret, les résultats tombent avec les noms, la minorité prend un gage. Niveaux Soft et Piquant.
+- **Loup-Garou, version ultime** : tous les personnages des boîtes en cartes (jeu de base, Nouvelle Lune, Personnages, Le Village : 47 cartes), de 4 à **47 joueurs**, plus le meneur.
+  - Composition rapide (Découverte, Classique, Complet, Ultime) ou à la main, nombre de loups conseillé, cartes du voleur et rôles du comédien gérés.
+  - **Ordre d'appel officiel** de la nuit, filtré selon les rôles en jeu : Voleur, Comédien, Cupidon, Chien-loup, Voyante, Renard, Amoureux, Juge bègue, Sœurs, Frères, Enfant sauvage, Montreur d'ours, Corbeau, Pyromane, Salvateur, Loups-garous (et la petite fille qui espionne), Infect père, Grand méchant loup (tant qu'aucun loup n'est mort), Loup blanc (une nuit sur deux), Sorcière, Gitane, Joueur de flûte, Charmés. Les rôles de la première nuit disparaissent ensuite ; les morts sont appelés quand même, en silence.
+  - Les pouvoirs se jouent sur les téléphones : la voyante voit la carte choisie, Cupidon désigne les amoureux, le salvateur protège, la sorcière sauve ou empoisonne, le renard flaire, le corbeau désigne, le joueur de flûte charme, le voleur échange sa carte, le chien-loup et l'enfant sauvage choisissent… Le meneur voit tout et peut toujours corriger.
+  - Le matin, protections, potions, infection et Ancien sont appliqués automatiquement, puis les morts sont annoncés (avec des annonces rigolotes en option).
+  - **Le maire** est élu par vote : il porte une écharpe tricolore bleu-blanc-rouge sur tous les écrans, sa voix compte double et, s'il meurt, il désigne son successeur.
+  - Votes secrets sur les téléphones (corbeau, égalité et bouc émissaire, second vote du juge bègue, idiot gracié), victoires de chaque camp détectées (village, loups, amoureux, joueur de flûte, loup blanc, ange, sectaire, pyromane).
 - **Téléphone dessiné** (3 joueurs minimum) : chacun écrit une phrase, le voisin la dessine, le suivant devine le dessin, et ainsi de suite. À la fin, l'hôte fait défiler les albums sur tous les téléphones. Chrono au choix.
+- **Action ou Vérité** (fin de soirée) : chacun son tour, le joueur choisit sur son téléphone, la carte s'affiche chez tout le monde, chacun réagit (😂 🔥 😱 👏), joker = un gage. Niveaux Soft et Piquant, cartes reprises de La Tournée (qui garde sa version sur un seul téléphone).
 
 # Le Tapis
 
@@ -74,13 +83,13 @@ Poker, Blackjack et Roulette entre amis, chacun sur son téléphone, avec 1 000 
 
 ## Sons et ambiances (La Veillée et Le Tapis)
 Tout est composé en direct par l'appli (synthèse Web Audio, `shared/son.js`) : créations originales, libres de droits, rien à télécharger. Le bouton en bas à droite règle la musique, l'ambiance, les bruitages et le volume.
-- **La Veillée** : valse de guinguette (accordéon et guitare). Pendant le Loup-Garou, ambiance de village provençal en été : la nuit, vent léger, ruisseau au loin, grillons, crapaud et chouette ; le jour, cigales, oiseaux et brise. La cloche de l'église sonne au réveil du village, la chouette à la tombée de la nuit. Le décor (village sur sa colline, cyprès, lavande, ruisseau, étoiles, lucioles) passe du soir à la nuit et au jour.
-- **Le Tapis** : jazz lounge de salle de jeu. Bruit de la roulette (la bille roule, ralentit, rebondit et se pose), cartes distribuées, jetons, gains et pertes.
+- **La Veillée** : musique au choix, feu de camp (guitare et flûte) ou guinguette (accordéon). Pendant le Loup-Garou, ambiance de forêt : la nuit, vent dans les arbres, ruisseau, grillons, crapaud, chouette et loups qui hurlent au loin ; le jour, cigales, oiseaux et brise. La cloche sonne au réveil du village, la chouette à la tombée de la nuit, les loups hurlent quand le meneur les appelle, une fanfare salue le nouveau maire.
+- **Le Tapis** : couleurs de Las Vegas années 80 (nuit violette, néons rose et turquoise adoucis, or). Musique au choix : jazz lounge ou Vegas 80 (synthés et boîte à rythmes). Bruit de la roulette (la bille roule, ralentit, rebondit et se pose), cartes distribuées, jetons, gains et pertes.
 - En partie, la musique et l'ambiance jouent sur le téléphone de l'hôte (pour ne pas avoir 20 musiques décalées) ; chaque invité peut les activer chez lui. Les bruitages jouent sur tous les téléphones.
 - Le « ? » de chaque jeu (accueil et en partie) ouvre ses règles ; le nombre de joueurs connectés s'affiche en haut pendant la partie.
 
 ## Fonctionnement en ligne (La Veillée et Le Tapis)
-Chacun installe l'APK de l'appli sur son téléphone. L'hôte crée la partie et donne le code, les autres le tapent : **jusqu'à 20 téléphones par partie**. Connexion internet nécessaire. Le téléphone de l'hôte sert de serveur ; les autres s'y connectent en direct (WebRTC via [PeerJS](https://peerjs.com), inclus dans `shared/`, avec le service gratuit de mise en relation de PeerJS). Un téléphone qui se met en veille se reconnecte tout seul et retrouve sa place ; si l'hôte ferme l'appli, il peut reprendre la partie depuis l'accueil.
+Chacun installe l'APK de l'appli sur son téléphone. L'hôte crée la partie et donne le code, les autres le tapent : **jusqu'à 20 téléphones par partie** (47 pour le Loup-Garou). Connexion internet nécessaire. Le téléphone de l'hôte sert de serveur ; les autres s'y connectent en direct (WebRTC via [PeerJS](https://peerjs.com), inclus dans `shared/`, avec le service gratuit de mise en relation de PeerJS). Un téléphone qui se met en veille se reconnecte tout seul et retrouve sa place ; si l'hôte ferme l'appli, il peut reprendre la partie depuis l'accueil.
 
 Pour tester sur un ordinateur : `tools/build-www.sh veillee` (ou `tapis`), puis servir le dossier `build/veillee/www` (par exemple `python3 -m http.server`). Avec `index.html?local`, plusieurs onglets du même navigateur jouent ensemble sans réseau.
 

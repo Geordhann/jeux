@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#121a33">
+<meta name="theme-color" content="#08161a">
 <meta name="description" content="Loup-Garou et Téléphone dessiné : des jeux de soirée où chacun joue sur son téléphone.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="La Veillée">
@@ -14,8 +14,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&display=swap">
 <link rel="stylesheet" href="shared/salon.css">
 <style>
-/* La Veillée : bleu nuit, comme une veillée au coin du feu */
-:root { --felt: #121a33; --felt-2: #1d2a52; --felt-line: #34457a; --muted: #aab5d8; }
 .wheel-box { flex: none; position: relative; width: min(100%, 330px); aspect-ratio: 1; max-width: 100%; margin: 6px auto 0; }
 .wheel { pointer-events: none; width: 100%; height: 100%; display: block; border-radius: 50%; box-shadow: 0 0 0 6px var(--paper), 0 16px 36px rgba(0,0,0,.45); }
 .pointer { position: absolute; left: 50%; top: -14px; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 30px solid var(--gold); z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,.4)); }
@@ -62,38 +60,92 @@
 .bub { background: var(--paper); color: var(--ink); padding: 12px 16px; border-radius: 16px; font-family: var(--font-card); font-size: 1.25rem; line-height: 1.3; overflow-wrap: anywhere; }
 .bub.miss { font-style: italic; color: var(--ink-soft); font-size: 1rem; }
 @media (prefers-reduced-motion: reduce) { .album .it { animation: none; } }
-/* Décor du village : le ciel, les collines et les fenêtres changent avec le moment de la journée */
-body { background-attachment: fixed; transition: background-color 1.5s; }
-body[data-scene="evening"] { --sky1: #231d45; --sky2: #6b3f6b; --sky3: #e2875c; --far: #4a3866; --mid: #3a2b55; --near: #2a2043; --wall: #4b3a63; --roof: #7a4a5a; --win: #ffd27a; --cyp: #1f1733; --lav: #7b5aa8; --water: #b48ac0; }
-body[data-scene="night"] { --sky1: #070d22; --sky2: #10204a; --sky3: #1d3264; --far: #16244a; --mid: #111d3d; --near: #0c1530; --wall: #1d2747; --roof: #2a2f55; --win: #ffc95e; --cyp: #081024; --lav: #2c2c62; --water: #35558f; }
-body[data-scene="day"] { --sky1: #1f4f86; --sky2: #4f86b8; --sky3: #f0b46a; --far: #7c8c5c; --mid: #a98448; --near: #6f7a3e; --wall: #e6c690; --roof: #c0603a; --win: #6b4a2e; --cyp: #2f4a26; --lav: #8e6cc0; --water: #7fb6d6; }
-body[data-scene] { background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 55%, var(--sky3) 100%) fixed; }
+/* Décor : forêt de nuit et village dans sa clairière ; le jour, l'aube se lève sur la forêt */
+:root { --felt: #08161a; --felt-2: #10292c; --felt-line: #24464a; --muted: #a9c6c2; --gold: #f1b95c; }
+body { background-attachment: fixed; }
+body[data-scene="night"], body[data-scene="evening"] { --sky1: #03080f; --sky2: #0a1a2a; --sky3: #123437; --far: #0d2228; --pfar: #0b1d22; --mid: #0a1a1e; --pmid: #071317; --near: #061013; --pnear: #03090b; --wall: #1a2a33; --roof: #22323f; --win: #ffc463; --water: #2f5f7a; --fog: #9fc3cf; }
+body[data-scene="day"] { --sky1: #2a3f6a; --sky2: #c58a8f; --sky3: #f3c48a; --far: #4f6b6a; --pfar: #3f5a58; --mid: #33504a; --pmid: #24403a; --near: #1d342e; --pnear: #13261f; --wall: #c9b48f; --roof: #8a4a3a; --win: #5a4a3a; --water: #7fb2c9; --fog: #fff1dc; }
+body[data-scene] { background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 58%, var(--sky3) 100%) fixed; }
 #scene { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 #scene svg { width: 100%; height: 100%; display: block; }
-#scene path, #scene rect, #scene polygon, #scene circle { transition: fill 1.6s, opacity 1.6s; }
+#scene path, #scene rect, #scene polygon, #scene circle, #scene ellipse { transition: fill 1.8s, opacity 1.8s; }
 #scene .far { fill: var(--far); } #scene .mid { fill: var(--mid); } #scene .near { fill: var(--near); }
-#scene .wall { fill: var(--wall); } #scene .roof { fill: var(--roof); } #scene .cyp { fill: var(--cyp); }
+#scene .p-far { fill: var(--pfar); } #scene .p-mid { fill: var(--pmid); } #scene .p-near { fill: var(--pnear); }
+#scene .wall { fill: var(--wall); } #scene .roof { fill: var(--roof); }
 #scene .win { fill: var(--win); } #scene .belfry { fill: var(--win); opacity: .85; }
-body[data-scene="night"] #scene .win { filter: drop-shadow(0 0 3px var(--win)); animation: glow 5s ease-in-out infinite alternate; }
+body:not([data-scene="day"]) #scene .win { filter: drop-shadow(0 0 4px var(--win)); animation: glow 5s ease-in-out infinite alternate; }
 #scene .w2 { animation-delay: -2.5s; }
-#scene .lav { fill: none; stroke: var(--lav); stroke-width: 7; stroke-linecap: round; opacity: .55; }
-#scene .stream { fill: none; stroke: var(--water); stroke-width: 9; stroke-linecap: round; opacity: .55; }
-#scene .shine { stroke: #fff; stroke-width: 2; stroke-dasharray: 6 22; opacity: .35; animation: flow 6s linear infinite; }
+#scene .stream { fill: none; stroke: var(--water); stroke-width: 9; stroke-linecap: round; opacity: .5; }
+#scene .shine { stroke: #fff; stroke-width: 2; stroke-dasharray: 6 22; opacity: .3; animation: flow 6s linear infinite; }
+#scene .fog { fill: var(--fog); opacity: .07; animation: drift 26s ease-in-out infinite alternate; }
+#scene .f2 { opacity: .06; animation-duration: 34s; animation-direction: alternate-reverse; }
 #scene .stars circle { fill: #fff; opacity: 0; transition: opacity 2s; }
-body[data-scene="night"] #scene .stars circle { opacity: .9; animation: twinkle 3.5s ease-in-out infinite alternate; }
-body[data-scene="evening"] #scene .stars circle:nth-child(3n) { opacity: .55; }
-#scene .moon { fill: #f6efd2; } #scene .moon-bite { fill: var(--sky1); opacity: 0; } #scene .moon-glow { fill: #f6efd2; opacity: .08; }
-body:not([data-scene="night"]) #scene .moon, body:not([data-scene="night"]) #scene .moon-glow { opacity: 0; }
-#scene .sun { fill: #ffd98a; opacity: 0; } #scene .sun-glow { fill: #ffd98a; opacity: 0; }
-body[data-scene="day"] #scene .sun { opacity: .95; } body[data-scene="day"] #scene .sun-glow { opacity: .18; }
-body[data-scene="evening"] #scene .sun { opacity: .5; transform: translateY(250px); fill: #ff9e5e; } body[data-scene="evening"] #scene .sun-glow { opacity: .12; transform: translateY(250px); fill: #ff9e5e; }
+body:not([data-scene="day"]) #scene .stars circle { opacity: .9; animation: twinkle 3.5s ease-in-out infinite alternate; }
+#scene .moon { fill: #f4f0dc; } #scene .crater { fill: #dcd6bd; } #scene .moon-glow { fill: #dfe9ff; opacity: .09; }
+body[data-scene="day"] #scene .moon, body[data-scene="day"] #scene .moon-glow, body[data-scene="day"] #scene .crater { opacity: 0; }
+#scene .sun { fill: #ffd9a0; opacity: 0; } #scene .sun-glow { fill: #ffd9a0; opacity: 0; }
+body[data-scene="day"] #scene .sun { opacity: .9; } body[data-scene="day"] #scene .sun-glow { opacity: .22; }
 #scene .flies circle { fill: #fff3a0; opacity: 0; }
-body[data-scene="night"] #scene .flies circle, body[data-scene="evening"] #scene .flies circle { animation: firefly 7s ease-in-out infinite; }
+body:not([data-scene="day"]) #scene .flies circle { animation: firefly 7s ease-in-out infinite; }
 @keyframes twinkle { from { opacity: .25; } to { opacity: 1; } }
 @keyframes glow { from { opacity: .7; } to { opacity: 1; } }
 @keyframes flow { to { stroke-dashoffset: -280; } }
+@keyframes drift { from { transform: translateX(-40px); } to { transform: translateX(40px); } }
 @keyframes firefly { 0%, 100% { opacity: 0; transform: translate(0, 0); } 30% { opacity: .9; } 50% { opacity: .2; transform: translate(14px, -10px); } 75% { opacity: .85; transform: translate(-6px, -18px); } }
 @media (prefers-reduced-motion: reduce) { #scene * { animation: none !important; } }
+/* Loup-Garou : écharpe du maire, appels de la nuit, votes */
+.sash { display: inline-flex; align-items: center; vertical-align: middle; margin-left: 6px; padding: 1px 8px; border-radius: 3px; background: linear-gradient(90deg, #1f4fa8 0 33.3%, #fff 33.3% 66.6%, #d8343f 66.6%); box-shadow: 0 1px 3px rgba(0,0,0,.5); transform: rotate(-4deg); }
+.sash b { font-size: .58rem; letter-spacing: .14em; color: #10203a; font-weight: 800; text-shadow: 0 0 2px #fff, 0 0 2px #fff; }
+.sash.big { padding: 3px 14px; margin: 0 8px 0 0; }
+.sash.big b { font-size: .72rem; }
+.card.has-sash > .sash { position: absolute; top: 18px; right: -10px; transform: rotate(32deg); padding: 4px 28px; z-index: 2; margin: 0; }
+.mayor-band { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 12px; background: rgba(255,255,255,.08); font-weight: 800; }
+.tag-i { margin-left: 4px; }
+.camp-t { font-size: .75rem; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); font-weight: 800; margin-top: 4px; }
+.card.call { text-align: left; align-items: stretch; }
+.card.call .kind { text-align: left; }
+.call-t { font-size: clamp(1.1rem, 5vw, 1.3rem) !important; font-style: italic; text-align: left !important; }
+.card.call .sub { text-align: left; }
+.done-l { color: #1f7a4a !important; font-weight: 700; }
+.wait-dot { animation: glow 1.2s ease-in-out infinite alternate; }
+.night-order { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; counter-reset: n; }
+.night-order li { counter-increment: n; }
+.night-order button { padding: 6px 10px; border-radius: 999px; border: 1px solid var(--felt-line); background: rgba(0,0,0,.25); font-size: .8rem; font-weight: 700; }
+.night-order button::before { content: counter(n) ". "; color: var(--gold); }
+.night-order button.now { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+.night-order button.now::before { color: var(--ink); }
+.night-order button.past { opacity: .45; }
+.panel.ask { border-color: var(--gold); box-shadow: 0 0 24px rgba(241,185,92,.25); }
+.ask-t { font-family: var(--font-card); font-style: italic; font-size: 1.2rem; }
+.pick-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+.mini-card { padding: 14px 8px; border-radius: 12px; background: var(--paper); color: var(--ink); display: flex; flex-direction: column; align-items: center; gap: 4px; box-shadow: 0 3px 0 var(--paper-edge); }
+.mini-card span { font-size: 2rem; }
+.tally { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.tally li { display: grid; grid-template-columns: minmax(0, 1fr) 2fr auto; align-items: center; gap: 8px; }
+.tally li small { grid-column: 1 / -1; color: var(--muted); font-size: .78rem; }
+.tally .bar { height: 10px; border-radius: 5px; background: rgba(255,255,255,.08); overflow: hidden; }
+.tally .bar i { display: block; height: 100%; background: var(--gold); }
+.tally li.top b { color: var(--gold); }
+.alerts { display: flex; flex-direction: column; gap: 8px; }
+.alerts .banner { justify-content: space-between; text-align: left; }
+/* Tu préfères et Action ou Vérité */
+.tp-duel { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+.tp-opt { padding: 22px 18px; border-radius: 18px; font-family: var(--font-card); font-size: clamp(1.2rem, 5.5vw, 1.45rem); line-height: 1.3; color: var(--ink); box-shadow: 0 4px 0 rgba(0,0,0,.25); transition: transform .12s; }
+.tp-opt.a { background: #ffd27a; } .tp-opt.b { background: #9fd8ff; }
+.tp-opt[aria-pressed="true"] { outline: 4px solid #fff; transform: scale(1.02); }
+.tp-or { text-align: center; font-family: var(--font-display); color: var(--gold); font-size: 1.3rem; }
+.tp-res { position: relative; overflow: hidden; border-radius: 16px; padding: 14px 16px; background: rgba(9,12,30,.6); display: flex; flex-direction: column; gap: 2px; }
+.tp-res > * { position: relative; }
+.tp-res .tp-bar { position: absolute; inset: 0 auto 0 0; opacity: .35; }
+.tp-res.a .tp-bar { background: #ffd27a; } .tp-res.b .tp-bar { background: #9fd8ff; }
+.tp-res b { font-family: var(--font-display); font-weight: 400; font-size: 1.6rem; color: var(--gold); }
+.tp-res span { font-family: var(--font-card); font-size: 1.15rem; }
+.tp-res small { color: var(--muted); }
+.tp-res.minor { box-shadow: inset 0 0 0 3px var(--red); }
+.av-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.reacts { display: flex; justify-content: center; gap: 10px; }
+.reacts button { width: 58px; height: 52px; border-radius: 16px; background: rgba(255,255,255,.1); font-size: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.reacts b { font-size: .7rem; color: var(--gold); min-height: .8em; }
 /* Lisibilité par-dessus le décor */
 .panel, .plist li { background: rgba(9, 12, 30, .58); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
 .howto, .hint, .tag, .sec-title, .foot, .turn small { text-shadow: 0 1px 4px rgba(0, 0, 0, .85); }
@@ -107,18 +159,21 @@ body[data-scene="night"] #scene .flies circle, body[data-scene="evening"] #scene
 <script>
 window.APP = {
   id: 'veillee', name: 'La Veillée', of: 'de La Veillée', logo: ['La', 'Veillée'],
-  tagline: 'Des jeux de soirée où chacun joue sur son téléphone.',
-  hooks: ['La nuit tombe sur le village…', 'Qui est le loup ? Personne ne le sait.', 'Ton dessin va finir en catastrophe. Et c\'est le but.', 'Ce soir, on ne fait confiance à personne.', 'Une phrase, dix dessins, zéro rapport.'],
-  deal: ['🌙', '🐺', '✏️'],
+  tagline: 'Une veillée au cœur de la forêt, chacun sur son téléphone.',
+  hooks: ['La nuit tombe sur la forêt…', 'Qui est le loup ? Personne ne le sait.', 'Ton dessin va finir en catastrophe. Et c\'est le but.', 'Ce soir, on ne fait confiance à personne.', 'Au loin, un loup hurle. Ou alors c\'est Kevin.', 'Allumez le feu, la veillée commence.'],
+  deal: ['🌙', '🐺', '🌲'],
   games: [
-    { id: 'lg', name: 'Loup-Garou', icon: '🐺', color: '#8fa8ff', players: '4 à 20 joueurs + le maître du jeu', desc: "Tu es le maître du jeu : la roue distribue une carte secrète sur le téléphone de chacun." },
-    { id: 'gp', name: 'Téléphone dessiné', icon: '✏️', color: '#ffb36b', players: '3 à 20 joueurs', desc: "Écris, dessine, devine : la phrase passe de téléphone en téléphone et se déforme." },
+    { id: 'tp', name: 'Tu préfères', icon: '⚖️', color: '#7fe0b0', players: '2 à 20 joueurs', when: 'Début de soirée', desc: "Une question, deux choix : chacun vote en secret, la minorité prend un gage." },
+    { id: 'lg', name: 'Loup-Garou', icon: '🐺', color: '#8fb6ff', players: '4 à 47 joueurs + le meneur', when: 'Le grand jeu', desc: "Tu es le maître du jeu : la roue distribue une carte secrète sur le téléphone de chacun." },
+    { id: 'gp', name: 'Téléphone dessiné', icon: '✏️', color: '#ffb36b', players: '3 à 20 joueurs', when: 'Pour rire', desc: "Écris, dessine, devine : la phrase passe de téléphone en téléphone et se déforme." },
+    { id: 'av', name: 'Action ou Vérité', icon: '🎲', color: '#d39cff', players: '2 à 20 joueurs', when: 'Fin de soirée', desc: "Chacun son tour, la carte s'affiche sur tous les téléphones et tout le monde réagit." },
   ],
   legal: {
-    what: 'est un recueil de jeux de soirée en ligne (Loup-Garou, Téléphone dessiné)',
+    what: 'est un recueil de jeux de soirée en ligne (Loup-Garou, Téléphone dessiné, Tu préfères, Action ou Vérité)',
     dataExtra: ' (cartes, votes, phrases et dessins)',
     sections: [
       ['Public concerné', `<p>La Veillée est tout public. Les morts du Loup-Garou sont fictives et font partie du jeu. Les phrases et dessins du Téléphone dessiné sont créés par les joueurs, qui restent responsables de ce qu'ils écrivent et dessinent : on reste bienveillant, surtout avec des enfants autour de la table.</p>
+        <p>Tu préfères et Action ou Vérité proposent un niveau Soft (tout public) et un niveau Piquant (séduction légère, pour les plus de 16 ans). Chacun peut refuser n'importe quel défi, à tout moment, sans se justifier : aucun défi ne doit être fait sous la pression du groupe.</p>
         <p>Les moins de 15 ans utilisent l'application avec l'accord d'un parent.</p>`],
     ],
     ip: `<p>Le Loup-Garou est un jeu de société traditionnel dont les règles sont libres. « Les Loups-garous de Thiercelieux » est une marque de ses ayants droit : La Veillée n'y est pas affiliée et n'en reprend ni les illustrations ni les textes. Le Téléphone dessiné reprend le principe du jeu du téléphone (ou « téléphone arabe ») en dessin ; La Veillée n'est affiliée à aucun autre jeu ou service du même genre.</p>`,
@@ -146,111 +201,367 @@ function wheelSvg(segs, angle) {
       <circle cx="100" cy="100" r="14" style="fill:var(--paper);stroke:var(--red);stroke-width:3"/></svg></div>`;
 }
 
-/* ---------- Loup-Garou ---------- */
-const LG_ROLES = {
-  loup: { name: 'Loup-Garou', short: 'Loup', icon: '🐺', desc: "Chaque nuit, avec les autres loups, tu choisis une victime. Le jour, fais-toi passer pour un innocent villageois." },
-  villageois: { name: 'Simple villageois', short: 'Villageois', icon: '🧑‍🌾', desc: "Aucun pouvoir, juste ton flair et ta voix au vote. Démasque les loups avant qu'il ne soit trop tard." },
-  voyante: { name: 'Voyante', short: 'Voyante', icon: '🔮', desc: "Chaque nuit, tu découvres la vraie carte d'un joueur de ton choix. Aide le village sans te faire repérer." },
-  sorciere: { name: 'Sorcière', short: 'Sorcière', icon: '🧪', desc: "Deux potions, une seule fois chacune : la potion de vie sauve la victime des loups, la potion de mort élimine qui tu veux." },
-  chasseur: { name: 'Chasseur', short: 'Chasseur', icon: '🏹', desc: "Si tu meurs, tu tires une dernière balle : tu emportes immédiatement le joueur de ton choix." },
-  cupidon: { name: 'Cupidon', short: 'Cupidon', icon: '💘', desc: "La première nuit, tu désignes deux amoureux. Si l'un meurt, l'autre meurt de chagrin. Ensemble, ils peuvent gagner seuls." },
-  petitefille: { name: 'Petite fille', short: 'Petite fille', icon: '👧', desc: "Pendant le tour des loups, tu peux entrouvrir les yeux pour les espionner. S'ils te surprennent, tu deviens leur proie." },
-  salvateur: { name: 'Salvateur', short: 'Salvateur', icon: '🛡️', desc: "Chaque nuit, tu protèges un joueur de l'attaque des loups (toi compris), jamais le même deux nuits de suite." },
-  ancien: { name: 'Ancien', short: 'Ancien', icon: '👴', desc: "Tu survis à la première attaque des loups. Mais si le village t'élimine, les villageois perdent tous leurs pouvoirs." },
-  idiot: { name: 'Idiot du village', short: 'Idiot', icon: '🤪', desc: "Si le village vote contre toi, tu montres ta carte et tu restes en vie… mais tu ne votes plus." },
-  loupblanc: { name: 'Loup blanc', short: 'Loup blanc', icon: '🐺', desc: "Tu te réveilles avec les loups, mais une nuit sur deux tu peux dévorer l'un d'eux. Tu gagnes seul : sois le dernier debout." },
+/* ---------- Loup-Garou, version ultime ---------- */
+// Tous les personnages des boîtes en cartes (jeu de base, Nouvelle Lune, Personnages, Le Village : 47 cartes),
+// l'ordre d'appel officiel de la nuit, et les téléphones qui participent : la voyante voit la carte sur son écran,
+// Cupidon choisit ses amoureux, la sorcière ses potions, le village vote… Le meneur garde toujours la main.
+const LG_MAX = 47;
+const LG = {
+  // Le village
+  villageois: { name: 'Simple villageois', short: 'Villageois', icon: '🧑‍🌾', camp: 'village', box: 9, desc: "Aucun pouvoir, juste ton flair et ta voix au vote. Démasque les loups avant qu'il ne soit trop tard." },
+  villvill: { name: 'Villageois-Villageois', short: 'Villageois-Villageois', icon: '😇', camp: 'village', box: 1, desc: "Ta carte a deux faces Villageois : tout le monde sait que tu es innocent. Sers-t'en pour guider le village." },
+  voyante: { name: 'Voyante', short: 'Voyante', icon: '🔮', camp: 'village', box: 1, desc: "Chaque nuit, tu découvres sur ton téléphone la vraie carte d'un joueur de ton choix." },
+  sorciere: { name: 'Sorcière', short: 'Sorcière', icon: '🧪', camp: 'village', box: 1, desc: "Deux potions, une seule fois chacune : la potion de vie sauve la victime des loups, la potion de mort élimine qui tu veux." },
+  chasseur: { name: 'Chasseur', short: 'Chasseur', icon: '🏹', camp: 'village', box: 1, desc: "Si tu meurs, tu tires une dernière balle : tu emportes immédiatement le joueur de ton choix." },
+  cupidon: { name: 'Cupidon', short: 'Cupidon', icon: '💘', camp: 'village', box: 1, desc: "La première nuit, tu désignes deux amoureux (toi compris si tu veux). Si l'un meurt, l'autre meurt de chagrin." },
+  petitefille: { name: 'Petite fille', short: 'Petite fille', icon: '👧', camp: 'village', box: 1, desc: "Pendant le tour des loups, tu peux entrouvrir les yeux pour les espionner. S'ils te surprennent, tu deviens leur proie." },
+  salvateur: { name: 'Salvateur', short: 'Salvateur', icon: '🛡️', camp: 'village', box: 1, desc: "Chaque nuit, tu protèges un joueur de l'attaque des loups (toi compris), jamais le même deux nuits de suite." },
+  ancien: { name: 'Ancien', short: 'Ancien', icon: '👴', camp: 'village', box: 1, desc: "Tu survis à la première attaque des loups. Mais si le village t'élimine, les villageois perdent tous leurs pouvoirs." },
+  idiot: { name: 'Idiot du village', short: 'Idiot', icon: '🤪', camp: 'village', box: 1, desc: "Si le village vote contre toi, tu montres ta carte et tu restes en vie… mais tu ne votes plus." },
+  bouc: { name: 'Bouc émissaire', short: 'Bouc émissaire', icon: '🐐', camp: 'village', box: 1, desc: "En cas d'égalité au vote, c'est toi qui meurs. Avant de partir, tu choisis qui aura le droit de voter le lendemain." },
+  soeurs: { name: 'Deux sœurs', short: 'Deux sœurs', icon: '👭', camp: 'village', box: 2, desc: "Vous êtes deux. Vous vous reconnaissez et pouvez vous concerter en silence certaines nuits." },
+  freres: { name: 'Trois frères', short: 'Trois frères', icon: '👬', camp: 'village', box: 3, desc: "Vous êtes trois. Vous vous reconnaissez et pouvez vous concerter en silence certaines nuits." },
+  renard: { name: 'Renard', short: 'Renard', icon: '🦊', camp: 'village', box: 1, desc: "Chaque nuit, tu désignes trois joueurs : ton téléphone te dit si un loup se cache parmi eux. Si ce n'est pas le cas, tu perds ton flair." },
+  montreur: { name: "Montreur d'ours", short: "Montreur d'ours", icon: '🐻', camp: 'village', box: 1, desc: "Chaque matin, si un loup est assis juste à côté de toi, ton ours grogne (le meneur grogne pour lui)." },
+  juge: { name: 'Juge bègue', short: 'Juge bègue', icon: '⚖️', camp: 'village', box: 1, desc: "Une fois dans la partie, en faisant le signe convenu avec le meneur, tu déclenches un second vote juste après le premier." },
+  chevalier: { name: "Chevalier à l'épée rouillée", short: 'Chevalier', icon: '⚔️', camp: 'village', box: 1, desc: "Si les loups te dévorent, ton épée rouillée infecte le premier loup assis à ta gauche : il meurt la nuit suivante." },
+  servante: { name: 'Servante dévouée', short: 'Servante', icon: '🧹', camp: 'village', box: 1, desc: "Quand un joueur est éliminé, tu peux te dévoiler et prendre sa carte, son rôle et ses secrets." },
+  corbeau: { name: 'Corbeau', short: 'Corbeau', icon: '🪶', camp: 'village', box: 1, desc: "Chaque nuit, tu désignes un joueur : le lendemain, il aura deux voix contre lui au vote." },
+  gitane: { name: 'Gitane', short: 'Gitane', icon: '🧿', camp: 'village', box: 1, desc: "Certaines nuits, tu désignes un spirite : le matin, il pose ta question à un mort, qui répond par oui ou par non." },
+  garde: { name: 'Garde champêtre', short: 'Garde champêtre', icon: '📯', camp: 'village', box: 1, desc: "Chaque matin, tu peux faire une annonce publique : le meneur lit un événement qui change les règles pour la journée." },
+  // Les loups
+  loup: { name: 'Loup-Garou', short: 'Loup', icon: '🐺', camp: 'loups', box: 4, desc: "Chaque nuit, avec les autres loups, tu choisis une victime. Le jour, fais-toi passer pour un innocent villageois." },
+  gml: { name: 'Grand méchant loup', short: 'Grand méchant loup', icon: '👹', camp: 'loups', box: 1, desc: "Tu chasses avec les loups, puis, tant qu'aucun loup n'est mort, tu dévores seul une deuxième victime." },
+  ipl: { name: 'Infect père des loups', short: 'Infect père', icon: '🧛', camp: 'loups', box: 1, desc: "Une fois dans la partie, tu peux infecter la victime des loups au lieu de la tuer : elle devient loup-garou en secret." },
+  loupblanc: { name: 'Loup blanc', short: 'Loup blanc', icon: '❄️', camp: 'solo', box: 1, desc: "Tu te réveilles avec les loups, mais une nuit sur deux tu peux dévorer l'un d'eux. Tu gagnes seul : sois le dernier debout." },
+  // Les ambigus
+  voleur: { name: 'Voleur', short: 'Voleur', icon: '🦹', camp: 'ambigu', box: 1, desc: "La première nuit, ton téléphone te montre les deux cartes restées au centre : tu peux échanger la tienne contre l'une d'elles." },
+  comedien: { name: 'Comédien', short: 'Comédien', icon: '🎭', camp: 'ambigu', box: 1, desc: "Trois rôles t'attendent. Chaque nuit, tu en choisis un et tu joues son pouvoir, jusqu'à les avoir tous utilisés." },
+  chienloup: { name: 'Chien-loup', short: 'Chien-loup', icon: '🐕', camp: 'ambigu', box: 1, desc: "La première nuit, tu choisis ton camp : fidèle chien du village, ou loup-garou. Pour toute la partie." },
+  enfant: { name: 'Enfant sauvage', short: 'Enfant sauvage', icon: '🧒', camp: 'ambigu', box: 1, desc: "La première nuit, tu choisis un modèle. Tant qu'il vit, tu es villageois. S'il meurt, tu deviens loup-garou." },
+  // Les solitaires
+  flute: { name: 'Joueur de flûte', short: 'Joueur de flûte', icon: '🎶', camp: 'solo', box: 1, desc: "Chaque nuit, tu charmes deux joueurs. Tu gagnes seul quand tous les vivants sont charmés." },
+  sectaire: { name: 'Abominable sectaire', short: 'Sectaire', icon: '🕯️', camp: 'solo', box: 1, desc: "Le village est coupé en deux groupes (affichés sur les téléphones). Tu gagnes seul quand tout le groupe d'en face est éliminé." },
+  ange: { name: 'Ange', short: 'Ange', icon: '👼', camp: 'solo', box: 1, desc: "Tu gagnes tout de suite si tu es le premier éliminé, au premier vote ou la première nuit. Sinon, tu deviens simple villageois." },
+  pyromane: { name: 'Pyromane', short: 'Pyromane', icon: '🔥', camp: 'solo', box: 1, desc: "Chaque nuit, tu asperges d'huile la maison d'un joueur… ou tu mets le feu : tous les joueurs aspergés brûlent. Tu gagnes seul." },
 };
-const LG_SPECIALS = ['voyante', 'sorciere', 'chasseur', 'cupidon', 'petitefille', 'salvateur', 'ancien', 'idiot', 'loupblanc'];
+const LG_CAMPS = [['village', 'Le village'], ['loups', 'Les loups-garous'], ['ambigu', 'Les ambigus'], ['solo', 'Les solitaires']];
+const LG_SPECIALS = Object.keys(LG).filter(r => !['villageois', 'loup'].includes(r));
+const LG_WOLF_CARDS = ['loup', 'gml', 'ipl', 'loupblanc'];
+// Composition rapide : de la plus simple à la boîte complète
+const LG_PRESETS = {
+  decouverte: ['voyante', 'sorciere', 'chasseur'],
+  classique: ['voyante', 'sorciere', 'chasseur', 'cupidon', 'petitefille', 'voleur', 'salvateur'],
+  complet: ['voyante', 'sorciere', 'chasseur', 'cupidon', 'petitefille', 'salvateur', 'ancien', 'idiot', 'renard', 'corbeau', 'chienloup', 'enfant', 'loupblanc', 'soeurs', 'bouc', 'juge', 'gml'],
+  ultime: LG_SPECIALS,
+};
+// Ordre d'appel officiel : on n'appelle que les personnages en jeu (et les morts, en silence, pour ne rien trahir)
 const LG_NIGHT = [
-  { id: 'cupidon', icon: '💘', title: 'Cupidon', first: true, text: "Cupidon, réveille-toi. Désigne les deux personnes qui tomberont follement amoureuses… Cupidon, rendors-toi.", note: "Touche 💘 sur les deux amoureux : ils le verront sur leur téléphone." },
-  { id: 'amoureux', icon: '💞', title: 'Les amoureux', first: true, need: 'cupidon', text: "Amoureux, regardez votre téléphone, ouvrez les yeux et reconnaissez-vous… Puis rendormez-vous." },
-  { id: 'salvateur', icon: '🛡️', title: 'Salvateur', text: "Salvateur, réveille-toi. Qui protèges-tu cette nuit ?… Salvateur, rendors-toi.", note: "Jamais le même joueur deux nuits de suite." },
-  { id: 'voyante', icon: '🔮', title: 'Voyante', text: "Voyante, réveille-toi. Désigne la personne dont tu veux connaître la carte… Voyante, rendors-toi.", note: "Fais-lui comprendre le rôle par un geste ou à l'oreille, sans montrer ton écran." },
-  { id: 'loup', icon: '🐺', title: 'Loups-garous', text: "Loups-garous, réveillez-vous. Mettez-vous d'accord en silence sur votre victime… Loups-garous, rendormez-vous.", note: "Touche ☠ sur la victime." },
-  { id: 'loupblanc', icon: '🐺', title: 'Loup blanc', even: true, text: "Loup blanc, réveille-toi. Veux-tu dévorer un loup-garou ?… Loup blanc, rendors-toi.", note: "Une nuit sur deux. S'il dévore un loup, touche ☠ sur ce loup." },
-  { id: 'sorciere', icon: '🧪', title: 'Sorcière', text: "Sorcière, réveille-toi. Voici la victime de cette nuit. Veux-tu utiliser ta potion de vie ? Ta potion de mort ?… Sorcière, rendors-toi.", note: "Potion de vie : retire le ☠ de la victime. Potion de mort : touche ☠ sur sa cible." },
+  { id: 'voleur', role: 'voleur', first: true, phone: true, title: 'Le Voleur', text: "Voleur, réveille-toi. Ton téléphone te montre les deux cartes restées au centre : tu peux échanger la tienne… Voleur, rendors-toi." },
+  { id: 'comedien', role: 'comedien', phone: true, title: 'Le Comédien', text: "Comédien, réveille-toi. Choisis sur ton téléphone le rôle que tu joueras cette nuit… Comédien, rendors-toi." },
+  { id: 'cupidon', role: 'cupidon', first: true, phone: true, title: 'Cupidon', text: "Cupidon, réveille-toi. Désigne sur ton téléphone les deux personnes qui tomberont follement amoureuses… Cupidon, rendors-toi." },
+  { id: 'chienloup', role: 'chienloup', first: true, phone: true, title: 'Le Chien-loup', text: "Chien-loup, réveille-toi. Fidèle chien du village, ou loup-garou ? Choisis sur ton téléphone… Rendors-toi." },
+  { id: 'voyante', role: 'voyante', phone: true, title: 'La Voyante', text: "Voyante, réveille-toi. Choisis sur ton téléphone le joueur dont tu veux connaître la vraie nature… Voyante, rendors-toi." },
+  { id: 'renard', role: 'renard', phone: true, title: 'Le Renard', text: "Renard, réveille-toi. Désigne trois joueurs : ton flair te dira si un loup se cache parmi eux… Renard, rendors-toi." },
+  { id: 'amoureux', need: 'cupidon', first: true, title: 'Les Amoureux', text: "Amoureux, regardez votre téléphone, ouvrez les yeux et reconnaissez-vous… Puis rendormez-vous, le cœur battant." },
+  { id: 'juge', role: 'juge', first: true, title: 'Le Juge bègue', text: "Juge bègue, réveille-toi et montre-moi le signe que tu feras pour demander un second vote… Rendors-toi." },
+  { id: 'soeurs', role: 'soeurs', first: true, again: true, title: 'Les Deux sœurs', text: "Les deux sœurs se réveillent, se reconnaissent et peuvent se concerter en silence… Rendormez-vous." },
+  { id: 'freres', role: 'freres', first: true, again: true, title: 'Les Trois frères', text: "Les trois frères se réveillent, se reconnaissent et peuvent se concerter en silence… Rendormez-vous." },
+  { id: 'enfant', role: 'enfant', first: true, phone: true, title: "L'Enfant sauvage", text: "Enfant sauvage, réveille-toi. Choisis sur ton téléphone ton modèle : s'il meurt, tu rejoindras la meute… Rendors-toi." },
+  { id: 'montreur', role: 'montreur', first: true, title: "Le Montreur d'ours", text: "Montreur d'ours, réveille-toi et lève la main que je te reconnaisse… Rendors-toi." },
+  { id: 'corbeau', role: 'corbeau', phone: true, title: 'Le Corbeau', text: "Corbeau, réveille-toi. Désigne le joueur qui aura deux voix contre lui demain… Rendors-toi." },
+  { id: 'pyromane', role: 'pyromane', phone: true, title: 'Le Pyromane', text: "Pyromane, réveille-toi. Asperge une maison d'huile… ou craque l'allumette. Rendors-toi." },
+  { id: 'salvateur', role: 'salvateur', phone: true, title: 'Le Salvateur', text: "Salvateur, réveille-toi. Qui protèges-tu cette nuit ?… Salvateur, rendors-toi." },
+  { id: 'loups', wolves: true, title: 'Les Loups-garous', text: "Loups-garous, réveillez-vous. Reconnaissez-vous et désignez en silence votre victime… Loups-garous, rendormez-vous." },
+  { id: 'infect', role: 'ipl', once: true, title: "L'Infect père des loups", text: "Infect père des loups, lève la main si tu veux infecter la victime plutôt que la dévorer." },
+  { id: 'gml', role: 'gml', phone: true, title: 'Le Grand méchant loup', text: "Grand méchant loup, réveille-toi. Tant qu'aucun loup n'est tombé, tu dévores une deuxième victime… Rendors-toi." },
+  { id: 'loupblanc', role: 'loupblanc', even: true, phone: true, title: 'Le Loup blanc', text: "Loup blanc, réveille-toi. Veux-tu dévorer l'un de tes frères loups ?… Rendors-toi." },
+  { id: 'sorciere', role: 'sorciere', phone: true, title: 'La Sorcière', text: "Sorcière, réveille-toi. Ton téléphone te montre la victime de cette nuit. Potion de vie ? Potion de mort ?… Rendors-toi." },
+  { id: 'gitane', role: 'gitane', title: 'La Gitane', text: "Gitane, réveille-toi. Veux-tu interroger les esprits ? Désigne ton spirite… Rendors-toi." },
+  { id: 'flute', role: 'flute', phone: true, title: 'Le Joueur de flûte', text: "Joueur de flûte, réveille-toi. Choisis les deux joueurs que tu vas charmer… Rendors-toi." },
+  { id: 'charmes', need: 'flute', title: 'Les Joueurs charmés', text: "Les joueurs charmés regardent leur téléphone, ouvrent les yeux et se reconnaissent… Rendormez-vous." },
 ];
-const LG_WIN = { village: 'Le village gagne !', loups: 'Les loups-garous gagnent !', amoureux: 'Les amoureux gagnent !', loupblanc: 'Le loup blanc gagne seul !', personne: 'Plus personne en vie…', '': 'Partie terminée' };
-const lgAuto = n => n >= 18 ? 4 : n >= 12 ? 3 : n >= 7 ? 2 : 1;
-const isWolf = r => r === 'loup' || r === 'loupblanc';
-const lgRole = r => LG_ROLES[r] || LG_ROLES.villageois;
-function lgDeck(H) {
-  const n = H.players.length, c = H.cfg;
-  const w = Math.min(Math.max(c.wolves || lgAuto(n), 1), Math.max(1, Math.floor((n - 1) / 2)));
-  const sp = LG_SPECIALS.filter(r => c.sp.includes(r));
-  const vil = n - w - sp.length;
-  return { w, sp, vil, err: n < 4 ? 'Il faut au moins 4 joueurs connectés.' : vil < 0 ? `Trop de cartes spéciales pour ${n} joueurs : retire-en ${-vil}.` : '', cards: [...Array(w).fill('loup'), ...sp, ...Array(Math.max(vil, 0)).fill('villageois')] };
+const LG_WIN = { village: 'Le village gagne !', loups: 'Les loups-garous gagnent !', amoureux: 'Les amoureux gagnent !', loupblanc: 'Le loup blanc gagne seul !', flute: 'Le joueur de flûte a charmé tout le village !', sectaire: "L'abominable sectaire gagne !", ange: "L'ange gagne : il voulait mourir le premier !", pyromane: 'Le pyromane a tout brûlé !', personne: 'Plus personne en vie…', '': 'Partie terminée' };
+// Pour rire : les annonces du meneur
+const LG_FUN = {
+  none: ["Miracle : personne n'est mort cette nuit ! Les loups étaient au régime ?", 'Nuit calme. Trop calme…', "Tout le monde est vivant. Les loups ont dû s'endormir devant une série.", 'Pas une égratignure. Le village respire… pour l\'instant.'],
+  night: ["On a retrouvé {n} au petit matin… enfin, ce qu'il en restait.", '{n} ne viendra pas au marché aujourd\'hui.', "Paix à l'âme de {n}, qui ronflait beaucoup trop fort de toute façon.", '{n} a été dévoré·e. Il paraît que c\'était croustillant.', 'Les loups ont invité {n} à dîner. Comme plat principal.'],
+  vote: ['Le village a parlé : {n} est envoyé·e au bûcher !', '{n} est banni·e du village. Bon vent !', 'Adieu {n}, on t\'aimait bien… ou pas.', '{n} quitte la partie sous les huées. Ou les applaudissements, on ne sait plus.'],
+  love: ['{n} meurt de chagrin. C\'était beau, c\'était triste.'],
+  mayor: ["{n} enfile l'écharpe tricolore ! Discours, discours !", 'Vive {n}, notre nouveau maire ! Promis, les impôts vont baisser.', '{n} est élu·e maire. Le village a peut-être fait une erreur.'],
+};
+const lgFun = (k, n) => LG_FUN[k][rand(LG_FUN[k].length)].replace(/\{n\}/g, n);
+const lgRole = r => LG[r] || LG.villageois;
+const lgCount = n => n <= 7 ? 1 : n <= 11 ? 2 : n <= 13 ? 3 : n <= 22 ? 4 : n <= 32 ? 5 : 6; // loups simples conseillés
+// Camp réel d'un joueur, avec les transformations de la partie
+function lgWolf(p) {
+  return LG_WOLF_CARDS.includes(p.role) || !!p.infected || (p.role === 'chienloup' && p.dog === 'loup') || (p.role === 'enfant' && !!p.wild);
 }
+const lgHas = (H, r) => H.players.some(p => p.role === r);
+const lgAlive = H => H.players.filter(p => p.alive);
+const byName = n => MP.H.players.find(p => p.name === n);
+function lgCards(H) {
+  const c = H.cfg, n = H.players.length;
+  const cards = Array(c.loups).fill('loup');
+  c.roles.forEach(r => cards.push(...Array(r === 'soeurs' ? 2 : r === 'freres' ? 3 : 1).fill(r)));
+  const need = n + (c.roles.includes('voleur') ? 2 : 0), vil = need - cards.length;
+  let err = '';
+  if (n < 4) err = 'Il faut au moins 4 joueurs connectés.';
+  else if (!cards.some(r => LG_WOLF_CARDS.includes(r))) err = 'Il faut au moins un loup-garou.';
+  else if (vil < 0) err = `Trop de cartes pour ${n} joueurs${c.roles.includes('voleur') ? ' (le voleur en garde 2 de côté)' : ''} : retire-en ${-vil}.`;
+  for (let i = 0; i < vil; i++) cards.push('villageois');
+  return { cards, need, vil: Math.max(vil, 0), err };
+}
+function lgPreset(H, kind) {
+  const n = H.players.length, list = LG_PRESETS[kind];
+  const roles = [];
+  let slots = n + (list.includes('voleur') ? 2 : 0) - lgCount(n) - Math.max(1, Math.round(n * .15)); // garde quelques simples villageois
+  for (const r of list) { const k = r === 'soeurs' ? 2 : r === 'freres' ? 3 : 1; if (k <= slots) { roles.push(r); slots -= k; } }
+  if (roles.includes('voleur') && n < 9) roles.splice(roles.indexOf('voleur'), 1);
+  Object.assign(H.cfg, { loups: Math.max(roles.some(r => LG_WOLF_CARDS.includes(r)) ? 0 : 1, lgCount(n) - (kind === 'ultime' ? 1 : 0)), roles });
+}
+const lgStepOn = (H, s) => {
+  if (s.first && H.n !== 1 && !s.again) return false;
+  if (s.even && H.n % 2) return false;
+  if (s.once && H.infectUsed) return false;
+  if (s.id === 'gml' && H.wolfDied) return false;
+  if (s.id === 'renard' && H.foxBlind) return false;
+  if (s.wolves) return H.players.some(p => p.alive && lgWolf(p));
+  return lgHas(H, s.need || s.role);
+};
+const lgSteps = H => LG_NIGHT.filter(s => lgStepOn(H, s));
+// Qui joue cette étape sur son téléphone ?
+const lgActor = (H, s) => s && s.phone ? H.players.find(p => p.alive && p.role === s.role) : null;
+
 function lgWinner(H) {
-  const a = H.players.filter(p => p.alive);
+  const a = lgAlive(H);
   if (!a.length) return 'personne';
+  if (H.angeWon) return 'ange';
   if (H.lovers.length === 2 && a.length === 2 && a.every(p => H.lovers.includes(p.cid))) return 'amoureux';
+  const fl = a.find(p => p.role === 'flute');
+  if (fl && a.every(p => p === fl || p.charmed)) return 'flute';
+  const sect = a.find(p => p.role === 'sectaire');
+  if (sect && a.every(p => p === sect || p.group === sect.group)) return 'sectaire';
   if (a.length === 1 && a[0].role === 'loupblanc') return 'loupblanc';
-  if (!a.some(p => isWolf(p.role))) return 'village';
-  if (a.every(p => isWolf(p.role)) && !a.some(p => p.role === 'loupblanc')) return 'loups';
+  if (a.length === 1 && a[0].role === 'pyromane') return 'pyromane';
+  const wolves = a.filter(lgWolf), solos = a.filter(p => ['loupblanc', 'pyromane', 'flute', 'sectaire'].includes(p.role));
+  if (!wolves.length && !solos.length) return 'village';
+  if (wolves.length === a.length && !a.some(p => p.role === 'loupblanc')) return 'loups';
   return null;
 }
-// Élimine des joueurs ; un amoureux emporte l'autre dans la mort
-function lgKill(cids) {
+// Élimine des joueurs et déroule les conséquences : amoureux, enfant sauvage, maire, ange…
+function lgKill(list, why) {
   const H = MP.H, out = [];
-  const kill = (p, why) => { if (!p || !p.alive) return; p.alive = false; out.push({ name: p.name, role: p.role, why }); };
-  cids.forEach(cid => kill(mpP(cid)));
-  out.slice().forEach(d => {
-    const p = H.players.find(x => x.name === d.name);
-    if (H.lovers.length === 2 && H.lovers.includes(p.cid)) kill(mpP(H.lovers.find(c => c !== p.cid)), 'chagrin');
-  });
+  const kill = (p, how) => {
+    if (!p || !p.alive) return;
+    p.alive = false;
+    if (lgWolf(p)) H.wolfDied = true;
+    if (!H.firstOut) { H.firstOut = p.cid; if (p.role === 'ange' && (H.n === 1 || why === 'vote')) H.angeWon = true; }
+    out.push({ name: p.name, role: p.role, how, mayor: H.mayor === p.cid });
+    if (H.mayor === p.cid) { H.mayor = null; H.needMayor = true; }
+    if (H.lovers.includes(p.cid)) kill(mpP(H.lovers.find(c => c !== p.cid)), 'love');
+    H.players.filter(e => e.alive && e.role === 'enfant' && e.model === p.cid && !e.wild).forEach(e => { e.wild = true; H.alerts.push(`${e.name} (enfant sauvage) a perdu son modèle : il rejoint la meute.`); });
+    if (p.role === 'chasseur') H.alerts.push(`${p.name} était chasseur : il tire sur quelqu'un. Touche « Éliminer » sur sa cible.`);
+    if (p.role === 'chevalier' && how === 'loups') H.alerts.push('Le chevalier a été dévoré : le premier loup à sa gauche mourra la nuit prochaine.');
+    if (H.players.some(s => s.alive && s.role === 'servante')) H.alerts.push(`La servante dévouée peut prendre la carte de ${p.name}.`);
+  };
+  list.forEach(([cid, how]) => kill(mpP(cid), how));
   return out;
 }
-const lgNews = (title, out) => ({ title, lines: out });
+function lgDawn() {
+  const H = MP.H, kills = [], notes = [];
+  H.pending.forEach(([cid, by]) => {
+    const p = mpP(cid);
+    if (!p || !p.alive || kills.some(k => k[0] === cid)) return;
+    const wolfy = ['loups', 'gml'].includes(by);
+    if (wolfy && H.protect === cid) { notes.push(`${p.name} a été sauvé·e par le salvateur.`); return; }
+    if (wolfy && H.saved === cid) { notes.push(`${p.name} a été sauvé·e par la sorcière.`); return; }
+    if (by === 'loups' && H.infectOn === cid) { p.infected = true; notes.push(`${p.name} a été infecté·e : c'est désormais un loup-garou.`); return; }
+    if (wolfy && p.role === 'ancien' && !p.tough) { p.tough = true; notes.push(`${p.name} (ancien) a résisté à l'attaque.`); return; }
+    kills.push([cid, by]);
+  });
+  const out = lgKill(kills, 'nuit');
+  H.mjNotes = notes;
+  Object.assign(H, { pending: [], saved: null, infectOn: null, lastProtect: H.protect, protect: null, phase: 'day', cur: null, vote: null, news: lgNewsOf('Au lever du jour', out, 'night') });
+}
+function lgNewsOf(title, out, kind) {
+  const fun = MP.H.cfg.fun;
+  return { title, lines: out.map(d => ({ ...d, fun: fun ? lgFun(d.how === 'love' ? 'love' : kind, d.name) : '' })), empty: fun ? lgFun('none') : "Personne n'est mort." };
+}
+function lgDeal() {
+  const H = MP.H, { cards } = lgCards(H), deck = shuffle(cards), n = H.players.length;
+  shuffle(H.players).forEach((p, i) => {
+    Object.keys(p).forEach(k => { if (!['cid', 'name', 'on'].includes(k)) delete p[k]; });
+    Object.assign(p, { role: deck[i], card: deck[i], alive: true, seen: false });
+  });
+  const pool = ['voyante', 'salvateur', 'renard', 'corbeau', 'sorciere', 'chasseur', 'ancien', 'idiot', 'petitefille', 'gitane'].filter(r => !deck.includes(r));
+  Object.assign(H, { step: 'deal', phase: 'night', n: 1, extra: deck.slice(n), comRoles: shuffle(pool).slice(0, 3), comUsed: [],
+    pending: [], potions: { vie: true, mort: true }, lovers: [], news: null, winner: null, mayor: null, needMayor: false, cur: null, done: {}, res: {}, log: {},
+    protect: null, lastProtect: null, saved: null, infectOn: null, infectUsed: false, wolfDied: false, foxBlind: false, crow: null, firstOut: null, angeWon: false,
+    vote: null, judgeUsed: false, alerts: [], mjNotes: [] });
+  if (lgHas(H, 'sectaire')) shuffle(H.players).forEach((p, i) => { p.group = i % 2 ? 'soleil' : 'lune'; });
+  mpPush();
+}
+
+/* --- Les actions de nuit faites sur les téléphones --- */
+// Ce que l'étape en cours propose au joueur concerné : choix de joueurs, de cartes ou de camp
+function lgAsk(H, p) {
+  if (H.step !== 'game' || H.phase !== 'night' || !H.cur || H.done[H.cur]) return null;
+  const s = LG_NIGHT.find(x => x.id === H.cur);
+  if (!s || lgActor(H, s) !== p) return null;
+  const alive = lgAlive(H), others = alive.filter(x => x !== p).map(x => x.name), all = alive.map(x => x.name);
+  const victims = H.pending.filter(([, by]) => ['loups', 'gml'].includes(by)).map(([c]) => mpP(c).name);
+  switch (s.id) {
+    case 'voleur': return { id: s.id, kind: 'cards', title: 'Les deux cartes du centre', cards: H.extra, must: H.extra.length === 2 && H.extra.every(r => LG_WOLF_CARDS.includes(r)) };
+    case 'comedien': return { id: s.id, kind: 'roles', title: 'Quel rôle joues-tu cette nuit ?', cards: H.comRoles.filter(r => !H.comUsed.includes(r)) };
+    case 'cupidon': return { id: s.id, kind: 'pick', title: 'Choisis les deux amoureux', choices: all, count: 2 };
+    case 'chienloup': return { id: s.id, kind: 'camp', title: 'Quel camp choisis-tu ?' };
+    case 'voyante': return { id: s.id, kind: 'pick', title: 'Qui veux-tu sonder ?', choices: others, count: 1 };
+    case 'renard': return { id: s.id, kind: 'pick', title: 'Choisis trois joueurs à flairer', choices: others, count: Math.min(3, others.length) };
+    case 'enfant': return { id: s.id, kind: 'pick', title: 'Qui sera ton modèle ?', choices: others, count: 1 };
+    case 'corbeau': return { id: s.id, kind: 'pick', title: 'Qui aura deux voix contre lui demain ?', choices: others, count: 1 };
+    case 'salvateur': return { id: s.id, kind: 'pick', title: 'Qui protèges-tu cette nuit ?', choices: alive.filter(x => x.cid !== H.lastProtect).map(x => x.name), count: 1 };
+    case 'gml': return { id: s.id, kind: 'pick', title: 'Ta deuxième victime', choices: alive.filter(x => !lgWolf(x)).map(x => x.name), count: 1, skip: true };
+    case 'loupblanc': return { id: s.id, kind: 'pick', title: 'Quel loup dévores-tu ?', choices: alive.filter(x => x !== p && lgWolf(x)).map(x => x.name), count: 1, skip: true };
+    case 'flute': return { id: s.id, kind: 'pick', title: 'Charme deux joueurs', choices: alive.filter(x => x !== p && !x.charmed).map(x => x.name), count: Math.min(2, alive.filter(x => x !== p && !x.charmed).length) };
+    case 'pyromane': return { id: s.id, kind: 'fire', title: "L'huile ou l'allumette ?", choices: alive.filter(x => x !== p && !x.oiled).map(x => x.name), oiled: alive.filter(x => x.oiled).map(x => x.name) };
+    case 'sorciere': return { id: s.id, kind: 'witch', title: 'Tes potions', victims, vie: H.potions.vie, mort: H.potions.mort, choices: others };
+  }
+  return null;
+}
+function lgDo(cid, d) {
+  const H = MP.H, p = mpP(cid), ask = p && lgAsk(H, p);
+  if (!ask || d.id !== ask.id) return;
+  const picks = (Array.isArray(d.picks) ? d.picks : []).map(String).filter((n, i, a) => a.indexOf(n) === i);
+  const okPicks = ask.choices && picks.length === ask.count && picks.every(n => ask.choices.includes(n));
+  const P = picks.map(byName), names = picks.join(', ');
+  let res = null, log = null;
+  switch (ask.id) {
+    case 'voleur': {
+      const k = d.card;
+      if (k === 'keep' && !ask.must) { res = 'Tu restes Voleur, donc simple villageois.'; log = 'Le voleur a gardé sa carte.'; break; }
+      if (![0, 1].includes(k) || !H.extra[k]) return;
+      const taken = H.extra[k];
+      H.extra[k] = p.role; p.role = taken;
+      res = `Tu es maintenant ${lgRole(taken).name} ${lgRole(taken).icon}`; log = `Le voleur a pris la carte ${lgRole(taken).name}.`; break;
+    }
+    case 'comedien': if (!ask.cards.includes(d.card)) return; H.comUsed.push(d.card); H.comNight = d.card; res = `Cette nuit, tu es ${lgRole(d.card).name}. Le meneur t'appellera à son tour.`; log = `Le comédien joue ${lgRole(d.card).name} cette nuit.`; break;
+    case 'cupidon': if (!okPicks) return; H.lovers = P.map(x => x.cid); res = `Tu as uni ${names}. 💘`; log = `Amoureux : ${names}.`; break;
+    case 'chienloup': if (!['village', 'loup'].includes(d.camp)) return; p.dog = d.camp; res = d.camp === 'loup' ? 'Tu rejoins la meute. 🐺' : 'Tu restes le fidèle chien du village. 🐕'; log = `Le chien-loup a choisi : ${d.camp === 'loup' ? 'loup-garou' : 'village'}.`; break;
+    case 'voyante': if (!okPicks) return; res = `${names} est ${lgRole(P[0].role).name} ${lgRole(P[0].role).icon}`; log = `La voyante a sondé ${names} (${lgRole(P[0].role).name}).`; break;
+    case 'renard': {
+      if (!okPicks) return;
+      const yes = P.some(lgWolf);
+      if (!yes) H.foxBlind = true;
+      res = yes ? `🐺 Un loup se cache parmi ${names} !` : `Aucun loup parmi ${names}. Ton flair s'éteint.`; log = `Le renard a flairé ${names} : ${yes ? 'oui' : 'non (il perd son pouvoir)'}.`; break;
+    }
+    case 'enfant': if (!okPicks) return; p.model = P[0].cid; res = `Ton modèle est ${names}. Tant qu'il vit, tu es du village.`; log = `L'enfant sauvage a choisi ${names} comme modèle.`; break;
+    case 'corbeau': if (!okPicks) return; H.crow = P[0].cid; res = `${names} aura deux voix contre lui demain.`; log = `Le corbeau a désigné ${names}.`; break;
+    case 'salvateur': if (!okPicks) return; H.protect = P[0].cid; res = `Tu protèges ${names} cette nuit.`; log = `Le salvateur protège ${names}.`; break;
+    case 'gml': case 'loupblanc':
+      if (d.skip) { res = 'Tu laisses passer cette nuit.'; log = `${ask.id === 'gml' ? 'Le grand méchant loup' : 'Le loup blanc'} n'a dévoré personne.`; break; }
+      if (!okPicks) return; H.pending.push([P[0].cid, ask.id]); res = `Tu dévores ${names}.`; log = `${ask.id === 'gml' ? 'Le grand méchant loup' : 'Le loup blanc'} dévore ${names}.`; break;
+    case 'flute': if (!okPicks) return; P.forEach(x => { x.charmed = true; }); res = `Tu as charmé ${names}. 🎶`; log = `Le joueur de flûte a charmé ${names}.`; break;
+    case 'pyromane':
+      if (d.fire) { const burn = lgAlive(H).filter(x => x.oiled); if (!burn.length) return; burn.forEach(x => { H.pending.push([x.cid, 'feu']); x.oiled = false; }); res = '🔥 Tout brûle !'; log = `Le pyromane met le feu : ${burn.map(x => x.name).join(', ')}.`; break; }
+      if (picks.length !== 1 || !ask.choices.includes(picks[0])) return; P[0].oiled = true; res = `Tu as aspergé la maison de ${names}.`; log = `Le pyromane asperge ${names}.`; break;
+    case 'sorciere': {
+      const out = [];
+      if (d.save && ask.vie && ask.victims.includes(d.save)) { H.saved = byName(d.save).cid; H.potions.vie = false; out.push(`tu sauves ${d.save}`); }
+      if (d.poison && ask.mort && ask.choices.includes(d.poison)) { H.pending.push([byName(d.poison).cid, 'poison']); H.potions.mort = false; out.push(`tu empoisonnes ${d.poison}`); }
+      res = out.length ? `Cette nuit, ${out.join(' et ')}.` : 'Tu gardes tes potions.'; log = `Sorcière : ${out.length ? out.join(', ').replace(/tu /g, '') : 'rien'}.`; break;
+    }
+    default: return;
+  }
+  H.done[ask.id] = true; H.res[cid] = res; H.log[ask.id] = log;
+  mpPush();
+}
+
+/* --- Les votes sur les téléphones --- */
+function lgTally(H) {
+  const v = H.vote, score = {}, voters = {};
+  Object.entries(v.ballots).forEach(([from, to]) => {
+    const w = v.kind === 'exil' && H.mayor === from ? 2 : 1;
+    score[to] = (score[to] || 0) + w; (voters[to] = voters[to] || []).push((mpP(from) || {}).name + (w > 1 ? ' (×2)' : ''));
+  });
+  if (v.kind === 'exil' && H.crow && mpP(H.crow) && mpP(H.crow).alive) { score[H.crow] = (score[H.crow] || 0) + 2; (voters[H.crow] = voters[H.crow] || []).push('🪶 le corbeau (×2)'); }
+  const rows = Object.keys(score).map(c => ({ cid: c, name: mpP(c).name, votes: score[c], voters: voters[c] })).sort((a, b) => b.votes - a.votes);
+  const top = rows.length ? rows.filter(r => r.votes === rows[0].votes) : [];
+  return { rows, top };
+}
+const lgCanVote = (H, p) => p && p.alive && !(H.vote.kind === 'exil' && p.idiotOut);
+
 MPG.lg = {
   narrator: true, // le créateur de la partie est le maître du jeu : il ne joue pas
+  max: LG_MAX,
   after: () => lgSpinAnim(),
   rules: () => ({ title: 'Loup-Garou', steps: [
-    "Le maître du jeu (MJ) crée la partie sur son téléphone et donne le code. Il ne joue pas : il raconte et arbitre.",
-    "Chaque joueur ouvre La Veillée sur son téléphone, touche « Rejoindre une partie » et tape le code.",
-    "Le MJ choisit les cartes (nombre de loups, rôles spéciaux) puis lance la roue : chacun reçoit sa carte en secret sur son téléphone.",
-    "La nuit, tout le monde ferme les yeux. Le MJ suit le déroulé affiché et appelle les rôles un par un ; il touche ☠ sur la victime des loups.",
-    "Au réveil, le MJ annonce les morts, dont la carte est révélée. Le village débat, puis vote pour éliminer un suspect.",
-    "Le village gagne s'il élimine tous les loups. Les loups gagnent s'ils dévorent tous les villageois. Les amoureux gagnent s'ils sont les deux derniers.",
+    "Le meneur crée la partie sur son téléphone et donne le code. Il ne joue pas : il raconte, appelle les personnages et arbitre. Jusqu'à 47 joueurs, comme la boîte complète.",
+    "Chacun ouvre La Veillée, touche « Rejoindre une partie » et tape le code.",
+    "Le meneur compose les cartes (composition rapide ou à la main), puis lance la roue : chacun reçoit sa carte en secret sur son téléphone.",
+    "La nuit, tout le monde ferme les yeux. Le meneur suit l'ordre officiel affiché et appelle chaque personnage. Ceux qui ont un pouvoir l'utilisent sur leur téléphone : la voyante voit la carte choisie, Cupidon désigne les amoureux, la sorcière boit ou verse ses potions…",
+    "Au réveil, les morts sont annoncés sur tous les téléphones. Le village élit son maire (écharpe tricolore, voix double), débat, puis vote sur les téléphones. Le meneur élimine le condamné.",
+    "Le village gagne quand tous les loups sont morts. Les loups gagnent quand il ne reste qu'eux. Amoureux, joueur de flûte, loup blanc, ange, sectaire et pyromane ont leur propre victoire.",
   ], tips: [
-    "Les morts gardent le silence jusqu'à la fin de la partie.",
-    "Si un téléphone se met en veille ou perd le réseau, il se reconnecte tout seul et retrouve sa carte.",
-    "Si le téléphone du MJ redémarre, il peut reprendre la partie depuis l'accueil.",
-    "Le MJ voit toutes les cartes : qu'il garde son écran caché !",
+    "« 📖 Tous les rôles » explique les 33 personnages.",
+    "Le meneur appelle aussi les personnages morts, en silence, pour ne rien trahir.",
+    "Les morts se taisent jusqu'à la fin de la partie (même si c'est dur).",
+    "Si un téléphone se met en veille, il se reconnecte tout seul et retrouve sa carte. Si le téléphone du meneur redémarre, il reprend la partie depuis l'accueil.",
+    "Le meneur voit toutes les cartes : qu'il garde son écran caché !",
   ] }),
-  init: () => ({ step: 'lobby', players: [], cfg: store.get('lgCfg', { wolves: 0, sp: ['voyante', 'sorciere', 'chasseur'], mates: true }), phase: 'night', n: 1, pending: [], checks: {}, potions: { vie: true, mort: true }, lovers: [], news: null, winner: null, spin: null, cards: [] }),
-  resume() { const H = MP.H; if (H.step === 'spin') lgDeal(); },
+  init: () => ({ step: 'lobby', players: [], cfg: Object.assign({ loups: 2, roles: ['voyante', 'sorciere', 'chasseur'], mates: true, phoneVote: true, fun: true }, store.get('lgCfg2', {})), spin: null, n: 1, phase: 'night', lovers: [], pending: [] }),
+  resume() { if (MP.H.step === 'spin') lgDeal(); },
   act(cid, d) {
-    const p = mpP(cid);
-    if (d.t === 'seen' && p && !p.seen) { p.seen = true; mpPush(); }
+    const H = MP.H, p = mpP(cid);
+    if (!p) return;
+    if (d.t === 'seen' && !p.seen) { p.seen = true; mpPush(); }
+    else if (d.t === 'lg-do') lgDo(cid, d);
+    else if (d.t === 'lg-vote' && H.vote && H.vote.open && !H.vote.revealed && lgCanVote(H, p)) {
+      const t = byName(String(d.target || ''));
+      if (!t || !t.alive || t === p) return;
+      H.vote.ballots[cid] = t.cid; mpPush();
+    }
   },
   view(cid) {
-    const H = MP.H, p = mpP(cid);
-    const v = { game: 'lg', step: H.step, phase: H.phase, n: H.n, winner: H.winner, news: H.phase === 'day' ? H.news : null,
-      players: H.players.map(x => ({ name: x.name, on: !!x.on, alive: x.alive !== false })) };
-    if (p && p.role && ['deal', 'game', 'end'].includes(H.step)) {
-      v.me = { name: p.name, role: p.role, alive: p.alive };
-      if (H.cfg.mates && isWolf(p.role)) v.mates = H.players.filter(x => x !== p && isWolf(x.role)).map(x => x.name);
-      if (H.lovers.length === 2 && H.lovers.includes(cid)) v.lover = (mpP(H.lovers.find(c => c !== cid)) || {}).name;
+    const H = MP.H, p = mpP(cid), dealt = ['deal', 'game', 'end'].includes(H.step);
+    const v = { game: 'lg', step: H.step, phase: H.phase, n: H.n, winner: H.winner, news: H.phase === 'day' ? H.news : null, sect: dealt && lgHas(H, 'sectaire'),
+      players: H.players.map(x => ({ name: x.name, on: !!x.on, alive: x.alive !== false, mayor: H.mayor === x.cid, crow: H.phase === 'day' && H.crow === x.cid,
+        idiot: !!x.idiotOut, pure: dealt && x.role === 'villvill', group: dealt ? x.group : null })) };
+    if (H.vote) {
+      const t = lgTally(H), eligible = H.players.filter(x => lgCanVote(H, x));
+      v.vote = { kind: H.vote.kind, round: H.vote.round, revealed: H.vote.revealed, count: Object.keys(H.vote.ballots).length, of: eligible.length,
+        can: lgCanVote(H, p), mine: p && H.vote.ballots[cid] ? mpP(H.vote.ballots[cid]).name : null,
+        choices: lgAlive(H).filter(x => x !== p).map(x => x.name), rows: H.vote.revealed ? t.rows.map(r => ({ name: r.name, votes: r.votes, voters: r.voters })) : null };
     }
-    if (H.step === 'end') v.reveal = H.players.map(x => ({ name: x.name, role: x.role, alive: x.alive }));
+    if (p && p.role && dealt) {
+      v.me = { role: p.role, card: p.card, alive: p.alive, wolf: lgWolf(p), mayor: H.mayor === p.cid, infected: !!p.infected, wild: !!p.wild, dog: p.dog || null, idiot: !!p.idiotOut, charmed: !!p.charmed, group: p.group || null };
+      const wolves = H.players.filter(x => x !== p && lgWolf(x) && x.alive).map(x => x.name);
+      if (H.cfg.mates && lgWolf(p)) v.mates = wolves;
+      if (H.lovers.length === 2 && H.lovers.includes(cid)) v.lover = (mpP(H.lovers.find(c => c !== cid)) || {}).name;
+      if (['soeurs', 'freres'].includes(p.role)) v.kin = H.players.filter(x => x !== p && x.role === p.role).map(x => x.name);
+      if (p.charmed) v.charmed = H.players.filter(x => x !== p && x.charmed && x.alive).map(x => x.name);
+      if (p.role === 'comedien') v.com = H.comRoles.map(r => ({ r, used: H.comUsed.includes(r) }));
+      if (p.role === 'enfant' && p.model) v.model = (mpP(p.model) || {}).name;
+      v.ask = lgAsk(H, p);
+      v.res = H.res && H.res[cid] || null;
+    }
+    if (H.step === 'end') v.reveal = H.players.map(x => ({ name: x.name, role: x.role, alive: x.alive, wolf: lgWolf(x), mayor: H.mayor === x.cid }));
     return v;
   },
   notify(prev, v) {
-    const buzz = p => { try { navigator.vibrate && navigator.vibrate(p); } catch (e) {} };
-    if (v.step === 'deal' && (!prev || prev.step !== 'deal')) { MP.peek = false; MP.saidSeen = false; buzz([80, 60, 80]); }
-    if (prev && (prev.phase !== v.phase || prev.n !== v.n)) MP.peek = false; // carte recachée à chaque nuit et chaque jour
+    if (v.step === 'deal' && (!prev || prev.step !== 'deal')) { MP.peek = false; MP.saidSeen = false; MP.pick = []; buzz([80, 60, 80]); }
+    if (prev && (prev.phase !== v.phase || prev.n !== v.n)) { MP.peek = false; MP.pick = []; }
+    if (v.ask && !(prev && prev.ask && prev.ask.id === v.ask.id)) { MP.pick = []; buzz([120, 80, 120]); }
     if (prev && prev.me && prev.me.alive && v.me && !v.me.alive) buzz(400);
     if (v.lover && !(prev && prev.lover)) buzz([60, 40, 60, 40, 60]);
   },
   screen() { return MP.role === 'host' ? lgHost() : lgGuest(MP.view); },
 };
-function lgDeal() {
-  const H = MP.H, deck = shuffle(H.cards);
-  shuffle(H.players).forEach((p, i) => Object.assign(p, { role: deck[i] || 'villageois', alive: true, seen: false }));
-  Object.assign(H, { step: 'deal', phase: 'night', n: 1, pending: [], checks: {}, potions: { vie: true, mort: true }, lovers: [], news: null, winner: null });
-  ring(); mpPush();
-}
+// Les 33 personnages, expliqués (écran « Règles »)
+APP.rules = APP.rules || {};
+APP.rules.lgroles = () => ({ title: 'Tous les rôles', steps: LG_CAMPS.flatMap(([camp, label]) => Object.values(LG).filter(r => r.camp === camp).map(r => `${r.icon} ${r.name}${r.box > 1 ? ` (${r.box} cartes)` : ''} — ${label.replace(/^Les? /, '')} : ${r.desc}`)),
+  tips: ["Le maire n'est pas une carte : il est élu par le village. Sa voix compte double et, s'il meurt, il désigne son successeur.", 'Ordre de la nuit : Voleur, Comédien, Cupidon, Chien-loup, Voyante, Renard, Amoureux, Juge bègue, Sœurs, Frères, Enfant sauvage, Montreur d\'ours, Corbeau, Pyromane, Salvateur, Loups-garous, Infect père, Grand méchant loup, Loup blanc, Sorcière, Gitane, Joueur de flûte, Charmés.'] });
+
 function lgSpinAnim() {
   const H = MP.H, el = document.getElementById('wheel');
   if (!el || MP.role !== 'host' || H.step !== 'spin' || !H.spin) return;
@@ -259,112 +570,273 @@ function lgSpinAnim() {
   el.style.transition = `transform ${left / 1000}s cubic-bezier(.12,.7,.15,1)`;
   el.style.transform = `rotate(${H.spin.to}deg)`;
 }
-const lgCards = list => `<div class="roles">${list.map(x => `<div class="${isWolf(x.role) ? 'imp' : ''}"><span>${x.alive ? '' : '☠ '}${esc(x.name)}</span><span>${lgRole(x.role).icon} ${lgRole(x.role).name}</span></div>`).join('')}</div>`;
+
+/* --- Petits morceaux d'affichage --- */
+const sash = big => `<span class="sash ${big ? 'big' : ''}" aria-label="Maire"><b>MAIRE</b></span>`;
+const lgTags = (x, mj) => [x.mayor ? sash() : '', x.pure ? '<span class="tag-i" title="Villageois-Villageois">😇</span>' : '', x.crow ? '<span class="tag-i" title="Désigné par le corbeau">🪶</span>' : '', x.idiot ? '<span class="tag-i" title="Idiot gracié">🤪</span>' : '', x.group ? `<span class="tag-i">${x.group === 'lune' ? '🌙' : '☀️'}</span>` : ''].join('');
+const lgRevealList = list => `<div class="roles">${list.map(x => `<div class="${x.wolf ? 'imp' : ''}"><span>${x.alive ? '' : '☠ '}${esc(x.name)}${x.mayor ? ' 🎖️' : ''}</span><span>${lgRole(x.role).icon} ${lgRole(x.role).name}${x.wolf && !LG_WOLF_CARDS.includes(x.role) ? ' (loup)' : ''}</span></div>`).join('')}</div>`;
 function lgNewsCard(news) {
   if (!news) return '';
-  const lines = news.lines.length ? news.lines.map(d => `<p class="text">${esc(d.name)}${d.why === 'chagrin' ? ' meurt de chagrin' : ' est mort·e'}.<br><em>${lgRole(d.role).icon} ${lgRole(d.role).name}</em></p>`).join('')
-    : `<p class="text">Personne n'est mort.</p>`;
-  return `<div class="card black"><p class="kind">${esc(news.title)}</p>${lines}</div>`;
+  const lines = news.lines.length ? news.lines.map(d => `<p class="text">${esc(d.name)}${d.how === 'love' ? ' meurt de chagrin' : ' est mort·e'}${d.mayor ? ' (c\'était le maire !)' : ''}.<br><em>${lgRole(d.role).icon} ${lgRole(d.role).name}</em></p>${d.fun ? `<p class="sub">${esc(d.fun)}</p>` : ''}`).join('')
+    : `<p class="text">${esc(news.empty || "Personne n'est mort.")}</p>`;
+  return `<div class="card compact news">${cardIdx('☾')}<p class="kind">${esc(news.title)}</p>${lines}</div>`;
 }
+function lgVoteBox(v, host) {
+  const vt = v.vote;
+  if (!vt) return '';
+  const title = vt.kind === 'maire' ? '🎖️ Élection du maire' : `🗳️ Vote du village${vt.round > 1 ? ' (second vote)' : ''}`;
+  if (vt.revealed) return `<section class="panel vote-box"><h3><span>${title}</span><span>résultats</span></h3>
+    ${vt.rows.length ? `<ul class="tally">${vt.rows.map((r, i) => `<li class="${i === 0 ? 'top' : ''}"><b>${esc(r.name)}</b><span class="bar"><i style="width:${Math.round(100 * r.votes / vt.rows[0].votes)}%"></i></span><b>${r.votes}</b><small>${esc(r.voters.join(', '))}</small></li>`).join('')}</ul>` : '<p class="hint">Personne n\'a voté.</p>'}</section>`;
+  const head = `<section class="panel vote-box"><h3><span>${title}</span><span>${vt.count} / ${vt.of} votes</span></h3>`;
+  if (host) return `${head}<p class="hint">Les joueurs votent en secret sur leur téléphone. ${vt.kind === 'exil' ? 'La voix du maire compte double, le corbeau ajoute deux voix.' : ''}</p></section>`;
+  if (!vt.can) return `${head}<p class="hint">${v.me && !v.me.alive ? 'Les morts ne votent pas.' : 'Tu ne votes pas.'}</p></section>`;
+  return `${head}<p class="hint">${vt.mine ? `Tu as voté pour <b>${esc(vt.mine)}</b>. Tu peux changer d'avis.` : vt.kind === 'maire' ? 'Qui veux-tu comme maire ?' : 'Qui veux-tu éliminer ?'}</p>
+    <div class="vote">${vt.choices.map(n => `<button data-a="lg-vote" data-v="${esc(n)}" aria-pressed="${vt.mine === n}">${esc(n)}</button>`).join('')}</div></section>`;
+}
+
+/* --- L'écran du meneur --- */
 function lgHost() {
   const H = MP.H, n = H.players.length;
   if (H.step === 'lobby') {
-    const d = lgDeck(H), c = H.cfg;
+    const d = lgCards(H), c = H.cfg, chip = r => {
+      const on = c.roles.includes(r), R = LG[r];
+      return `<button class="chip tap ${on ? 'on' : ''}" data-a="lg-sp" data-v="${r}" aria-pressed="${on}">${R.icon} ${R.short}${R.box > 1 && r !== 'villageois' ? ` ×${R.box}` : ''}</button>`;
+    };
     return `${roomBox(true)}
-    <section class="panel"><h3><span>Joueurs connectés</span><span>${n}</span></h3>
+    <section class="panel"><h3><span>Joueurs connectés</span><span>${n} / ${LG_MAX}</span></h3>
       ${n ? `<ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${esc(p.name)}</b>${p.on ? '' : '<small>déconnecté·e</small>'}</span><button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button></li>`).join('')}</ul>`
-        : `<p class="hint">En attente des joueurs… Toi, tu es le maître du jeu : tu ne joues pas, tu racontes.</p>`}
+        : `<p class="hint">En attente des joueurs… Toi, tu es le meneur : tu ne joues pas, tu racontes. De 4 à ${LG_MAX} joueurs, comme la boîte complète.</p>`}
     </section>
-    <section class="panel"><h3><span>Les cartes</span><span>${n} joueur${n > 1 ? 's' : ''}</span></h3>
-      <div class="stepper"><span><b>🐺 Loups-garous</b><br><span class="hint">${c.wolves ? 'Choisi à la main' : 'Automatique selon le nombre de joueurs'}</span></span>
-        <span class="ctl"><button data-a="lg-w" data-v="-1" aria-label="Moins de loups" ${d.w <= 1 ? 'disabled' : ''}>−</button><output>${d.w}</output><button data-a="lg-w" data-v="1" aria-label="Plus de loups">+</button></span></div>
-      <div class="chips">${LG_SPECIALS.map(r => `<button class="chip tap ${c.sp.includes(r) ? 'on' : ''}" data-a="lg-sp" data-v="${r}" aria-pressed="${c.sp.includes(r)}">${LG_ROLES[r].icon} ${LG_ROLES[r].name}</button>`).join('')}</div>
-      <div class="toggle"><span><b>Les loups se reconnaissent</b><br><span class="hint">Chaque loup voit ses complices sur son téléphone</span></span>
-        <button data-a="lg-mates" aria-pressed="${c.mates}" aria-label="Les loups voient leurs complices"></button></div>
-      <p class="hint">${d.w} loup${d.w > 1 ? 's' : ''}${d.sp.length ? ' · ' + d.sp.map(r => LG_ROLES[r].short).join(', ') : ''} · ${Math.max(d.vil, 0)} villageois</p>
+    <section class="panel"><h3><span>Les cartes</span><span>${d.cards.length} / ${LG_MAX}</span></h3>
+      <div class="levels four" role="group" aria-label="Composition rapide">${[['decouverte', 'Découverte'], ['classique', 'Classique'], ['complet', 'Complet'], ['ultime', 'Ultime']].map(([k, l]) => `<button data-a="lg-preset" data-v="${k}">${l}</button>`).join('')}</div>
+      <p class="hint">Composition rapide selon le nombre de joueurs, puis ajuste à la main.</p>
+      <div class="stepper"><span><b>🐺 Simples loups-garous</b><br><span class="hint">Conseillé : ${lgCount(n)} pour ${n} joueur${n > 1 ? 's' : ''}</span></span>
+        <span class="ctl"><button data-a="lg-w" data-v="-1" aria-label="Moins de loups" ${c.loups <= 0 ? 'disabled' : ''}>−</button><output>${c.loups}</output><button data-a="lg-w" data-v="1" aria-label="Plus de loups" ${c.loups >= 8 ? 'disabled' : ''}>+</button></span></div>
+      ${LG_CAMPS.map(([camp, label]) => `<p class="camp-t">${label}</p><div class="chips">${LG_SPECIALS.filter(r => LG[r].camp === camp).map(chip).join('')}</div>`).join('')}
+      <button class="btn ghost" data-a="info" data-v="lgroles">📖 Tous les rôles expliqués</button>
+      <p class="hint">${d.cards.filter(r => r !== 'villageois').length} cartes spéciales et loups · ${d.vil} simple${d.vil > 1 ? 's' : ''} villageois${c.roles.includes('voleur') ? ' · 2 cartes de côté pour le voleur' : ''}${c.roles.includes('comedien') ? ' · 3 rôles pour le comédien' : ''}</p>
       ${d.err ? `<p class="warn">${d.err}</p>` : ''}
+    </section>
+    <section class="panel"><h3><span>Options</span></h3>
+      <div class="toggle"><span><b>Les loups se reconnaissent</b><br><span class="hint">Chaque loup voit ses complices sur son téléphone</span></span><button data-a="lg-opt" data-v="mates" aria-pressed="${c.mates}" aria-label="Les loups se reconnaissent"></button></div>
+      <div class="toggle"><span><b>Votes sur les téléphones</b><br><span class="hint">Vote secret, résultats révélés à tous (sinon, à main levée)</span></span><button data-a="lg-opt" data-v="phoneVote" aria-pressed="${c.phoneVote}" aria-label="Votes sur les téléphones"></button></div>
+      <div class="toggle"><span><b>Annonces rigolotes</b><br><span class="hint">Le meneur annonce les morts avec humour</span></span><button data-a="lg-opt" data-v="fun" aria-pressed="${c.fun}" aria-label="Annonces rigolotes"></button></div>
     </section>
     <button class="btn big" data-a="lg-spin" ${d.err || MP.status !== 'open' ? 'disabled' : ''}>Lancer la roue</button>`;
   }
-  if (H.step === 'spin') {
-    const segs = H.cards.map(r => ({ label: lgRole(r).short }));
-    return `<div class="turn"><small>La roue distribue</small><strong>${n} cartes</strong></div>${wheelSvg(segs, H.spin.from)}<p class="howto">Chacun va recevoir sa carte en secret sur son téléphone.</p>`;
-  }
-  const list = (acts) => `<ul class="plist">${H.players.map(p => {
-    const R = lgRole(p.role), pend = H.pending.includes(p.cid), lov = H.lovers.includes(p.cid);
-    const tags = [R.name, lov ? '💘 amoureux' : '', pend ? '☠ victime cette nuit' : '', p.on ? '' : 'déconnecté·e', H.step === 'deal' && !p.seen ? 'carte pas encore vue' : ''].filter(Boolean).join(' · ');
-    return `<li class="${p.alive ? '' : 'dead'} ${pend ? 'target' : ''}"><span class="ic" aria-hidden="true">${R.icon}</span><span class="nm"><b>${esc(p.name)}</b><small>${tags}</small></span>${acts ? acts(p, pend, lov) : ''}</li>`;
-  }).join('')}</ul>`;
+  if (H.step === 'spin') return `<div class="turn"><small>La roue distribue</small><strong>${n} cartes</strong></div>${wheelSvg(H.cards.slice(0, 24).map(r => ({ label: lgRole(r).short })), H.spin.from)}<p class="howto">Chacun reçoit sa carte en secret sur son téléphone.</p>`;
+  const tags = p => [lgRole(p.role).name + (p.role !== p.card ? ` (était ${lgRole(p.card).short})` : ''),
+    p.infected ? 'infecté' : '', p.role === 'chienloup' && p.dog ? (p.dog === 'loup' ? 'devenu loup' : 'reste chien') : '', p.wild ? 'devenu loup' : '',
+    H.lovers.includes(p.cid) ? '💘' : '', p.charmed ? '🎶 charmé' : '', p.oiled ? '🛢️ huilé' : '', H.protect === p.cid ? '🛡️ protégé' : '', p.group ? (p.group === 'lune' ? '🌙' : '☀️') : '',
+    H.pending.some(([c]) => c === p.cid) ? '☠ ' + H.pending.filter(([c]) => c === p.cid).map(([, b]) => ({ loups: 'loups', gml: 'grand méchant loup', loupblanc: 'loup blanc', poison: 'poison', feu: 'feu', mj: 'meneur' }[b])).join(', ') : '',
+    p.on ? '' : 'déconnecté·e', H.step === 'deal' && !p.seen ? 'carte pas encore vue' : ''].filter(Boolean).join(' · ');
+  const list = acts => `<ul class="plist">${H.players.map(p => `<li class="${p.alive ? '' : 'dead'} ${H.pending.some(([c]) => c === p.cid) ? 'target' : ''}"><span class="ic" aria-hidden="true">${lgRole(p.role).icon}</span>
+    <span class="nm"><b>${esc(p.name)}${H.mayor === p.cid ? ' ' + sash() : ''}</b><small>${tags(p)}</small></span>${acts ? acts(p) : ''}</li>`).join('')}</ul>`;
   if (H.step === 'deal') {
     const seen = H.players.filter(p => p.seen).length;
     return `<div class="turn"><small>Cartes distribuées</small><strong>${seen} / ${n} vues</strong></div>
     <p class="howto">Chacun regarde sa carte en secret. Toi seul vois toutes les cartes : cache bien ton écran.</p>
+    ${H.extra.length ? `<p class="howto">Cartes du voleur : ${H.extra.map(r => lgRole(r).icon + ' ' + lgRole(r).name).join(' et ')}</p>` : ''}
+    ${H.comRoles.length && lgHas(H, 'comedien') ? `<p class="howto">Rôles du comédien : ${H.comRoles.map(r => lgRole(r).icon + ' ' + lgRole(r).name).join(', ')}</p>` : ''}
     <section class="panel"><h3><span>Les cartes</span></h3>${list()}</section>
-    <button class="btn big" data-a="lg-start">La nuit tombe</button>
+    <button class="btn big" data-a="lg-start">🌙 La nuit tombe</button>
     <button class="btn ghost" data-a="lg-respin">Relancer la roue</button>`;
   }
   if (H.step === 'end') return `<div class="turn"><small>Fin de partie</small><strong>${LG_WIN[H.winner || '']}</strong></div>
-    <div class="card">${cardIdx('♠')}<p class="kind">Toutes les cartes</p>${lgCards(H.players)}</div>
+    <div class="card">${cardIdx('☾')}<p class="kind">Toutes les cartes</p>${lgRevealList(MPG.lg.view(MP_CID).reveal)}</div>
     <div class="row"><button class="btn" data-a="lg-again">Nouvelle partie</button><button class="btn ghost" data-a="mp-quit">Fermer</button></div>`;
   // Partie en cours
-  const night = H.phase === 'night', inDeck = r => H.players.some(p => p.role === r);
-  const win = lgWinner(H);
+  const night = H.phase === 'night', win = lgWinner(H), alive = lgAlive(H).length;
+  const alerts = H.alerts.length ? `<div class="alerts">${H.alerts.map((a, i) => `<div class="banner gold"><span>${esc(a)}</span><button class="mini" data-a="lg-alert" data-v="${i}" aria-label="Compris">OK</button></div>`).join('')}</div>` : '';
   let body = '';
   if (night) {
-    const steps = LG_NIGHT.filter(s => inDeck(s.need || s.id) && (!s.first || H.n === 1) && (!s.even || H.n % 2 === 0));
-    const victims = H.pending.map(c => mpP(c).name);
-    body = `<section class="panel"><h3><span>Le déroulé de la nuit</span><span>à lire à voix haute</span></h3>
-      <p class="hint">« La nuit tombe sur le village. Tout le monde ferme les yeux. »</p>
-      <div class="steps-mj">${steps.map(s => {
-        const alive = H.players.some(p => p.alive && p.role === (s.need || s.id));
-        let extra = '';
-        if (s.id === 'sorciere') extra = `<span class="row potions"><button class="mini ${H.potions.vie ? '' : 'red'}" data-a="lg-potion" data-v="vie">Vie : ${H.potions.vie ? 'dispo' : 'utilisée'}</button><button class="mini ${H.potions.mort ? '' : 'red'}" data-a="lg-potion" data-v="mort">Mort : ${H.potions.mort ? 'dispo' : 'utilisée'}</button></span>`;
-        return `<div class="step-mj ${H.checks[s.id] ? 'done' : ''}"><button class="step-go" data-a="lg-check" data-v="${s.id}" aria-pressed="${!!H.checks[s.id]}"><span class="ic" aria-hidden="true">${H.checks[s.id] ? '✓' : s.icon}</span>
-          <span><b>${s.title}${alive ? '' : ' <i>(mort·e : appelle-le quand même pour ne rien trahir)</i>'}</b><span class="t">${s.text}</span>${s.note ? `<small>${s.note}</small>` : ''}${s.id === 'sorciere' ? `<small>Victime : ${victims.length ? esc(victims.join(', ')) : 'personne pour l\'instant'}</small>` : ''}</span></button>${extra}</div>`;
-      }).join('')}</div></section>`;
+    const steps = lgSteps(H), cur = steps.find(s => s.id === H.cur);
+    const curCard = cur ? (() => {
+      const actor = lgActor(H, cur), dead = !H.players.some(p => p.alive && (cur.wolves ? lgWolf(p) : p.role === (cur.need || cur.role)));
+      const wait = actor && !H.done[cur.id] ? `<p class="sub wait-dot">⏳ En attente du choix sur le téléphone de ${esc(actor.name)}…</p>` : '';
+      const done = H.log[cur.id] ? `<p class="sub done-l">✓ ${esc(H.log[cur.id])}</p>` : '';
+      let extra = '';
+      if (cur.id === 'loups' && lgHas(H, 'petitefille')) extra += `<p class="sub">👧 La petite fille peut espionner en entrouvrant les yeux.</p>`;
+      if (cur.id === 'loups') extra += `<p class="sub">Touche ☠ sur la victime dans la liste des joueurs.</p>`;
+      if (cur.id === 'infect') { const vic = H.pending.find(([, b]) => b === 'loups'); extra += vic ? `<button class="btn paper" data-a="lg-infect">${H.infectOn ? 'Annuler l\'infection' : `Infecter ${esc(mpP(vic[0]).name)}`}</button>` : '<p class="sub">Pas encore de victime des loups.</p>'; }
+      if (cur.id === 'comedien' && H.comNight) extra += `<p class="sub">Appelle le comédien au tour de : ${lgRole(H.comNight).name}.</p>`;
+      return `<div class="card compact call"><p class="kind">${cur.title}${dead ? ' · mort·e : appelle quand même' : ''}</p><p class="text call-t">« ${cur.text} »</p>${wait}${done}${extra}
+        <div class="row"><button class="btn" data-a="lg-next">${steps.indexOf(cur) === steps.length - 1 ? 'Terminer la nuit' : 'Suivant ›'}</button></div></div>`;
+    })() : H.allDone ? `<div class="card compact call"><p class="kind">Nuit ${H.n}</p><p class="text call-t">Tous les personnages ont été appelés.</p><p class="sub">Réveille le village quand tu es prêt·e.</p></div>`
+      : `<div class="card compact call"><p class="kind">Nuit ${H.n}</p><p class="text call-t">« La nuit tombe sur le village. Tout le monde ferme les yeux… »</p>
+        <button class="btn" data-a="lg-next">Appeler le premier personnage</button></div>`;
+    body = `${curCard}
+      <section class="panel"><h3><span>L'ordre de la nuit</span><span>${steps.length} appels</span></h3>
+        <ol class="night-order">${steps.map(s => `<li><button data-a="lg-goto" data-v="${s.id}" class="${s.id === H.cur ? 'now' : ''} ${H.done[s.id] || (H.cur && steps.indexOf(s) < steps.findIndex(x => x.id === H.cur)) ? 'past' : ''}">${s.title}</button></li>`).join('')}</ol>
+        ${lgHas(H, 'sorciere') ? `<p class="hint">Potions de la sorcière : vie ${H.potions.vie ? 'disponible' : 'utilisée'}, mort ${H.potions.mort ? 'disponible' : 'utilisée'}.</p>` : ''}</section>`;
+  } else {
+    const t = H.vote ? lgTally(H) : null;
+    const voteCtl = !H.vote ? `<div class="row">${!H.mayor ? `<button class="btn paper" data-a="lg-vote-start" data-v="maire">🎖️ Élire le maire</button>` : ''}<button class="btn" data-a="lg-vote-start" data-v="exil">🗳️ Lancer le vote</button></div>`
+      : !H.vote.revealed ? `<button class="btn" data-a="lg-vote-reveal">Révéler le vote (${Object.keys(H.vote.ballots).length} / ${H.players.filter(x => lgCanVote(H, x)).length})</button>`
+      : `<div class="row">${t.top.length === 1 ? (H.vote.kind === 'maire' ? `<button class="btn" data-a="lg-mayor" data-v="${esc(t.top[0].cid)}">🎖️ ${esc(t.top[0].name)} devient maire</button>` : `<button class="btn red" data-a="lg-kill" data-v="${esc(t.top[0].cid)}">Éliminer ${esc(t.top[0].name)}</button>`)
+          : t.top.length ? `<p class="howto">Égalité entre ${esc(t.top.map(r => r.name).join(' et '))}. ${H.mayor ? 'Le maire tranche.' : 'On revote.'}</p>${t.top.map(r => H.vote.kind === 'maire' ? `<button class="btn paper" data-a="lg-mayor" data-v="${esc(r.cid)}">${esc(r.name)}</button>` : `<button class="btn ghost" data-a="lg-kill" data-v="${esc(r.cid)}">${esc(r.name)}</button>`).join('')}` : ''}
+        ${H.vote.kind === 'exil' && t.top.length > 1 && H.players.some(p => p.alive && p.role === 'bouc') ? `<button class="btn red" data-a="lg-bouc">Égalité : le bouc émissaire meurt</button>` : ''}
+        ${H.vote.kind === 'exil' && lgHas(H, 'juge') && !H.judgeUsed ? `<button class="btn ghost" data-a="lg-judge">⚖️ Le juge bègue demande un second vote</button>` : ''}
+        <button class="btn ghost" data-a="lg-vote-close">Fermer le vote</button></div>`;
+    const tips = [lgHas(H, 'montreur') && H.players.some(p => p.alive && p.role === 'montreur') ? "🐻 Un loup est-il assis à côté du montreur d'ours ? Si oui, grogne !" : '', lgHas(H, 'garde') ? '📯 Le garde champêtre veut-il faire une annonce ?' : '', lgHas(H, 'gitane') ? '🧿 Le spirite de la gitane pose-t-il sa question à un mort ?' : '', ...(H.mjNotes || [])].filter(Boolean);
+    body = `${lgNewsCard(H.news)}${tips.length ? `<section class="panel"><h3><span>Pour le meneur</span></h3>${tips.map(x => `<p class="hint">${esc(x)}</p>`).join('')}</section>` : ''}
+      ${H.cfg.phoneVote ? `${lgVoteBox(MPG.lg.view(MP_CID), true)}${voteCtl}` : `<p class="howto">Le village débat, puis vote à main levée. Touche « Éliminer » sur le condamné.</p>`}`;
   }
-  const acts = (p, pend, lov) => {
-    if (!p.alive) return `<button class="mini" data-a="lg-revive" data-v="${esc(p.cid)}">Ramener</button>`;
-    let b = '';
-    if (night && inDeck('cupidon') && (lov || H.lovers.length < 2)) b += `<button class="mini ${lov ? 'on' : ''}" data-a="lg-love" data-v="${esc(p.cid)}" aria-pressed="${lov}" aria-label="Amoureux">💘</button>`;
-    b += night ? `<button class="mini ${pend ? 'red' : ''}" data-a="lg-target" data-v="${esc(p.cid)}" aria-pressed="${pend}" aria-label="Victime de la nuit">☠</button>`
+  const acts = p => {
+    if (!p.alive) return `<span class="acts"><button class="mini" data-a="lg-revive" data-v="${esc(p.cid)}">Ramener</button></span>`;
+    const pend = H.pending.some(([c, b]) => c === p.cid && b === 'mj' || c === p.cid && b === 'loups');
+    let b = night ? `<button class="mini ${pend ? 'red' : ''}" data-a="lg-target" data-v="${esc(p.cid)}" aria-pressed="${pend}" aria-label="Victime de la nuit">☠</button>`
       : `<button class="mini red" data-a="lg-kill" data-v="${esc(p.cid)}">Éliminer</button>`;
+    if (!night) b = `<button class="mini ${H.mayor === p.cid ? 'on' : ''}" data-a="lg-mayor" data-v="${esc(p.cid)}" aria-label="Nommer maire">🎖️</button>` + b;
     return `<span class="acts">${b}</span>`;
   };
-  const alive = H.players.filter(p => p.alive).length;
   return `<div class="phase ${H.phase}"><small>${night ? 'Nuit' : 'Jour'} ${H.n} · ${alive} en vie</small><strong>${night ? '🌙 Le village dort' : '☀️ Le village débat'}</strong></div>
-    ${night ? '' : lgNewsCard(H.news)}
     ${win ? `<div class="banner gold"><b>${LG_WIN[win]}</b> <button class="mini" data-a="lg-end" data-v="${win}">Annoncer la fin</button></div>` : ''}
-    ${body}
-    ${night ? '' : `<p class="howto">Le village débat puis vote. Touche « Éliminer » sur le joueur désigné (et sur la cible du chasseur s'il tire).</p>`}
+    ${H.needMayor ? `<div class="banner">Le maire est mort : il désigne son successeur. Touche 🎖️ sur le nouveau maire.</div>` : ''}
+    ${alerts}${body}
     <section class="panel"><h3><span>Les joueurs</span><span>${alive} / ${n}</span></h3>${list(acts)}</section>
     <button class="btn big ${night ? '' : 'red'}" data-a="${night ? 'lg-dawn' : 'lg-night'}">${night ? '☀️ Le village se réveille' : '🌙 La nuit tombe'}</button>
     <button class="btn ghost" data-a="lg-end" data-v="">Arrêter et révéler les cartes</button>`;
 }
+
+/* --- L'écran des joueurs --- */
+function lgAskBox(a) {
+  const pick = MP.pick || [];
+  const names = l => `<div class="vote">${l.map(n => `<button data-a="lg-pick" data-v="${esc(n)}" aria-pressed="${pick.includes(n)}">${esc(n)}</button>`).join('')}</div>`;
+  let body = '';
+  if (a.kind === 'pick') body = `${names(a.choices)}<div class="row">${a.skip ? `<button class="btn ghost" data-a="lg-do-skip">Personne cette nuit</button>` : ''}<button class="btn" data-a="lg-do" ${pick.length === a.count ? '' : 'disabled'}>${a.count > 1 ? `Valider (${pick.length} / ${a.count})` : 'Valider'}</button></div>`;
+  else if (a.kind === 'cards' || a.kind === 'roles') body = `<div class="pick-cards">${a.cards.map((r, i) => `<button class="mini-card" data-a="lg-card" data-v="${a.kind === 'cards' ? i : r}"><span>${lgRole(r).icon}</span><b>${lgRole(r).name}</b></button>`).join('')}</div>${a.kind === 'cards' && !a.must ? `<button class="btn ghost" data-a="lg-card" data-v="keep">Garder ma carte</button>` : a.must ? '<p class="hint">Deux loups : tu dois en prendre un.</p>' : ''}`;
+  else if (a.kind === 'camp') body = `<div class="row"><button class="btn paper" data-a="lg-camp" data-v="village">🐕 Chien du village</button><button class="btn red" data-a="lg-camp" data-v="loup">🐺 Loup-garou</button></div>`;
+  else if (a.kind === 'fire') body = `${a.oiled.length ? `<button class="btn red" data-a="lg-fire">🔥 Mettre le feu (${esc(a.oiled.join(', '))})</button>` : ''}<p class="hint">Ou asperge une maison d'huile :</p>${names(a.choices)}<button class="btn" data-a="lg-do" ${pick.length === 1 ? '' : 'disabled'}>Asperger</button>`;
+  else if (a.kind === 'witch') body = `<p class="hint">${a.victims.length ? `Victime${a.victims.length > 1 ? 's' : ''} de cette nuit : <b>${esc(a.victims.join(', '))}</b>` : 'Pas de victime des loups cette nuit.'}</p>
+    ${a.vie && a.victims.length ? `<div class="row">${a.victims.map(n => `<button class="btn paper" data-a="lg-save" data-v="${esc(n)}" aria-pressed="${MP.save === n}">💚 Sauver ${esc(n)}</button>`).join('')}</div>` : `<p class="hint">${a.vie ? '' : 'Potion de vie déjà utilisée.'}</p>`}
+    ${a.mort ? `<p class="hint">☠ Potion de mort sur :</p>${names(a.choices)}` : '<p class="hint">Potion de mort déjà utilisée.</p>'}
+    <button class="btn" data-a="lg-witch">${MP.save || pick.length ? 'Valider' : 'Ne rien faire'}</button>`;
+  return `<section class="panel ask"><h3><span>🌙 À toi de jouer</span><span>en secret</span></h3><p class="ask-t">${esc(a.title)}</p>${body}</section>`;
+}
 function lgGuest(v) {
-  const others = v.players.map(p => `<span class="chip tap ${p.alive ? '' : 'off'}">${p.alive ? '' : '☠ '}${esc(p.name)}</span>`).join('');
+  const others = v.players.map(p => `<span class="chip tap ${p.alive ? '' : 'off'}">${p.alive ? '' : '☠ '}${esc(p.name)}${lgTags(p)}</span>`).join('');
   if (v.step === 'lobby') return `${roomBox(false)}
     <section class="panel"><h3><span>Dans la partie</span><span>${v.players.length}</span></h3><div class="chips">${others}</div></section>
-    <p class="howto">Le maître du jeu prépare les cartes. Garde ton téléphone près de toi : ta carte va arriver.</p>`;
-  if (v.step === 'spin') return `<div class="turn"><small>Loup-Garou</small><strong>La roue tourne…</strong></div>
-    <div class="card verso shuffle"><p class="text">Ta carte arrive</p></div>`;
+    <p class="howto">Le meneur prépare les cartes. Garde ton téléphone près de toi : ta carte va arriver.</p>`;
+  if (v.step === 'spin') return `<div class="turn"><small>Loup-Garou</small><strong>La roue tourne…</strong></div><div class="card verso shuffle"><p class="text">Ta carte arrive</p></div>`;
   if (v.step === 'end') return `<div class="turn"><small>Fin de partie</small><strong>${LG_WIN[v.winner || '']}</strong></div>
-    <div class="card">${cardIdx('♠')}<p class="kind">Toutes les cartes</p>${lgCards(v.reveal)}</div>
-    <p class="howto">Le maître du jeu peut lancer une nouvelle partie : reste connecté·e.</p>`;
+    <div class="card">${cardIdx('☾')}<p class="kind">Toutes les cartes</p>${lgRevealList(v.reveal)}</div>
+    <p class="howto">Le meneur peut relancer une partie : reste connecté·e.</p>`;
   const me = v.me || { role: 'villageois', alive: true }, R = lgRole(me.role);
   const phase = v.step === 'deal' ? `<div class="phase night"><small>Loup-Garou</small><strong>Découvre ta carte en secret</strong></div>`
     : v.phase === 'night' ? `<div class="phase night"><small>Nuit ${v.n}</small><strong>🌙 Ferme les yeux</strong></div>`
     : `<div class="phase day"><small>Jour ${v.n}</small><strong>☀️ Débattez et votez</strong></div>`;
+  const facts = [
+    me.mayor ? `${sash(true)}<b>Tu es le maire !</b> Ta voix compte double. Si tu meurs, tu désignes ton successeur.` : '',
+    me.infected ? '🧛 Tu as été infecté·e : tu es maintenant un loup-garou, en secret.' : '',
+    me.wild ? '🧒 Ton modèle est mort : tu es maintenant un loup-garou.' : '',
+    me.role === 'chienloup' && me.dog ? (me.dog === 'loup' ? '🐺 Tu as rejoint la meute.' : '🐕 Tu es le fidèle chien du village.') : '',
+    v.mates ? (v.mates.length ? `🐺 Tes complices : <b>${esc(v.mates.join(', '))}</b>` : '🐺 Tu es le seul loup encore en vie.') : '',
+    v.lover ? `💘 Tu es amoureux·se de <b>${esc(v.lover)}</b>. Si l'un meurt, l'autre aussi.` : '',
+    v.kin ? `${R.icon} ${me.role === 'soeurs' ? 'Ta sœur' : 'Tes frères'} : <b>${esc(v.kin.join(', '))}</b>` : '',
+    me.charmed ? `🎶 Tu es charmé·e${v.charmed && v.charmed.length ? `, comme <b>${esc(v.charmed.join(', '))}</b>` : ''}.` : '',
+    me.group ? `${me.group === 'lune' ? '🌙 Tu es du groupe de la Lune' : '☀️ Tu es du groupe du Soleil'}.` : '',
+    v.model ? `🧒 Ton modèle : <b>${esc(v.model)}</b>` : '',
+    v.com ? `🎭 Tes rôles : ${v.com.map(c => `${c.used ? '<s>' : ''}${lgRole(c.r).icon} ${lgRole(c.r).name}${c.used ? '</s>' : ''}`).join(', ')}` : '',
+  ].filter(Boolean).map(x => `<p class="sub">${x}</p>`).join('');
   const face = MP.peek
-    ? `<div class="card ${me.alive ? '' : 'dead'}" role="button" tabindex="0" data-a="lg-peek" aria-label="Cacher ma carte">${cardIdx(R.icon)}<p class="kind">Ta carte</p><p class="role-ic" aria-hidden="true">${R.icon}</p><p class="text">${R.name}</p><p class="sub">${R.desc}</p>
-        ${v.mates ? `<p class="sub"><b>${v.mates.length ? 'Tes complices : ' + esc(v.mates.join(', ')) : 'Tu es le seul loup.'}</b></p>` : ''}
-        ${v.lover ? `<p class="sub"><b>💘 Tu es amoureux·se de ${esc(v.lover)}.</b> Si l'un meurt, l'autre aussi.</p>` : ''}
-        <p class="sub">Touche pour cacher.</p></div>`
-    : `<div class="card verso" role="button" tabindex="0" data-a="lg-peek" aria-label="Voir ma carte"><p class="text">Touche pour voir ta carte</p><p class="sub">${v.lover ? '💘 Nouveau : regarde ta carte' : 'Personne ne doit voir ton écran'}</p></div>`;
-  return `${phase}${me.alive ? '' : `<div class="banner">☠ Tu es mort·e. Garde le silence, tu peux suivre la partie.</div>`}
-    ${lgNewsCard(v.news)}${face}
+    ? `<div class="card ${me.alive ? '' : 'dead'} ${me.mayor ? 'has-sash' : ''}" role="button" tabindex="0" data-a="lg-peek" aria-label="Cacher ma carte">${me.mayor ? sash(true) : ''}${cardIdx(R.icon)}<p class="kind">Ta carte</p><p class="role-ic" aria-hidden="true">${R.icon}</p><p class="text">${R.name}</p><p class="sub">${R.desc}</p>${facts}<p class="sub">Touche pour cacher.</p></div>`
+    : `<div class="card verso" role="button" tabindex="0" data-a="lg-peek" aria-label="Voir ma carte"><p class="text">Touche pour voir ta carte</p><p class="sub">${me.mayor ? '🎖️ Tu es le maire' : 'Personne ne doit voir ton écran'}</p></div>`;
+  return `${phase}${me.alive ? '' : `<div class="banner">☠ Tu es mort·e. Chut ! Tu peux suivre la partie en silence.</div>`}
+    ${me.mayor && !MP.peek ? `<div class="mayor-band">${sash(true)}<span>Monsieur ou Madame le Maire</span></div>` : ''}
+    ${v.ask && me.alive ? lgAskBox(v.ask) : v.res && v.phase === 'night' ? `<div class="banner gold">${esc(v.res)}</div>` : ''}
+    ${lgNewsCard(v.news)}${v.phase === 'day' ? lgVoteBox(v, false) : ''}${face}
     ${v.step === 'game' ? `<section class="panel"><h3><span>Le village</span><span>${v.players.filter(p => p.alive).length} en vie</span></h3><div class="chips">${others}</div></section>` : ''}`;
 }
+
+Object.assign(actions, {
+  // Composition
+  'lg-w'(v) { const c = MP.H.cfg; c.loups = Math.min(8, Math.max(0, c.loups + +v)); store.set('lgCfg2', c); mpPush(); },
+  'lg-sp'(r) { const c = MP.H.cfg; c.roles = c.roles.includes(r) ? c.roles.filter(x => x !== r) : c.roles.concat(r); store.set('lgCfg2', c); mpPush(); },
+  'lg-preset'(k) { lgPreset(MP.H, k); store.set('lgCfg2', MP.H.cfg); mpPush(); },
+  'lg-opt'(k) { const c = MP.H.cfg; c[k] = !c[k]; store.set('lgCfg2', c); mpPush(); },
+  'lg-spin'() {
+    const H = MP.H, d = lgCards(H);
+    if (d.err) { toast(d.err); return; }
+    const from = H.spin ? H.spin.to % 360 : 0;
+    H.cards = shuffle(d.cards); H.step = 'spin'; H.spin = { from, to: from + 1800 + rand(360), at: Date.now() };
+    mpPush();
+    mpTimer('lgT', () => MP.H === H && H.step === 'spin' && lgDeal(), 3600);
+  },
+  'lg-respin'() { MP.H.step = 'lobby'; actions['lg-spin'](); },
+  // Nuit
+  'lg-start'() { Object.assign(MP.H, { step: 'game', phase: 'night', n: 1, cur: null, allDone: false, done: {}, res: {}, log: {} }); mpPush(); },
+  'lg-next'() {
+    const H = MP.H, steps = lgSteps(H), i = steps.findIndex(s => s.id === H.cur);
+    if (i === steps.length - 1) { H.cur = null; H.allDone = true; toast('Tous les personnages ont été appelés : réveille le village.'); }
+    else H.cur = steps[i + 1].id;
+    if (H.cur === 'loups') sfx('howl');
+    mpPush();
+  },
+  'lg-goto'(id) { MP.H.cur = id; if (id === 'loups') sfx('howl'); mpPush(); },
+  'lg-target'(cid) {
+    const H = MP.H, by = H.cur === 'loups' || !H.cur ? 'loups' : 'mj', i = H.pending.findIndex(([c, b]) => c === cid && ['loups', 'mj'].includes(b));
+    if (i >= 0) H.pending.splice(i, 1); else H.pending.push([cid, by]);
+    mpPush();
+  },
+  'lg-infect'() {
+    const H = MP.H, vic = H.pending.find(([, b]) => b === 'loups');
+    if (!vic) return;
+    if (H.infectOn) { H.infectOn = null; H.infectUsed = false; } else { H.infectOn = vic[0]; H.infectUsed = true; H.log.infect = `${mpP(vic[0]).name} sera infecté·e au lieu de mourir.`; }
+    mpPush();
+  },
+  'lg-dawn'() { lgDawn(); mpPush(); },
+  // Jour
+  'lg-night'() { const H = MP.H; Object.assign(H, { phase: 'night', n: H.n + 1, cur: null, allDone: false, done: {}, res: {}, log: {}, pending: [], news: null, vote: null, crow: null, comNight: null, mjNotes: [] }); mpPush(); },
+  'lg-kill'(cid) {
+    const H = MP.H, p = mpP(cid);
+    if (!p || !p.alive) return;
+    if (H.phase === 'day' && p.role === 'idiot' && !p.idiotOut) { p.idiotOut = true; H.news = { title: 'Le village a tranché', lines: [], empty: `${p.name} est l'idiot du village ! Gracié·e, mais ne vote plus.` }; H.vote = null; mpPush(); return; }
+    const out = lgKill([[cid, H.phase === 'day' ? 'vote' : 'mj']], H.phase === 'day' ? 'vote' : 'nuit');
+    if (H.phase === 'day') { H.news = lgNewsOf('Le village a tranché', out, 'vote'); H.vote = null; }
+    mpPush();
+  },
+  'lg-bouc'() { const b = MP.H.players.find(p => p.alive && p.role === 'bouc'); if (b) actions['lg-kill'](b.cid); },
+  'lg-judge'() { const H = MP.H; H.judgeUsed = true; H.vote = { kind: 'exil', ballots: {}, revealed: false, open: true, round: 2 }; mpPush(); },
+  'lg-revive'(cid) { const p = mpP(cid); if (p) p.alive = true; mpPush(); },
+  'lg-mayor'(cid) {
+    const H = MP.H, p = mpP(cid);
+    if (!p || !p.alive) return;
+    H.mayor = cid; H.needMayor = false;
+    if (H.vote && H.vote.kind === 'maire') H.vote = null;
+    H.news = { title: 'Nouveau maire', lines: [], empty: H.cfg.fun ? lgFun('mayor', p.name) : `${p.name} est le nouveau maire.` };
+    mpPush();
+  },
+  'lg-vote-start'(kind) { MP.H.vote = { kind, ballots: {}, revealed: false, open: true, round: 1 }; mpPush(); },
+  'lg-vote-reveal'() { MP.H.vote.revealed = true; mpPush(); },
+  'lg-vote-close'() { MP.H.vote = null; mpPush(); },
+  'lg-alert'(i) { MP.H.alerts.splice(+i, 1); mpPush(); },
+  'lg-end'(w) { Object.assign(MP.H, { step: 'end', winner: w || '' }); mpPush(); },
+  'lg-again'() { const H = MP.H; H.players.forEach(p => Object.keys(p).forEach(k => { if (!['cid', 'name', 'on'].includes(k)) delete p[k]; })); Object.assign(H, { step: 'lobby', lovers: [], pending: [], news: null, winner: null, mayor: null, vote: null }); mpPush(); },
+  // Joueurs
+  'lg-peek'() {
+    MP.peek = !MP.peek;
+    sfx(MP.peek ? 'flip' : 'deal');
+    if (MP.peek && !MP.saidSeen) { MP.saidSeen = true; mpSend({ t: 'seen' }); }
+    render(false);
+  },
+  'lg-pick'(n) {
+    const a = MP.view && MP.view.ask;
+    if (!a) return;
+    const p = MP.pick = MP.pick || [], max = a.kind === 'fire' ? 1 : a.kind === 'witch' ? 1 : a.count;
+    if (p.includes(n)) p.splice(p.indexOf(n), 1); else { if (p.length >= max) p.shift(); p.push(n); }
+    sfx('tick'); render(false);
+  },
+  'lg-do'() { const a = MP.view.ask; sfx('send'); mpSend({ t: 'lg-do', id: a.id, picks: MP.pick || [] }); MP.pick = []; },
+  'lg-do-skip'() { mpSend({ t: 'lg-do', id: MP.view.ask.id, skip: true }); },
+  'lg-card'(k) { sfx('flip'); mpSend({ t: 'lg-do', id: MP.view.ask.id, card: k === 'keep' ? 'keep' : /^\d$/.test(k) ? +k : k }); },
+  'lg-camp'(c) { sfx('send'); mpSend({ t: 'lg-do', id: 'chienloup', camp: c }); },
+  'lg-fire'() { sfx('send'); mpSend({ t: 'lg-do', id: 'pyromane', fire: true }); },
+  'lg-save'(n) { MP.save = MP.save === n ? null : n; render(false); },
+  'lg-witch'() { sfx('send'); mpSend({ t: 'lg-do', id: 'sorciere', save: MP.save || null, poison: (MP.pick || [])[0] || null }); MP.save = null; MP.pick = []; },
+  'lg-vote'(n) { sfx('tick'); mpSend({ t: 'lg-vote', target: n }); },
+});
 
 /* ---------- Téléphone dessiné ---------- */
 const GP_IDEAS = [
@@ -592,46 +1064,6 @@ function gpCanvasSetup() {
 }
 
 Object.assign(actions, {
-  // Loup-Garou (maître du jeu)
-  'lg-w'(v) { const H = MP.H; H.cfg.wolves = Math.max(1, lgDeck(H).w + +v); store.set('lgCfg', H.cfg); mpPush(); },
-  'lg-sp'(r) { const c = MP.H.cfg; c.sp = c.sp.includes(r) ? c.sp.filter(x => x !== r) : c.sp.concat(r); store.set('lgCfg', c); mpPush(); },
-  'lg-mates'() { const c = MP.H.cfg; c.mates = !c.mates; store.set('lgCfg', c); mpPush(); },
-  'lg-spin'() {
-    const H = MP.H, d = lgDeck(H);
-    if (d.err) { toast(d.err); return; }
-    const from = H.spin ? H.spin.to % 360 : 0;
-    H.cards = shuffle(d.cards); H.step = 'spin'; H.spin = { from, to: from + 1800 + rand(360), at: Date.now() };
-    mpPush();
-    mpTimer('lgT', () => MP.H === H && H.step === 'spin' && lgDeal(), 3600);
-  },
-  'lg-respin'() { MP.H.step = 'lobby'; actions['lg-spin'](); },
-  'lg-start'() { Object.assign(MP.H, { step: 'game', phase: 'night', n: 1, checks: {} }); mpPush(); },
-  'lg-check'(id) { const c = MP.H.checks; c[id] = !c[id]; mpPush(); },
-  'lg-potion'(k) { const p = MP.H.potions; p[k] = !p[k]; mpPush(); },
-  'lg-target'(cid) { const H = MP.H; H.pending = H.pending.includes(cid) ? H.pending.filter(c => c !== cid) : H.pending.concat(cid); mpPush(); },
-  'lg-love'(cid) { const H = MP.H; H.lovers = H.lovers.includes(cid) ? H.lovers.filter(c => c !== cid) : H.lovers.length < 2 ? H.lovers.concat(cid) : H.lovers; mpPush(); },
-  'lg-dawn'() {
-    const H = MP.H, out = lgKill(H.pending);
-    Object.assign(H, { pending: [], phase: 'day', news: lgNews(`Ce matin, au village`, out) });
-    if (out.some(d => d.role === 'chasseur')) toast('Le chasseur est mort : il tire sur quelqu\'un. Touche « Éliminer » sur sa cible.');
-    mpPush();
-  },
-  'lg-kill'(cid) {
-    const H = MP.H, out = lgKill([cid]);
-    H.news = lgNews('Le village a tranché', out);
-    if (out.some(d => d.role === 'chasseur')) toast('Le chasseur tire sur quelqu\'un : touche « Éliminer » sur sa cible.');
-    mpPush();
-  },
-  'lg-revive'(cid) { const p = mpP(cid); if (p) p.alive = true; mpPush(); },
-  'lg-night'() { const H = MP.H; Object.assign(H, { phase: 'night', n: H.n + 1, checks: {}, pending: [], news: null }); mpPush(); },
-  'lg-end'(w) { Object.assign(MP.H, { step: 'end', winner: w || '' }); mpPush(); },
-  'lg-again'() { const H = MP.H; H.players.forEach(p => { delete p.role; delete p.alive; delete p.seen; }); Object.assign(H, { step: 'lobby', lovers: [], pending: [], news: null, winner: null }); mpPush(); },
-  'lg-peek'() {
-    MP.peek = !MP.peek;
-    sfx(MP.peek ? 'flip' : 'deal');
-    if (MP.peek && !MP.saidSeen) { MP.saidSeen = true; mpSend({ t: 'seen' }); }
-    render(false);
-  },
   // Téléphone dessiné
   'gp-secs'(v) { MP.H.cfg.secs = +v; store.set('gpSecs', +v); mpPush(); },
   'gp-start'() {
@@ -663,35 +1095,219 @@ Object.assign(actions, {
 });
 app.addEventListener('input', e => { if (e.target.id === 'gpText') GPD.text = e.target.value; });
 
-/* ---------- Décor : un village provençal sur sa colline ---------- */
-// Le ciel et les couleurs suivent le moment : soir à l'accueil, nuit et jour pendant le Loup-Garou.
-(function villageDecor() {
+// Cartes reprises de La Tournée (niveaux Soft et Piquant, sans alcool) ; {x} = un autre joueur
+const AV_CARDS = {"soft":{"verite":["Raconte ton pire date, sans rien cacher.","Quelle est la recherche la plus gênante de ton historique ?","Quel est le dernier mensonge que tu as dit ? À qui ?","Si tu devais échanger ta vie avec quelqu'un ici pendant une semaine, ce serait qui ?","Quelle est ta plus grosse honte en soirée ?","Tu as déjà stalké un·e ex ? Jusqu'où tu es allé·e ?","Quel est le message le plus gênant que tu aies envoyé à la mauvaise personne ?","Quelle est la qualité que tu préfères chez {x} ?","Qui ici a les pires goûts musicaux ?","Quel est ton plaisir coupable que personne ne connaît ?","Tu as déjà inventé une excuse pour éviter quelqu'un ici ?","Quelle est ta peur la plus irrationnelle ?","Quel est le pire cadeau que tu aies reçu, et de qui ?","Quel est le dernier truc que tu as cherché sur Google ?","Qui dans ce groupe tu appelles en premier si tu finis en garde à vue ?","Ta première impression de {x}, honnêtement ?","Tu as un compte secret sur un réseau social ?","Quel est ton pire râteau ?","Quel achat tu regrettes le plus ?","Quelle rumeur sur toi était vraie ?","Tu as déjà lu les messages de quelqu'un en cachette ?","Quel défaut de {x} tu n'as jamais osé lui dire ?","Le moment où tu as eu le plus honte devant tes parents ?","La pire chose que tu aies faite bourré·e ?","Ton plus gros mensonge à tes parents ?","Qui ici te connaît le mieux ?","L'appli que tu as honte d'avoir sur ton téléphone ?","Ton plus gros fou rire au mauvais moment ?","Ton pire look d'ado, décris-le.","Tu as déjà fait pipi dans une piscine ?","Le truc le plus bête que tu aies cru jusqu'à beaucoup trop tard ?","La pire excuse que tu aies inventée, et ça a marché ?","Le surnom que tes parents te donnaient, et pourquoi ?","La chose la plus bizarre que tu fais quand tu es seul·e chez toi ?","Ta pire chute en public, avec les détails ?","Si tu étais un plat, lequel, et pourquoi c'est un plat raté ?","L'objet que tu as chez toi et que tu n'avoueras jamais ?","La pire coupe de cheveux de ta vie, décris-la.","Qui ici mourrait en premier dans un film d'horreur, et comment ?","Ton talent le plus inutile ? Montre-le.","Le message que tu regrettes d'avoir envoyé dans un groupe ?","La chose la plus chère que tu aies cassée, et tu l'as avoué ?"],"action":["Imite {x} jusqu'à ce que quelqu'un devine qui c'est.","Parle avec un accent au choix du groupe jusqu'à ton prochain tour.","Laisse {x} écrire ta prochaine story. Tu dois la poster.","Fais 15 squats en chantant l'hymne national.","Chante le refrain de la dernière chanson que tu as écoutée.","Montre la 7e photo de ta galerie, sans tricher.","Envoie « tu me manques » à la 3e conversation de ton téléphone.","Fais une déclaration d'amour dramatique à un objet de la pièce.","Laisse le groupe choisir ta photo de profil WhatsApp pour 24 h.","Danse 30 secondes sans musique.","Mime un film, le groupe a une minute pour trouver.","Fais un compliment sincère à chaque personne présente.","Parle de toi à la troisième personne jusqu'à ton prochain tour.","Lis à voix haute ton dernier message envoyé.","Fais une pub de 30 secondes pour {x} comme si c'était un produit.","Échange un vêtement avec {x} jusqu'à la fin de la partie.","Laisse le groupe lire tes 10 derniers emojis et interpréter ta vie.","Fais ta meilleure imitation d'influenceur qui déballe un colis.","Appelle quelqu'un et chante-lui joyeux anniversaire, même si ce n'est pas le sien.","Fais le tour de la pièce en marchant comme un mannequin.","Fais un tour de magie, même complètement raté.","Parle en chuchotant jusqu'à ton prochain tour.","Fais deviner une chanson en la fredonnant.","Montre ta dernière capture d'écran.","Fais 10 secondes de gainage pendant que {x} te raconte une blague.","Fais une déclaration d'amour passionnée à ton téléphone.","Appelle un·e pote et commande une pizza comme si c'était une pizzeria. Tiens 20 secondes.","Commente tout ce que fait {x} comme un commentateur sportif pendant 30 secondes.","Fais ton discours de remerciement des Oscars pour le prix de « Meilleure personne de cette soirée ».","Envoie à ta mère un vocal où tu chantes ce que tu as mangé aujourd'hui.","Fais un tuto beauté de 20 secondes avec ce que tu as sous la main.","Imite un animal choisi par le groupe chaque fois que quelqu'un dit ton prénom, jusqu'à ton prochain tour.","Interviewe {x} comme si c'était une star internationale qui sort un album.","Récite l'alphabet à l'envers. Chaque erreur, un gage.","Raconte ta journée comme la bande-annonce d'un film d'action.","Échange ton téléphone avec {x} pendant 2 tours.","Fais un rap de 4 phrases sur {x}.","Mets ton t-shirt à l'envers jusqu'à la fin de la partie.","Ne parle plus qu'avec des questions jusqu'à ton prochain tour.","Mets ton selfie le plus moche en fond d'écran jusqu'à demain.","Fais le GPS qui s'est perdu et panique pendant 30 secondes."]},"piquant":{"verite":["Qui ici tu trouves le/la plus attirant·e ?","C'était quand ton dernier bisou ? Avec qui ?","Tu as déjà eu un crush sur quelqu'un de ce groupe ?","La chose la plus folle que tu aies faite pour séduire quelqu'un ?","Ton pire date d'appli de rencontre, raconte tout.","Tu as déjà écrit à un·e ex à 3 h du matin ? Qu'est-ce que tu as mis ?","Qu'est-ce qui te fait craquer immédiatement chez quelqu'un ?","Qu'est-ce qui te refroidit direct ?","Avec qui ici tu partirais en vacances en tête-à-tête ?","Ton plus gros red flag en couple ?","Tu as déjà embrassé quelqu'un pour rendre une autre personne jalouse ?","Combien de personnes as-tu embrassées cette année ?","Tu préfères faire le premier pas ou qu'on le fasse pour toi ?","Décris ta technique de drague. Le groupe note sur 10.","Tu as déjà craqué pour le/la partenaire d'un·e pote ?","Si tu devais sortir avec quelqu'un ici, ce serait qui ?","Tu as déjà ghosté quelqu'un ? Pourquoi ?","Qui ici embrasse le mieux, à ton avis ?","Tu stalkes quelqu'un en ce moment ? Qui ?","Le truc le plus romantique qu'on ait fait pour toi ?","Avec quelle célébrité tu craquerais sans hésiter ?","Tu as déjà fait semblant d'être célibataire ?","Qu'est-ce que tu penses vraiment de l'ex de {x} ?","Ton premier baiser, raconte.","Qui ici a le plus beau sourire ?","Le plus beau râteau que tu aies mis ?","Ton crush de célébrité de quand tu avais 15 ans ?","Tu as déjà embrassé quelqu'un dont tu ne connaissais pas le prénom ?","La phrase de drague la plus nulle qu'on t'ait sortie ?","Tu as déjà dragué quelqu'un en te trompant de personne ?","Ton date le plus gênant : note-le sur 10 et raconte.","Qui ici serait le pire en couple, et pourquoi ?","Le détail le plus bizarre qui te fait craquer ?","Tu as déjà fait semblant d'être occupé·e pour ne pas répondre à quelqu'un ?","Qui ici a déjà été ton crush, même 5 minutes ?","Ta technique pour répondre sans avoir l'air trop intéressé·e ?","La chose la plus ringarde que tu aies faite par amour ?","Ton pire bisou : avec qui, et qu'est-ce qui clochait ?","Combien de messages de drague tu reçois par semaine, honnêtement ?","Tu as déjà stalké le ou la nouvelle de ton ex ? Verdict ?"],"action":["Fais un bisou sur la joue de {x}.","Murmure un compliment à l'oreille de {x}.","Regarde {x} dans les yeux avec ton meilleur regard de séduction pendant 10 secondes, sans rire.","Laisse {x} envoyer un message (raisonnable) à quelqu'un de tes contacts.","Fais une danse lascive de 20 secondes sur la chanson choisie par le groupe.","Assieds-toi sur les genoux de {x} jusqu'à ton prochain tour.","Montre ta dernière conversation sur une appli de rencontre.","Fais un slow de 30 secondes avec {x}.","Laisse le groupe écrire ta bio d'appli de rencontre et lis-la à voix haute.","Masse les épaules de {x} pendant une minute.","Drague {x} avec ta pire phrase d'accroche, en y croyant à fond.","Tiens la main de {x} jusqu'à ton prochain tour.","Envoie un emoji 🔥 à la dernière personne avec qui tu as flirté.","Prends un selfie joue contre joue avec {x}.","Décris ton crush actuel sans dire son nom. Le groupe doit deviner.","Fais manger quelque chose à {x}, à la main.","Fais une demande en mariage à {x}, genou à terre.","Like une vieille photo d'un·e ex.","Fais un câlin de 20 secondes à {x}.","Mime ton premier baiser avec un coussin.","Écris un poème d'amour de 4 vers pour {x} et lis-le.","Fais un baisemain à {x}, comme à la cour du roi.","Joue avec les cheveux de {x} pendant 30 secondes.","Fais un bisou esquimau à {x}.","Fais une déclaration d'amour façon télénovela à {x}, avec les larmes.","Joue une scène de rupture ultra dramatique avec {x}, 30 secondes.","Mime ton type idéal, le groupe doit deviner.","Laisse {x} choisir l'emoji que tu dois envoyer à ton crush, sans explication.","Fais un massage des mains à {x} en commentant comme un pro du spa.","Chante une chanson d'amour à {x} en remplaçant chaque refrain par son prénom.","Joue un premier date avec {x} pendant une minute, en commençant par un silence gênant.","Pose ta tête sur les genoux de {x} jusqu'à ton prochain tour.","Note le look de chaque personne sur 10, avec un commentaire de jury de télé.","Fais un bisou sur le front de {x}, comme dans un film à l'eau de rose.","Mime ton dernier date. Le groupe devine comment ça s'est fini.","Fais un compliment à {x} uniquement avec des métaphores de cuisine.","Fais la bise à tout le monde avec l'accent de ton choix."]}};
+const TP_CARDS = {"soft":[["lire dans les pensées","être invisible"],["vivre sans musique","vivre sans films ni séries"],["toujours dire ce que tu penses","ne plus jamais parler"],["perdre ton téléphone","perdre ton portefeuille"],["voyager dans le passé","voyager dans le futur"],["être drôle","être canon"],["vivre à la mer","vivre à la montagne"],["avoir 10 potes","avoir 2 meilleur·es ami·es"],["être riche et seul·e","fauché·e et bien entouré·e"],["plus d'internet pendant un mois","plus d'eau chaude pendant un mois"],["manger pizza toute ta vie","manger burger toute ta vie"],["que ta vie soit filmée en télé-réalité","que ton journal intime soit publié"],["parler toutes les langues","parler aux animaux"]],"piquant":[["que ton ex lise tous tes messages","que tes parents lisent tous tes messages"],["sortir avec quelqu'un de très beau mais ennuyeux","quelqu'un de banal mais hilarant"],["ne plus jamais embrasser","ne plus jamais faire de câlin"],["que ton crush voie ton historique","que ton crush voie ta galerie photo"],["sortir avec ton/ta meilleur·e ami·e","sortir avec ton pire ennemi·e"],["un·e partenaire jaloux·se","un·e partenaire totalement indifférent·e"],["tomber amoureux·se tous les mois","ne jamais tomber amoureux·se"],["draguer","être dragué·e"],["sortir avec l'ex d'un·e pote","sortir avec le/la pote de ton ex"],["savoir ce que les gens pensent de ton physique","de ta personnalité"],["un premier date au resto","un premier date en soirée"],["que ton crush soit au courant","qu'il ou elle ne le sache jamais"],["embrasser quelqu'un ici maintenant","chanter seul·e devant tout le monde"],["une relation à distance","une relation où vous vivez ensemble dès le début"],["revoir tous tes ex dans la même soirée","rencontrer toute la famille de ton/ta partenaire"]]};
+const VG_GAGES = ["Fais 10 pompes ou 15 squats.","Chante un refrain choisi par le groupe.","Parle avec un accent jusqu'à ton prochain tour.","Laisse le groupe poster une story sur ton compte.","Fais un compliment à chaque joueur.","Imite un animal choisi par le groupe.","Envoie un message choisi par le groupe à un·e pote.","Garde les yeux fermés jusqu'à ton prochain tour.","Laisse le groupe choisir ta photo de profil pour 24 h.","Raconte ta plus grosse honte.","Parle en rimes jusqu'à ton prochain tour."];
+
+/* ---------- Début et fin de soirée : Tu préfères et Action ou Vérité, chacun son téléphone ---------- */
+const VG_LEVELS = [['soft', 'Soft'], ['piquant', 'Piquant']];
+const VG_REACT = ['😂', '🔥', '😱', '👏'];
+// Pioche sans répétition dans la partie, puis on remélange
+function vgDraw(H, key, list) {
+  H.used = H.used || {};
+  const u = H.used[key] = H.used[key] || [];
+  let free = list.map((_, i) => i).filter(i => !u.includes(i));
+  if (!free.length) { H.used[key] = []; free = list.map((_, i) => i); }
+  const i = free[rand(free.length)];
+  H.used[key].push(i);
+  return list[i];
+}
+const vgFill = (text, x) => esc(text).replace(/\{x\}/g, x ? `<em>${esc(x)}</em>` : "quelqu'un de ton choix");
+const vgOther = (H, cid) => { const o = H.players.filter(p => p.on && p.cid !== cid); return o.length ? o[rand(o.length)].name : null; };
+const vgLevelBox = (lvl, a) => `<div class="levels two" role="group" aria-label="Niveau">${VG_LEVELS.map(([k, l]) => `<button data-a="${a}" data-v="${k}" aria-pressed="${lvl === k}">${l}</button>`).join('')}</div>`;
+// Salon commun aux deux jeux : l'hôte joue aussi
+function vgLobby(v, start, extra) {
+  if (MP.role !== 'host') return `${roomBox(false)}<section class="panel"><h3><span>Dans la partie</span><span>${v.players.length}</span></h3>
+    <div class="chips">${v.players.map(p => `<span class="chip tap">${esc(p.name)}</span>`).join('')}</div></section><p class="howto">L'hôte va lancer la partie.</p>`;
+  const H = MP.H, n = H.players.filter(p => p.on).length;
+  return `${roomBox(true)}
+  <section class="panel"><h3><span>Joueurs</span><span>${H.players.length} / 20</span></h3>
+    <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
+    <p class="hint">On peut aussi rejoindre en cours de partie.</p></section>
+  ${extra}
+  <button class="btn big" data-a="${start}" ${n < 2 || MP.status !== 'open' ? 'disabled' : ''}>${n < 2 ? 'Il faut au moins 2 joueurs' : `C'est parti (${n} joueurs)`}</button>`;
+}
+const vgMe = v => v.players.find(p => p.me) || {};
+
+/* --- Tu préfères : chacun vote en secret, la minorité prend un gage --- */
+MPG.tp = {
+  lateJoin: true,
+  rules: () => ({ title: 'Tu préfères', steps: [
+    "Parfait pour lancer la soirée. L'hôte crée la partie et donne le code, les autres le rejoignent. L'hôte joue aussi.",
+    "Une question « Tu préfères… ou… ? » s'affiche sur tous les téléphones.",
+    "Chacun vote en secret sur son téléphone. Dès que tout le monde a voté, les résultats tombent : qui a choisi quoi.",
+    "La minorité prend un gage, à faire tout de suite. En cas d'égalité, chaque camp défend son choix en une phrase.",
+  ], tips: ['Niveau Soft pour tout le monde, Piquant pour les soirées entre adultes.', "Personne n'est obligé de faire un gage : on peut toujours refuser."] }),
+  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('tpLevel', 'soft'), q: null, votes: {}, n: 0, gage: null }),
+  act(cid, d) {
+    const H = MP.H;
+    if (d.t === 'tp-vote' && H.step === 'vote' && [0, 1].includes(d.c)) {
+      H.votes[cid] = d.c;
+      if (H.players.filter(p => p.on).every(p => H.votes[p.cid] !== undefined)) tpReveal(); else mpPush();
+    }
+  },
+  view(cid) {
+    const H = MP.H;
+    const v = { game: 'tp', step: H.step, level: H.level, n: H.n, q: H.q, gage: H.gage, voted: Object.keys(H.votes).length, of: H.players.filter(p => p.on).length, mine: H.votes[cid],
+      players: H.players.map(p => ({ name: p.name, on: !!p.on, me: p.cid === cid, voted: H.votes[p.cid] !== undefined, gages: p.gages || 0 })) };
+    if (H.step === 'reveal') v.sides = [0, 1].map(c => H.players.filter(p => H.votes[p.cid] === c).map(p => p.name));
+    return v;
+  },
+  sound(prev, v) {
+    if (v.step === 'vote' && (prev.step !== 'vote' || prev.n !== v.n)) sfx('deal');
+    if (v.step === 'reveal' && prev.step !== 'reveal') sfx('reveal');
+    if (v.step === 'vote' && v.voted > prev.voted) sfx('tick');
+  },
+  screen() { return tpScreen(MP.role === 'host' ? MPG.tp.view(MP_CID) : MP.view); },
+};
+function tpNext() { const H = MP.H; Object.assign(H, { step: 'vote', q: vgDraw(H, 'tp' + H.level, TP_CARDS[H.level]), votes: {}, n: H.n + 1, gage: null }); mpPush(); }
+function tpReveal() {
+  const H = MP.H, a = H.players.filter(p => H.votes[p.cid] === 0), b = H.players.filter(p => H.votes[p.cid] === 1);
+  H.step = 'reveal'; H.gage = null;
+  if (a.length && b.length && a.length !== b.length) { (a.length < b.length ? a : b).forEach(p => { p.gages = (p.gages || 0) + 1; }); H.gage = vgDraw(H, 'gage', VG_GAGES); }
+  mpPush();
+}
+function tpScreen(v) {
+  const host = MP.role === 'host';
+  if (v.step === 'lobby') return vgLobby(v, 'tp-start', `<section class="panel"><h3><span>Niveau</span></h3>${vgLevelBox(v.level, 'tp-level')}<p class="hint">Soft pour tout le monde, Piquant pour les grands.</p></section>`);
+  const [A, B] = v.q;
+  if (v.step === 'vote') return `<div class="turn"><small>Question ${v.n}</small><strong>Tu préfères…</strong></div>
+    <div class="tp-duel">
+      <button class="tp-opt a" data-a="tp-vote" data-v="0" aria-pressed="${v.mine === 0}"><span>${esc(A)}</span></button>
+      <span class="tp-or">ou</span>
+      <button class="tp-opt b" data-a="tp-vote" data-v="1" aria-pressed="${v.mine === 1}"><span>${esc(B)}</span></button>
+    </div>
+    <p class="howto">${v.mine === undefined ? 'Vote en secret : personne ne voit ton choix avant la fin.' : 'Vote enregistré, tu peux encore changer d\'avis.'} ${v.voted} / ${v.of} ont voté.</p>
+    <div class="chips qs">${v.players.map(p => `<span class="chip tap ${p.voted ? 'on' : ''}">${p.voted ? '✓ ' : ''}${esc(p.name)}</span>`).join('')}</div>
+    ${host ? `<button class="btn ghost" data-a="tp-reveal" ${v.voted ? '' : 'disabled'}>Révéler sans attendre</button>` : ''}`;
+  const tot = v.sides[0].length + v.sides[1].length || 1, pct = i => Math.round(100 * v.sides[i].length / tot);
+  const minor = v.sides[0].length === v.sides[1].length ? null : v.sides[0].length < v.sides[1].length ? 0 : 1;
+  return `<div class="turn"><small>Question ${v.n}</small><strong>Verdict !</strong></div>
+    ${[0, 1].map(i => `<div class="tp-res ${i ? 'b' : 'a'} ${minor === i ? 'minor' : ''}"><div class="tp-bar" style="width:${pct(i)}%"></div><b>${pct(i)} %</b><span>${esc(v.q[i])}</span><small>${v.sides[i].length ? esc(v.sides[i].join(', ')) : 'Personne !'}</small></div>`).join('')}
+    ${minor === null ? `<div class="banner gold">Égalité parfaite ! Chaque camp défend son choix en une phrase.</div>` : v.gage ? `<div class="card compact"><p class="kind">Gage pour la minorité</p><p class="text">${esc(v.gage)}</p><p class="sub">${esc(v.sides[minor].join(', '))}</p></div>` : ''}
+    ${host ? `<div class="row"><button class="btn big" data-a="tp-next">Question suivante</button></div><div class="row">${vgLevelBox(v.level, 'tp-level')}</div>` : `<p class="howto">L'hôte passe à la question suivante.</p>`}`;
+}
+
+/* --- Action ou Vérité : chacun son tour, la carte s'affiche chez tout le monde --- */
+MPG.av = {
+  lateJoin: true,
+  rules: () => ({ title: 'Action ou Vérité', steps: [
+    "Pour finir la soirée en beauté. L'hôte crée la partie et donne le code, les autres le rejoignent. L'hôte joue aussi.",
+    "L'appli désigne à qui c'est le tour. Sur son téléphone, ce joueur choisit Action, Vérité ou le hasard.",
+    "La carte s'affiche sur tous les téléphones : tout le monde peut réagir 😂 🔥 😱 👏.",
+    "Le joueur répond ou fait le défi, puis touche « Fait ». Pas envie ? Joker : il prend un gage à la place.",
+  ], tips: ['Niveau Soft pour tout le monde, Piquant pour les soirées entre adultes.', 'Règle d\'or : chacun peut refuser, sans se justifier.'] }),
+  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('avLevel', 'soft'), order: [], turn: 0, card: null, react: {}, n: 0 }),
+  act(cid, d) {
+    const H = MP.H, cur = avCur(H);
+    if (d.t === 'av-pick' && H.step === 'choose' && cur && cur.cid === cid && ['action', 'verite', 'random'].includes(d.k)) avDeal(d.k);
+    else if (d.t === 'av-done' && H.step === 'card' && cur && cur.cid === cid) avEnd(d.joker ? 'joker' : 'done');
+    else if (d.t === 'av-react' && H.step === 'card' && VG_REACT.includes(d.e)) { H.react[d.e] = (H.react[d.e] || 0) + 1; mpPush(); }
+  },
+  view(cid) {
+    const H = MP.H, cur = avCur(H);
+    return { game: 'av', step: H.step, level: H.level, n: H.n, card: H.card, react: H.react, gage: H.gage || null,
+      turn: cur ? cur.name : null, myTurn: !!cur && cur.cid === cid,
+      players: H.players.map(p => ({ name: p.name, on: !!p.on, me: p.cid === cid, done: p.done || 0, jokers: p.jokers || 0 })) };
+  },
+  sound(prev, v) {
+    if (v.step === 'choose' && v.myTurn && !(prev.step === 'choose' && prev.myTurn)) sfx('ping');
+    if (v.step === 'card' && prev.step !== 'card') sfx('flip');
+    const r = o => Object.values(o.react || {}).reduce((a, b) => a + b, 0);
+    if (v.step === 'card' && r(v) > r(prev)) sfx('pop');
+    if (v.step === 'after' && prev.step !== 'after') sfx(v.gage ? 'lose' : 'win');
+  },
+  screen() { return avScreen(MP.role === 'host' ? MPG.av.view(MP_CID) : MP.view); },
+};
+// Joueur dont c'est le tour (on saute ceux qui sont partis)
+function avCur(H) {
+  const live = H.order.map(mpP).filter(p => p && p.on);
+  return live.length ? live[H.turn % live.length] : null;
+}
+function avDeal(k) {
+  const H = MP.H, cur = avCur(H), kind = k === 'random' ? (rand(2) ? 'action' : 'verite') : k;
+  const txt = vgDraw(H, 'av' + H.level + kind, AV_CARDS[H.level][kind]);
+  Object.assign(H, { step: 'card', card: { kind, html: vgFill(txt, vgOther(H, cur.cid)) }, react: {}, gage: null });
+  mpPush();
+}
+function avEnd(how) {
+  const H = MP.H, cur = avCur(H);
+  if (how === 'joker') { cur.jokers = (cur.jokers || 0) + 1; H.gage = vgDraw(H, 'gage', VG_GAGES); } else cur.done = (cur.done || 0) + 1;
+  H.step = 'after'; mpPush();
+}
+function avScreen(v) {
+  const host = MP.role === 'host';
+  if (v.step === 'lobby') return vgLobby(v, 'av-start', `<section class="panel"><h3><span>Niveau</span></h3>${vgLevelBox(v.level, 'av-level')}<p class="hint">Soft pour tout le monde, Piquant pour les grands.</p></section>`);
+  const scores = `<section class="panel"><h3><span>Les braves</span><span>défis · jokers</span></h3><div class="chips">${v.players.slice().sort((a, b) => b.done - a.done).map(p => `<span class="chip tap ${p.name === v.turn ? 'on' : ''}">${esc(p.name)}<span class="n">${p.done}${p.jokers ? ` · ${p.jokers}🃏` : ''}</span></span>`).join('')}</div></section>`;
+  const head = `<div class="turn"><small>Tour ${v.n + 1}</small><strong>${v.myTurn ? 'À toi !' : esc(v.turn || '…')}</strong></div>`;
+  if (v.step === 'choose') return `${head}
+    ${v.myTurn ? `<div class="av-pick"><button class="btn big" data-a="av-pick" data-v="action">Action</button><button class="btn big red" data-a="av-pick" data-v="verite">Vérité</button></div><button class="btn ghost" data-a="av-pick" data-v="random">🎲 Au hasard</button>`
+      : `<div class="card verso"><p class="text">${esc(v.turn)} choisit…</p><p class="sub">Action ou Vérité ?</p></div>`}
+    ${host && !v.myTurn ? `<button class="btn ghost" data-a="av-skip">Passer ce joueur</button>` : ''}${scores}`;
+  const card = v.card ? `<div class="card ${v.card.kind === 'verite' ? 'black' : ''}">${cardIdx(v.card.kind === 'action' ? 'A' : 'V')}<p class="kind">${v.card.kind === 'action' ? 'Action' : 'Vérité'} pour ${esc(v.turn)}</p><p class="text">${v.card.html}</p></div>` : '';
+  const reacts = `<div class="reacts">${VG_REACT.map(e => `<button data-a="av-react" data-v="${e}" aria-label="Réagir ${e}">${e}<b>${v.react[e] || ''}</b></button>`).join('')}</div>`;
+  if (v.step === 'card') return `${head}${card}${reacts}
+    ${v.myTurn ? `<div class="row"><button class="btn" data-a="av-done">Fait ✓</button><button class="btn ghost" data-a="av-joker">Joker (un gage)</button></div>` : `<p class="howto">On attend que ${esc(v.turn)} relève le défi…</p>`}
+    ${host && !v.myTurn ? `<button class="btn ghost" data-a="av-force">Valider pour ${esc(v.turn)}</button>` : ''}${scores}`;
+  return `${head}${card}
+    ${v.gage ? `<div class="card compact"><p class="kind">Joker ! Gage pour ${esc(v.turn)}</p><p class="text">${esc(v.gage)}</p></div>` : `<div class="banner gold">Bravo ${esc(v.turn)} ! 👏</div>`}
+    ${host ? `<button class="btn big" data-a="av-next">Joueur suivant</button>${vgLevelBox(v.level, 'av-level')}` : `<p class="howto">L'hôte passe au joueur suivant.</p>`}${scores}`;
+}
+Object.assign(actions, {
+  'tp-level'(k) { MP.H.level = k; store.set('tpLevel', k); mpPush(); },
+  'tp-start'() { MP.H.players = MP.H.players.filter(p => p.on); tpNext(); },
+  'tp-vote'(c) { sfx('tick'); mpSend({ t: 'tp-vote', c: +c }); },
+  'tp-reveal'() { tpReveal(); },
+  'tp-next'() { tpNext(); },
+  'av-level'(k) { MP.H.level = k; store.set('avLevel', k); mpPush(); },
+  'av-start'() { const H = MP.H; H.players = H.players.filter(p => p.on); Object.assign(H, { order: shuffle(H.players.map(p => p.cid)), turn: 0, step: 'choose' }); mpPush(); },
+  'av-pick'(k) { mpSend({ t: 'av-pick', k }); },
+  'av-done'() { mpSend({ t: 'av-done' }); },
+  'av-joker'() { mpSend({ t: 'av-done', joker: true }); },
+  'av-react'(e) { mpSend({ t: 'av-react', e }); },
+  'av-force'() { avEnd('done'); },
+  'av-skip'() { const H = MP.H; H.turn++; mpPush(); },
+  'av-next'() {
+    const H = MP.H;
+    H.players.filter(p => p.on && !H.order.includes(p.cid)).forEach(p => H.order.push(p.cid)); // les nouveaux venus prennent la file
+    Object.assign(H, { turn: H.turn + 1, n: H.n + 1, step: 'choose', card: null, gage: null, react: {} }); mpPush();
+  },
+});
+
+/* ---------- Décor : un village dans une clairière, au cœur de la forêt ---------- */
+// Nuit étoilée par défaut ; l'aube se lève sur la forêt pendant le jour du Loup-Garou.
+(function forestDecor() {
   const R = (a, b) => a + Math.random() * (b - a);
-  const stars = Array.from({ length: 46 }, () => `<circle cx="${R(0, 400).toFixed(1)}" cy="${R(10, 470).toFixed(1)}" r="${R(.5, 1.6).toFixed(2)}" style="animation-delay:${R(0, 4).toFixed(2)}s"/>`).join('');
-  const base = 604;
-  const houses = [[146, 22, 24], [166, 18, 32], [182, 26, 22], [222, 24, 28], [244, 20, 20], [262, 26, 27], [286, 18, 19], [302, 22, 15]];
-  const house = ([x, w, h]) => `<rect class="wall" x="${x}" y="${base - h}" width="${w}" height="${h + 12}"/>
-    <polygon class="roof" points="${x - 2},${base - h} ${x + w + 2},${base - h} ${x + w / 2},${base - h - 7}"/>
-    <rect class="win" x="${x + w * .25}" y="${base - h + 6}" width="4" height="5"/>${w > 20 ? `<rect class="win w2" x="${x + w * .62}" y="${base - h + 6}" width="4" height="5"/>` : ''}`;
-  const flies = Array.from({ length: 9 }, () => `<circle cx="${R(20, 380).toFixed(1)}" cy="${R(640, 770).toFixed(1)}" r="1.7" style="animation-delay:${R(0, 6).toFixed(2)}s;animation-duration:${R(5, 9).toFixed(1)}s"/>`).join('');
-  const lav = Array.from({ length: 9 }, (_, i) => `<path class="lav" d="M${-20 + i * 48} 800 Q ${10 + i * 48} 735 ${70 + i * 44} ${700 + i * 2}"/>`).join('');
-  const cypress = (x, y, h) => `<path class="cyp" d="M${x} ${y} C ${x - 7} ${y - h * .4} ${x - 4} ${y - h * .8} ${x} ${y - h} C ${x + 4} ${y - h * .8} ${x + 7} ${y - h * .4} ${x} ${y}Z"/>`;
+  const stars = Array.from({ length: 60 }, () => `<circle cx="${R(0, 400).toFixed(1)}" cy="${R(8, 460).toFixed(1)}" r="${R(.5, 1.7).toFixed(2)}" style="animation-delay:${R(0, 4).toFixed(2)}s"/>`).join('');
+  // Un sapin : trois étages de branches
+  const pine = (x, y, h, cls) => { const w = h * .46; return `<polygon class="${cls}" points="${x},${y - h} ${x + w * .32},${y - h * .62} ${x + w * .2},${y - h * .62} ${x + w * .44},${y - h * .3} ${x + w * .3},${y - h * .3} ${x + w * .5},${y} ${x - w * .5},${y} ${x - w * .3},${y - h * .3} ${x - w * .44},${y - h * .3} ${x - w * .2},${y - h * .62} ${x - w * .32},${y - h * .62}"/><rect class="${cls}" x="${x - 1.5}" y="${y - 2}" width="3" height="8"/>`; };
+  const row = (from, to, step, y, h, cls, jitter) => { let s = ''; for (let x = from; x <= to; x += step) s += pine(x + R(-jitter, jitter), y + R(-6, 6), h * R(.8, 1.2), cls); return s; };
+  const base = 610;
+  const houses = [[154, 22, 22], [174, 18, 30], [190, 24, 20], [228, 22, 26], [248, 18, 19], [264, 24, 25], [286, 18, 18]];
+  const house = ([x, w, h]) => `<rect class="wall" x="${x}" y="${base - h}" width="${w}" height="${h + 10}"/>
+    <polygon class="roof" points="${x - 3},${base - h} ${x + w + 3},${base - h} ${x + w / 2},${base - h - 11}"/>
+    <rect class="win" x="${x + w * .22}" y="${base - h + 6}" width="4" height="5"/>${w > 19 ? `<rect class="win w2" x="${x + w * .6}" y="${base - h + 6}" width="4" height="5"/>` : ''}`;
+  const flies = Array.from({ length: 12 }, () => `<circle cx="${R(20, 380).toFixed(1)}" cy="${R(600, 780).toFixed(1)}" r="1.7" style="animation-delay:${R(0, 7).toFixed(2)}s;animation-duration:${R(5, 9).toFixed(1)}s"/>`).join('');
   const el = document.createElement('div');
   el.id = 'scene'; el.setAttribute('aria-hidden', 'true');
   el.innerHTML = `<svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice">
     <g class="stars">${stars}</g>
-    <circle class="moon-glow" cx="318" cy="120" r="54"/><circle class="moon" cx="318" cy="120" r="24"/><circle class="moon-bite" cx="329" cy="113" r="21"/>
-    <circle class="sun-glow" cx="92" cy="300" r="80"/><circle class="sun" cx="92" cy="300" r="34"/>
-    <path class="hill far" d="M0 560 C 60 522 120 545 180 518 C 250 490 320 532 400 506 L400 800 L0 800Z"/>
-    <path class="hill mid" d="M0 618 C 80 582 150 604 220 586 C 290 566 350 594 400 580 L400 800 L0 800Z"/>
-    <rect class="wall" x="206" y="${base - 64}" width="15" height="76"/><polygon class="roof" points="204,${base - 64} 223,${base - 64} 213.5,${base - 82}"/>
-    <rect class="belfry" x="210.5" y="${base - 58}" width="6" height="9" rx="3"/>
+    <circle class="moon-glow" cx="312" cy="128" r="60"/><circle class="moon" cx="312" cy="128" r="26"/><circle class="crater" cx="304" cy="120" r="4"/><circle class="crater" cx="320" cy="136" r="3"/>
+    <circle class="sun-glow" cx="80" cy="420" r="90"/><circle class="sun" cx="80" cy="420" r="30"/>
+    <path class="hill far" d="M0 540 C 70 505 130 528 200 500 C 270 474 330 512 400 490 L400 800 L0 800Z"/>
+    <g>${row(-10, 410, 13, 528, 34, 'p-far', 4)}</g>
+    <path class="hill mid" d="M0 600 C 70 578 140 598 210 590 C 290 580 340 598 400 586 L400 800 L0 800Z"/>
+    <g>${row(-10, 130, 15, 606, 52, 'p-mid', 4)}${row(310, 410, 15, 600, 52, 'p-mid', 4)}</g>
+    <rect class="wall" x="208" y="${base - 58}" width="14" height="68"/><polygon class="roof" points="205,${base - 58} 225,${base - 58} 215,${base - 84}"/>
+    <rect class="belfry" x="212" y="${base - 52}" width="6" height="9" rx="3"/>
     ${houses.map(house).join('')}
-    ${cypress(122, 612, 58)}${cypress(134, 614, 40)}${cypress(334, 596, 62)}${cypress(348, 598, 44)}
-    <path class="hill near" d="M0 700 C 90 668 180 698 260 676 C 330 657 370 676 400 668 L400 800 L0 800Z"/>
-    <g class="lavs">${lav}</g>
-    <path class="stream" d="M-10 772 C 70 742 150 790 240 760 S 360 744 410 768"/>
-    <path class="stream shine" d="M-10 772 C 70 742 150 790 240 760 S 360 744 410 768"/>
+    <ellipse class="fog f1" cx="200" cy="625" rx="260" ry="16"/>
+    <path class="hill near" d="M0 690 C 90 664 180 690 260 672 C 330 656 370 672 400 664 L400 800 L0 800Z"/>
+    <path class="stream" d="M-10 770 C 70 740 150 788 240 758 S 360 742 410 766"/>
+    <path class="stream shine" d="M-10 770 C 70 740 150 788 240 758 S 360 742 410 766"/>
+    <g>${pine(18, 800, 210, 'p-near')}${pine(70, 806, 150, 'p-near')}${pine(352, 800, 200, 'p-near')}${pine(398, 806, 160, 'p-near')}</g>
+    <ellipse class="fog f2" cx="200" cy="735" rx="300" ry="20"/>
     <g class="flies">${flies}</g>
   </svg>`;
   document.body.prepend(el);
@@ -700,6 +1316,8 @@ app.addEventListener('input', e => { if (e.target.id === 'gpText') GPD.text = e.
 /* ---------- Musique : une valse de guinguette, accordéon et guitare ---------- */
 const VG_PROG = [[43, [0, 4, 7]], [40, [0, 3, 7]], [36, [0, 4, 7]], [38, [0, 4, 7, 10]], [43, [0, 4, 7]], [47, [0, 3, 7]], [36, [0, 4, 7]], [38, [0, 4, 7, 10]]];
 const G_MAJ = [7, 9, 11, 0, 2, 4, 6];
+const FC_PROG = [[45, [0, 3, 7]], [41, [0, 4, 7]], [48, [0, 4, 7]], [43, [0, 4, 7]]]; // la mineur, fa, do, sol
+let fcMel = 76;
 let vgMel = 74;
 function vgStep(m, k) { // k pas dans la gamme de sol majeur
   let n = m;
@@ -707,11 +1325,19 @@ function vgStep(m, k) { // k pas dans la gamme de sol majeur
   return Math.min(81, Math.max(67, n));
 }
 Object.assign(APP, {
-  tuneLabel: 'Valse de guinguette, accordéon et guitare',
-  ambLabel: 'Le village : vent, ruisseau, grillons, cigales',
+  tuneLabel: 'Feu de camp ou guinguette',
+  ambLabel: 'La forêt : vent, ruisseau, grillons, chouette, loups au loin',
   sfxLabel: 'Roue, cartes, cloche du village, dessins…',
   tunes: {
-    guinguette: { bpm: 104, div: 2, play(step, t, sd) {
+    // Feu de camp : guitare en arpèges et petite flûte, en la mineur
+    feu: { label: 'Feu de camp', bpm: 76, div: 3, play(step, t, sd) {
+      const s = step % 12, barN = Math.floor(step / 12), [root, iv] = FC_PROG[barN % 4];
+      const arp = [0, 7, 12, iv[1] + 12, 12, 7];
+      INST.pluck(t, root + 12 + arp[s % 6], .04, .5);
+      if (s === 0 || s === 6) INST.bass(t, root, sd * 5, .16);
+      if (barN % 8 >= 2 && Math.random() < (s % 3 ? .06 : .22)) { fcMel = [69, 72, 74, 76, 79, 81][Math.max(0, Math.min(5, [69, 72, 74, 76, 79, 81].indexOf(fcMel) + [-1, 0, 1, 1, -1][rand(5)]))] || 76; INST.flute(t, fcMel, sd * (3 + rand(4)), .035); }
+    } },
+    guinguette: { label: 'Guinguette', bpm: 104, div: 2, play(step, t, sd) {
       const s = step % 6, barN = Math.floor(step / 6), bar = barN % 8, [root, iv] = VG_PROG[bar];
       if (s === 0) INST.bass(t, barN % 16 >= 8 && bar % 2 ? root + 7 : root, sd * 1.6, .2);
       if (s === 2 || s === 4) iv.slice(0, 3).forEach((i, k) => INST.pluck(t + k * .014, root + 12 + i, .045));
@@ -727,12 +1353,12 @@ Object.assign(APP, {
       INST.musette(t, vgMel, s === 5 ? sd * .8 : sd * 1.7, .045);
     } },
   },
-  tune: () => 'guinguette',
   ambiances: {
     // Nuit d'été : vent léger, ruisseau au loin, grillons, crapaud, chouette
     night(out, parts) { vWind(out, parts, .05); vStream(out, parts, .032); vCrickets(out, parts, 4, .011);
       every(parts, 2.1, 2.7, t => tone(out, t, 1260, .09, .009, { a: .01, pan: -.55 }));
-      every(parts, 24, 50, t => SFX.owl(t, out, .7)); },
+      every(parts, 24, 50, t => SFX.owl(t, out, .7));
+      every(parts, 45, 90, t => SFX.howl(t, out, .35)); },
     // Soir : les grillons commencent, un merle chante encore
     evening(out, parts) { vWind(out, parts, .045); vStream(out, parts, .028); vCrickets(out, parts, 2, .008); vBirds(out, parts, .011, 7, 16); },
     // Après-midi : cigales, oiseaux, brise
@@ -740,8 +1366,8 @@ Object.assign(APP, {
   },
   scene: veilleeScene,
   decor() {
-    const sc = S.screen === 'mp' && MP && MP.game === 'gp' ? 'day' : S.screen === 'mp' && lgView() ? veilleeScene() : 'evening';
-    document.body.dataset.scene = sc || 'evening';
+    const v = S.screen === 'mp' ? lgView() : null;
+    document.body.dataset.scene = v && v.step === 'game' && v.phase === 'day' ? 'day' : 'night';
   },
 });
 const vWind = (out, parts, v) => loopNoise(out, parts, { f: 520, q: .5, v, lfoF: .06, lfoDepth: 280, lfoV: v * .6 });
@@ -798,6 +1424,11 @@ MPG.lg.sound = (prev, v) => {
   if (v.step === 'game' && alive(v.players) < alive(prev.players)) setTimeout(() => sfx('death'), v.phase === 'day' && prev.phase === 'night' ? 1900 : 0);
   if (v.step === 'end' && prev.step !== 'end') sfx('tada');
   if (v.lover && !prev.lover) sfx('reveal');
+  const mayor = l => (l.find(p => p.mayor) || {}).name;
+  if (mayor(v.players) && mayor(v.players) !== mayor(prev.players)) sfx('fanfare');
+  if (v.ask && !(prev.ask && prev.ask.id === v.ask.id)) sfx('ping');
+  if (v.vote && !prev.vote) sfx('pop');
+  if (v.vote && v.vote.revealed && !(prev.vote && prev.vote.revealed)) sfx('reveal');
 };
 MPG.gp.sound = (prev, v) => {
   if (v.task && (!prev.task || prev.task.id !== v.task.id)) sfx('pop');

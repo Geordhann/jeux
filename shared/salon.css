@@ -218,3 +218,7 @@ body.son-hidden .son-fab, body.son-hidden .son-sheet { display: none; }
 .son-vol { display: flex; align-items: center; gap: 12px; font-weight: 700; }
 .son-vol input { flex: 1; accent-color: var(--gold); }
 #app { position: relative; z-index: 1; }
+.game small.when { display: inline-block; margin-bottom: 2px; padding: 1px 8px; border-radius: 999px; background: var(--tile, var(--gold)); color: var(--ink); font-weight: 800; font-size: .66rem; text-transform: uppercase; letter-spacing: .08em; }
+.vote { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+.vote button { padding: 16px 10px; border-radius: 12px; background: var(--paper); color: var(--ink); font-weight: 800; overflow-wrap: anywhere; box-shadow: 0 3px 0 var(--paper-edge); }
+.vote button[aria-pressed="true"] { background: var(--red); color: var(--paper); box-shadow: 0 3px 0 #8a2229; }
