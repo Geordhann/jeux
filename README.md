@@ -15,9 +15,14 @@ Intro animée au lancement, puis 4 onglets en bas de l'écran : **Jeux** (la lis
 - **Je n'ai jamais**, **Qui pourrait…**, **Tu préfères** : paquets de cartes en 5 niveaux, avec « Qui boit ? » pour compter les gorgées.
 
 ## Chacun son téléphone (en ligne)
-Deux jeux où chaque joueur utilise son propre téléphone. Celui qui crée la partie reçoit un **code à 4 lettres** ; les autres ouvrent La Tournée › Jeux › **Rejoindre une partie** et tapent ce code (ou ouvrent un lien `index.html?code=ABCD`).
+Des jeux où chaque joueur utilise son propre téléphone. Celui qui crée la partie reçoit un **code à 4 lettres** ; les autres ouvrent La Tournée › Jeux › **Rejoindre une partie** et tapent ce code (ou ouvrent un lien `index.html?code=ABCD`).
 - **Loup-Garou** : le créateur est le maître du jeu (il ne joue pas). Il choisit les cartes (loups automatiques ou à la main, Voyante, Sorcière, Chasseur, Cupidon, Petite fille, Salvateur, Ancien, Idiot du village, Loup blanc), lance la roue, et chacun reçoit sa carte en secret sur son téléphone. Le MJ pilote ensuite la partie : déroulé de la nuit à lire à voix haute, victimes (☠), amoureux (💘), potions, réveil du village avec annonce des morts, votes, et révélation de toutes les cartes à la fin. Les loups voient leurs complices et les amoureux leur partenaire sur leur téléphone (désactivable).
 - **Téléphone dessiné** (façon Gartic Phone, 3 joueurs minimum) : chacun écrit une phrase, la passe à son voisin qui la dessine, le suivant devine le dessin, et ainsi de suite. À la fin, l'hôte fait défiler les albums sur tous les téléphones. Chrono optionnel (1 min à 2 min).
+
+- **Poker** (Texas Hold'em sans limite, 2 à 10 joueurs) : deux cartes secrètes sur ton téléphone, le tapis au centre (flop, turn, river), blindes au choix (5/10, 10/20, 25/50). L'appli gère le bouton, les relances, les tapis, les pots partagés et l'abattage.
+- **Blackjack** : tout le monde contre la banque tenue par l'appli (sabot de 6 jeux, la banque tire jusqu'à 17, blackjack payé 3 pour 2, doubler possible). Option « gages de soirée » : une main perdue = une gorgée (ou un gage), un blackjack = 2 à distribuer.
+
+Poker et Blackjack se jouent avec 1 000 jetons **fictifs** par joueur (recave possible), jamais d'argent réel. On peut rejoindre la table entre deux mains.
 
 Fonctionnement : connexion internet nécessaire. Le téléphone de l'hôte sert de serveur ; les autres s'y connectent en direct (WebRTC via [PeerJS](https://peerjs.com), bibliothèque incluse dans `vendor/`, serveur de mise en relation gratuit de PeerJS). Un téléphone qui se met en veille se reconnecte tout seul et retrouve sa carte ; si l'hôte ferme l'appli, il peut reprendre la partie depuis l'onglet Jeux. Pour tester sans réseau, ouvre plusieurs onglets avec `index.html?local`.
 

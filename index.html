@@ -362,6 +362,36 @@ body.on-intro .music-fab { display: none; }
 .bub { background: var(--paper); color: var(--ink); padding: 12px 16px; border-radius: 16px; font-family: var(--font-card); font-size: 1.25rem; line-height: 1.3; overflow-wrap: anywhere; }
 .bub.miss { font-style: italic; color: var(--ink-soft); font-size: 1rem; }
 @media (prefers-reduced-motion: reduce) { .album .it { animation: none; } }
+.pcs { display: inline-flex; gap: 5px; flex-wrap: wrap; justify-content: center; flex: none; }
+.pc { width: 44px; height: 62px; border-radius: 7px; background: #fff; color: var(--ink); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; font-weight: 800; box-shadow: 0 2px 0 var(--paper-edge), 0 4px 10px rgba(0,0,0,.3); animation: deal .3s ease-out; }
+.pc b { font-size: 1.15rem; }
+.pc i { font-style: normal; font-size: 1.2rem; }
+.pc.red { color: var(--red); }
+.pc.back { background: var(--red) repeating-linear-gradient(45deg, rgba(255,255,255,.16) 0 4px, transparent 4px 9px); border: 3px solid #fff; }
+.pc.slot { background: transparent; border: 2px dashed rgba(255,255,255,.25); box-shadow: none; animation: none; }
+.pc.sm { width: 30px; height: 43px; border-radius: 5px; }
+.pc.sm b, .pc.sm i { font-size: .8rem; }
+.pc.sm.back { border-width: 2px; }
+.pc.lg { width: 76px; height: 106px; border-radius: 10px; }
+.pc.lg b { font-size: 1.9rem; }
+.pc.lg i { font-size: 2rem; }
+@media (prefers-reduced-motion: reduce) { .pc { animation: none; } }
+.felt-table { background: radial-gradient(120% 90% at 50% 30%, #2a7a55, #17513a); border: 6px solid #6b4426; border-radius: 26px; padding: 16px 12px; display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; box-shadow: inset 0 0 30px rgba(0,0,0,.45), 0 10px 26px rgba(0,0,0,.35); }
+.felt-table > small { text-transform: uppercase; letter-spacing: .14em; font-size: .72rem; font-weight: 800; color: var(--paper); opacity: .85; }
+.felt-table .hint { color: var(--paper); opacity: .85; }
+.pot { font-family: var(--font-display); font-size: 1.7rem; color: var(--gold); line-height: 1.1; }
+.badge { display: inline-block; font-size: .64rem; font-weight: 800; background: var(--paper); color: var(--ink); border-radius: 999px; padding: 1px 6px; margin-left: 5px; vertical-align: middle; }
+.badge.d { background: var(--gold); }
+.plist li.now { border-color: var(--gold); box-shadow: inset 0 0 0 2px var(--gold); }
+.chipline { font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 800; }
+.betbar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.jeton { width: 60px; height: 60px; border-radius: 50%; font-weight: 800; color: #fff; border: 4px dashed rgba(255,255,255,.75); box-shadow: 0 3px 0 rgba(0,0,0,.4); }
+.jeton.j10 { background: #2a62c9; } .jeton.j25 { background: #2f9e5a; } .jeton.j100 { background: #221c17; } .jeton.j500 { background: #8e44ad; }
+.hand-btn { display: flex; justify-content: center; padding: 4px; }
+.my-hand { align-items: center; text-align: center; }
+.my-hand h3 { width: 100%; }
+.card.compact { min-height: 0; padding: 22px 20px; }
+.raise input[type=range] { width: 100%; accent-color: var(--gold); }
 </style>
 </head>
 <body>
@@ -2472,6 +2502,29 @@ const RULES = {
     S.alcohol ? "Le camp minoritaire boit." : "Le camp minoritaire prend un point de gage.",
     "En cas d'égalité, chaque camp défend son choix en une phrase et le lecteur tranche.",
   ], tips: [] }),
+  pk: () => ({ title: 'Poker', steps: [
+    "Un joueur crée la table et donne le code ; les autres la rejoignent depuis leur téléphone. Tout le monde commence avec 1 000 jetons fictifs.",
+    "Chacun reçoit deux cartes secrètes sur son téléphone. Le bouton (D), la petite blinde (PB) et la grosse blinde (GB) tournent à chaque main.",
+    "À ton tour : te coucher, parler (si personne n'a misé), suivre, ou relancer avec le curseur. Tapis = tout miser.",
+    "Le flop (3 cartes), le turn puis la river s'affichent au centre. Une relance à chaque étape.",
+    "À l'abattage, la meilleure combinaison de 5 cartes parmi tes 2 cartes et les 5 du centre gagne le pot. L'appli calcule tout, y compris les pots partagés et les tapis.",
+  ], tips: [
+    "Combinaisons, de la plus faible à la plus forte : carte haute, paire, double paire, brelan, quinte, couleur, full, carré, quinte flush.",
+    "Touche tes cartes pour les cacher si ton voisin est trop curieux.",
+    "Plus de jetons ? La recave te redonne 1 000 jetons entre deux mains.",
+    "Jetons fictifs uniquement : on joue pour la gloire, jamais d'argent.",
+  ] }),
+  bj: () => ({ title: 'Blackjack', steps: [
+    "Un joueur crée la table et donne le code ; les autres la rejoignent. La banque est tenue par l'appli.",
+    "Chacun mise avec ses jetons (1 000 au départ, fictifs).",
+    "Tu reçois deux cartes, la banque en montre une. But : t'approcher de 21 sans dépasser. Figures = 10, as = 1 ou 11.",
+    "À ton tour : « Carte » pour en tirer une, « Je reste » pour t'arrêter, ou « Doubler » ta mise contre une seule carte.",
+    "La banque tire jusqu'à 17. Tu gagnes si tu fais mieux qu'elle ou si elle saute. Un blackjack (as + 10 d'entrée) paie 3 pour 2.",
+  ], tips: [
+    S.alcohol ? "Gages de soirée : chaque main perdue = une gorgée, un blackjack = 2 gorgées à distribuer." : "Gages de soirée : chaque main perdue = un gage, un blackjack = 2 gages à distribuer.",
+    "Plus de jetons ? La recave te redonne 1 000 jetons.",
+    "Jetons fictifs uniquement : on joue pour la gloire, jamais d'argent.",
+  ] }),
   lg: () => ({ title: 'Loup-Garou', steps: [
     "Le maître du jeu (MJ) crée la partie sur son téléphone et donne le code. Il ne joue pas : il raconte et arbitre.",
     "Chaque joueur ouvre La Tournée sur son téléphone, touche « Rejoindre une partie » et tape le code.",
@@ -2839,6 +2892,8 @@ const MP_CID = (() => { // identifiant de ce téléphone : il retrouve sa place 
 const MP_GAMES = [
   { id: 'lg', name: 'Loup-Garou', icon: '🐺', desc: "Tu es le maître du jeu : la roue distribue une carte secrète sur le téléphone de chacun." },
   { id: 'gp', name: 'Téléphone dessiné', icon: '✏️', desc: "Écris, dessine, devine : la phrase passe de téléphone en téléphone et se déforme." },
+  { id: 'pk', name: 'Poker', icon: '♠️', desc: "Texas Hold'em entre amis : tes cartes sur ton téléphone, jetons fictifs, l'appli gère pot et blindes." },
+  { id: 'bj', name: 'Blackjack', icon: '🃏', desc: "Tout le monde contre la banque, tenue par l'appli. Avec gages de soirée en option." },
 ];
 let MP = null, mpLock = null;
 
@@ -2955,11 +3010,11 @@ function mpHostRecv(conn, d) {
     if (!cid || !name || cid === MP_CID) return mpRefuse(conn, "Impossible de rejoindre ta propre partie depuis le même téléphone.");
     let p = mpP(cid);
     if (!p) {
-      if (H.step !== 'lobby') return mpRefuse(conn, 'La partie a déjà commencé. Attends la prochaine !');
+      if (H.step !== 'lobby' && !MPG[MP.game].lateJoin) return mpRefuse(conn, 'La partie a déjà commencé. Attends la prochaine !');
       if (H.players.length >= 20) return mpRefuse(conn, 'La partie est complète (20 joueurs maximum).');
       let nm = name, k = 2;
       while (H.players.some(x => x.name.toLowerCase() === nm.toLowerCase())) nm = `${name} ${k++}`;
-      p = { cid, name: nm }; H.players.push(p);
+      p = { cid, name: nm }; MPG[MP.game].join && MPG[MP.game].join(p); H.players.push(p);
       toast(`${nm} a rejoint la partie.`);
     }
     const old = MP.conns.get(cid);
@@ -3623,6 +3678,424 @@ Object.assign(actions, {
   'gp-again'() { const H = MP.H; Object.assign(H, { step: 'lobby', album: null, chains: [], order: [], subs: {}, end: null }); mpPush(); },
 });
 app.addEventListener('input', e => { if (e.target.id === 'gpText') GPD.text = e.target.value; });
+/* ---------- Casino entre amis : cartes communes ---------- */
+// Jetons fictifs uniquement : aucun argent réel, aucune mise réelle.
+const SUIT_SYM = { s: '♠', h: '♥', d: '♦', c: '♣' };
+const RANKS = '23456789TJQKA';
+const CASINO_STACK = 1000;
+const newDeck = (k = 1) => shuffle(Array.from({ length: 52 * k }, (_, i) => RANKS[i % 13] + 'shdc'[Math.floor(i / 13) % 4]));
+const isCard = c => typeof c === 'string' && c.length === 2 && RANKS.includes(c[0]) && SUIT_SYM[c[1]];
+const pcard = (c, cls = '') => isCard(c)
+  ? `<span class="pc ${'hd'.includes(c[1]) ? 'red' : ''} ${cls}" aria-label="${c[0] === 'T' ? '10' : c[0]} ${SUIT_SYM[c[1]]}"><b>${c[0] === 'T' ? '10' : c[0]}</b><i>${SUIT_SYM[c[1]]}</i></span>`
+  : `<span class="pc back ${cls}" aria-label="carte cachée"></span>`;
+const pcards = (l, cls = '') => `<span class="pcs">${(l || []).map(c => pcard(c, cls)).join('')}</span>`;
+const chipsTxt = n => `${(n || 0).toLocaleString('fr-FR')} jetons`;
+const casinoNew = p => Object.assign(p, { chips: CASINO_STACK, re: 0 });
+// Recave : un joueur à sec repart avec un tapis neuf (compté, pour la frime)
+function casinoRebuy(p) { if (p && p.chips < 10) { p.chips = CASINO_STACK; p.re = (p.re || 0) + 1; mpPush(); } }
+const casinoLobby = (v, opts) => {
+  if (MP.role !== 'host') return `${roomBox(false)}<section class="panel"><h3><span>À la table</span><span>${v.players.length}</span></h3>
+    <div class="chips">${v.players.map(p => `<span class="chip tap">${esc(p.name)}</span>`).join('')}</div></section>
+    <p class="howto">L'hôte va ouvrir la table. Chacun commence avec ${chipsTxt(CASINO_STACK)} (fictifs).</p>`;
+  const H = MP.H, n = H.players.filter(p => p.on).length;
+  return `${roomBox(true)}
+  <section class="panel"><h3><span>À la table</span><span>${H.players.length}</span></h3>
+    <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
+    <p class="hint">On peut aussi rejoindre la table en cours de partie, entre deux mains.</p>
+  </section>
+  ${opts.panel}
+  <button class="btn big" data-a="${opts.start}" ${n < opts.min || MP.status !== 'open' ? 'disabled' : ''}>${n < opts.min ? `Il faut au moins ${opts.min} joueurs` : `Ouvrir la table (${n} joueurs)`}</button>`;
+};
+
+/* ---------- Blackjack ---------- */
+// Chacun joue contre la banque, tenue par l'appli. Sabot de 6 jeux, la banque tire jusqu'à 17.
+function bjTotal(cards) {
+  let t = 0, aces = 0;
+  cards.forEach(c => { if (!c) return; if (c[0] === 'A') { t += 11; aces++; } else t += 'TJQK'.includes(c[0]) ? 10 : +c[0]; });
+  while (t > 21 && aces) { t -= 10; aces--; }
+  return { t, soft: aces > 0 };
+}
+function bjDraw() { const H = MP.H; if (H.shoe.length < 60) H.shoe = newDeck(6); return H.shoe.pop(); }
+const bjCur = () => { const H = MP.H; return H.step === 'play' ? mpP(H.order[H.turn]) : null; };
+MPG.bj = {
+  lateJoin: true,
+  init: name => ({ step: 'lobby', players: [casinoNew({ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true })], cfg: { gages: true }, shoe: newDeck(6), dealer: [], order: [], turn: -1, n: 0 }),
+  join: p => { casinoNew(p); Object.assign(p, { bet: 0, ready: false, hand: [], st: '' }); },
+  resume() { if (MP.H.step === 'dealer') bjDealer(); },
+  act(cid, d) {
+    const H = MP.H, p = mpP(cid);
+    if (!p) return;
+    if (d.t === 'bj-bet' && H.step === 'bet' && !p.ready) {
+      const v = Math.floor(+d.v);
+      if (!(v >= 10 && v <= p.chips)) return;
+      Object.assign(p, { bet: v, last: v, ready: true }); p.chips -= v;
+      const want = H.players.filter(x => x.on && (x.ready || x.chips >= 10));
+      if (want.every(x => x.ready)) bjDeal(); else mpPush();
+    } else if (d.t === 'bj-unbet' && H.step === 'bet' && p.ready) {
+      p.chips += p.bet; Object.assign(p, { bet: 0, ready: false }); mpPush();
+    } else if (d.t === 'bj-rebuy' && !['play', 'dealer'].includes(H.step) && !p.ready) casinoRebuy(p);
+    else if (d.t === 'bj-act' && bjCur() === p) bjMove(p, d.a);
+  },
+  view(cid) {
+    const H = MP.H, hide = H.step === 'play';
+    const dc = hide ? [H.dealer[0], null] : H.dealer;
+    return { game: 'bj', step: H.step, n: H.n, gages: H.cfg.gages, alc: S.alcohol,
+      dealer: { cards: dc, t: H.dealer.length ? bjTotal(dc).t : null },
+      turn: (bjCur() || {}).name || null,
+      players: H.players.map(p => ({ name: p.name, on: !!p.on, chips: p.chips, bet: p.bet || 0, ready: !!p.ready, last: p.last || 50, hand: p.hand || [], t: p.hand && p.hand.length ? bjTotal(p.hand).t : null,
+        st: p.st || '', res: p.res || '', gain: p.gain || 0, re: p.re || 0, me: p.cid === cid, inHand: H.order.includes(p.cid), canDouble: !!(p.hand && p.hand.length === 2 && p.chips >= p.bet) })) };
+  },
+  notify(prev, v) {
+    const me = v.players.find(p => p.me);
+    if (v.step === 'play' && v.turn === (me || {}).name && !(prev && prev.turn === v.turn && prev.step === 'play')) try { navigator.vibrate && navigator.vibrate(80); } catch (e) {}
+    if (v.step === 'bet' && (!prev || prev.step !== 'bet')) MP.bjBet = null;
+  },
+  screen() { return bjScreen(MP.role === 'host' ? MPG.bj.view(MP_CID) : MP.view); },
+};
+function bjDeal() {
+  const H = MP.H;
+  clearTimeout(MP.bjT);
+  H.order = H.players.filter(p => p.ready).map(p => p.cid);
+  if (!H.order.length) return;
+  H.players.forEach(p => { p.hand = []; p.st = ''; p.res = ''; p.gain = 0; });
+  H.order.forEach(c => { const p = mpP(c); p.hand = [bjDraw(), bjDraw()]; p.st = bjTotal(p.hand).t === 21 ? 'bj' : 'play'; });
+  H.dealer = [bjDraw(), bjDraw()]; H.n++; H.turn = -1;
+  if (bjTotal(H.dealer).t === 21) { H.step = 'dealer'; bjSettle(); return; } // la banque a un blackjack : on révèle tout de suite
+  bjNext();
+}
+function bjNext() {
+  const H = MP.H;
+  let i = H.turn + 1;
+  while (i < H.order.length && mpP(H.order[i]).st !== 'play') i++;
+  if (i < H.order.length) { H.turn = i; H.step = 'play'; mpPush(); return; }
+  H.turn = -1; H.step = 'dealer'; mpPush(); bjDealer();
+}
+function bjMove(p, a) {
+  if (a === 'hit') {
+    p.hand.push(bjDraw());
+    const t = bjTotal(p.hand).t;
+    if (t > 21) p.st = 'bust'; else if (t === 21) p.st = 'stand';
+  } else if (a === 'stand') p.st = 'stand';
+  else if (a === 'double' && p.hand.length === 2 && p.chips >= p.bet) {
+    p.chips -= p.bet; p.bet *= 2; p.hand.push(bjDraw());
+    p.st = bjTotal(p.hand).t > 21 ? 'bust' : 'stand';
+  } else return;
+  if (p.st === 'play') mpPush(); else bjNext();
+}
+// La banque retourne sa carte puis tire, une carte à la fois pour le suspense
+function bjDealer() {
+  const H = MP.H, m = MP;
+  const stands = H.order.some(c => ['stand', 'play'].includes(mpP(c).st));
+  const go = () => {
+    if (MP !== m || H.step !== 'dealer') return;
+    if (stands && bjTotal(H.dealer).t < 17) { H.dealer.push(bjDraw()); mpPush(); m.bjT = setTimeout(go, 850); }
+    else bjSettle();
+  };
+  clearTimeout(m.bjT); m.bjT = setTimeout(go, 900);
+}
+function bjSettle() {
+  const H = MP.H, d = bjTotal(H.dealer).t, dbj = H.dealer.length === 2 && d === 21;
+  H.order.forEach(c => {
+    const p = mpP(c), t = bjTotal(p.hand).t, b = p.bet;
+    let res, back = 0;
+    if (p.st === 'bust') res = 'lose';
+    else if (p.st === 'bj') { if (dbj) { res = 'push'; back = b; } else { res = 'bj'; back = b + Math.floor(b * 1.5); } }
+    else if (dbj) res = 'lose';
+    else if (d > 21 || t > d) { res = 'win'; back = 2 * b; }
+    else if (t === d) { res = 'push'; back = b; }
+    else res = 'lose';
+    p.chips += back; p.res = res; p.gain = back - b;
+  });
+  H.step = 'result'; mpPush();
+}
+const BJ_RES = { win: 'Gagné', bj: 'Blackjack !', push: 'Égalité', lose: 'Perdu' };
+const BJ_ST = { bust: 'Sauté', bj: 'Blackjack', stand: 'Reste', play: 'Joue…' };
+function bjScreen(v) {
+  const host = MP.role === 'host', me = v.players.find(p => p.me) || { chips: 0, hand: [] };
+  if (v.step === 'lobby') return casinoLobby(v, { start: 'bj-open', min: 1, panel: `<section class="panel">
+    <div class="toggle"><span><b>Gages de soirée</b><br><span class="hint">Chaque main perdue : ${v.alc ? 'une gorgée' : 'un gage'}. Un blackjack : tu en distribues 2.</span></span>
+      <button data-a="bj-gages" aria-pressed="${v.gages}" aria-label="Gages de soirée"></button></div>
+    <p class="hint">Blackjack payé 3 pour 2, la banque tire jusqu'à 17. Tu peux doubler sur tes deux premières cartes.</p></section>` });
+  const stack = `<p class="howto"><span class="chipline">${chipsTxt(me.chips)}</span>${me.re ? ` · ${me.re} recave${me.re > 1 ? 's' : ''}` : ''}</p>`;
+  if (v.step === 'bet') {
+    const ready = v.players.filter(p => p.ready).length;
+    let mine;
+    if (me.ready) mine = `<div class="card compact"><p class="kind">Ta mise</p><p class="text big-result">${me.bet}</p><p class="sub">En attente des autres joueurs…</p></div>
+      <button class="btn ghost" data-a="bj-unbet">Changer ma mise</button>`;
+    else if (me.chips < 10) mine = `<div class="card"><p class="kind">Plus de jetons</p><p class="text">Tu es à sec !</p></div><button class="btn big" data-a="bj-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>`;
+    else {
+      const bet = MP.bjBet == null ? Math.min(me.last, me.chips) : Math.min(MP.bjBet, me.chips);
+      mine = `<div class="card compact"><p class="kind">Ta mise</p><p class="text big-result">${bet}</p></div>
+      <div class="betbar">${[10, 25, 100, 500].map(k => `<button class="jeton j${k}" data-a="bj-add" data-v="${k}" ${me.chips < 10 ? 'disabled' : ''}>+${k}</button>`).join('')}</div>
+      <div class="row"><button class="btn ghost" data-a="bj-clear">Effacer</button><button class="btn ghost" data-a="bj-all">Tapis</button></div>
+      <button class="btn big" data-a="bj-bet" data-v="${bet}" ${bet < 10 ? 'disabled' : ''}>${bet < 10 ? 'Mise minimum : 10' : `Miser ${bet}`}</button>`;
+    }
+    return `<div class="turn"><small>Main ${v.n + 1}</small><strong>Faites vos jeux</strong></div>${stack}${mine}
+      <section class="panel"><h3><span>La table</span><span>${ready} prêt${ready > 1 ? 's' : ''}</span></h3><div class="chips">${v.players.map(p => `<span class="chip tap ${p.ready ? 'on' : ''} ${p.on ? '' : 'off'}">${p.ready ? '✓ ' : ''}${esc(p.name)}<span class="n">${p.ready ? p.bet : p.chips}</span></span>`).join('')}</div></section>
+      ${host ? `<button class="btn" data-a="bj-deal" ${ready ? '' : 'disabled'}>Distribuer sans attendre les autres</button>` : ''}`;
+  }
+  // Main en cours ou résultats
+  const dealer = `<div class="felt-table"><small>La banque</small>${pcards(v.dealer.cards)}${v.dealer.t != null ? `<span class="pot">${v.dealer.t > 21 ? 'Sautée !' : v.dealer.t}</span>` : ''}</div>`;
+  const seats = `<ul class="plist">${v.players.filter(p => p.inHand).map(p => `<li class="${v.turn === p.name ? 'now' : ''} ${p.res === 'lose' ? 'dead' : ''}">
+      <span class="nm"><b>${esc(p.name)}${p.me ? ' (toi)' : ''}</b><small>Mise ${p.bet} · ${v.step === 'result' ? `${BJ_RES[p.res]} ${p.gain > 0 ? '+' + p.gain : p.gain < 0 ? p.gain : ''}` : BJ_ST[p.st] || ''}</small></span>
+      ${pcards(p.hand, 'sm')}<b class="chipline">${p.t}</b></li>`).join('')}</ul>`;
+  const myTurn = v.step === 'play' && v.turn === me.name;
+  let zone = '';
+  if (myTurn) zone = `<div class="banner gold">À toi de jouer : ${bjTotal(me.hand).t}${bjTotal(me.hand).soft ? ' (as compté 11)' : ''}</div>
+    <div class="row"><button class="btn big" data-a="bj-act" data-v="hit">Carte</button><button class="btn big red" data-a="bj-act" data-v="stand">Je reste</button></div>
+    ${me.canDouble ? `<button class="btn paper" data-a="bj-act" data-v="double">Doubler (+${me.bet}) et une seule carte</button>` : ''}`;
+  else if (v.step === 'play') zone = `<p class="howto">Au tour de ${esc(v.turn || '…')}.</p>${host && v.turn && !(v.players.find(p => p.name === v.turn) || {}).on ? `<button class="btn ghost" data-a="bj-skip">${esc(v.turn)} est déconnecté·e : il reste</button>` : ''}`;
+  else if (v.step === 'dealer') zone = `<p class="howto">La banque joue…</p>`;
+  else {
+    const losers = v.players.filter(p => p.inHand && p.res === 'lose').map(p => p.name), bjs = v.players.filter(p => p.res === 'bj').map(p => p.name);
+    const unit = v.alc ? 'gorgée' : 'gage';
+    zone = `${me.inHand ? `<div class="banner ${me.res === 'lose' ? '' : 'gold'}">${BJ_RES[me.res]}${me.gain ? ` (${me.gain > 0 ? '+' : ''}${me.gain})` : ''}</div>` : ''}
+      ${v.gages && (losers.length || bjs.length) ? `<p class="howto">${losers.length ? `${esc(losers.join(', '))} : ${v.alc ? 'une gorgée' : 'un gage'} chacun·e.` : ''} ${bjs.length ? `${esc(bjs.join(', '))} distribue${bjs.length > 1 ? 'nt' : ''} 2 ${unit}s.` : ''}</p>` : ''}
+      ${host ? `<button class="btn big" data-a="bj-next">Main suivante</button>` : `<p class="howto">L'hôte lance la main suivante.</p>`}`;
+  }
+  return `<div class="turn"><small>Main ${v.n}</small><strong class="q">${v.step === 'result' ? 'Résultats' : 'Blackjack'}</strong></div>${dealer}${seats}${zone}${stack}`;
+}
+
+/* ---------- Poker (Texas Hold'em, sans limite) ---------- */
+const PK_HANDS = ['Carte haute', 'Paire', 'Double paire', 'Brelan', 'Quinte', 'Couleur', 'Full', 'Carré', 'Quinte flush'];
+const PK_BLINDS = [[5, 10], [10, 20], [25, 50]];
+const PK_STREET = ['Avant le flop', 'Flop', 'Turn', 'River'];
+const RV = c => RANKS.indexOf(c[0]) + 2;
+// Valeur d'une main de 5 cartes : [catégorie, départages…], comparée case par case
+function pkEval5(cs) {
+  const v = cs.map(RV).sort((a, b) => b - a), flush = cs.every(c => c[1] === cs[0][1]);
+  let straight = 0;
+  if (new Set(v).size === 5) { if (v[0] - v[4] === 4) straight = v[0]; else if (v.join() === '14,5,4,3,2') straight = 5; }
+  const cnt = {}; v.forEach(x => { cnt[x] = (cnt[x] || 0) + 1; });
+  const g = Object.entries(cnt).map(([x, n]) => [n, +x]).sort((a, b) => b[0] - a[0] || b[1] - a[1]), k = g.map(x => x[1]);
+  if (straight && flush) return [8, straight];
+  if (g[0][0] === 4) return [7, ...k];
+  if (g[0][0] === 3 && g[1][0] === 2) return [6, ...k];
+  if (flush) return [5, ...v];
+  if (straight) return [4, straight];
+  if (g[0][0] === 3) return [3, ...k];
+  if (g[0][0] === 2 && g[1][0] === 2) return [2, ...k];
+  if (g[0][0] === 2) return [1, ...k];
+  return [0, ...v];
+}
+const pkCmp = (a, b) => { for (let i = 0; i < Math.max(a.length, b.length); i++) { const d = (a[i] || 0) - (b[i] || 0); if (d) return d; } return 0; };
+function pkBest(cs) {
+  let best = null;
+  const n = cs.length;
+  for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) for (let c = b + 1; c < n; c++) for (let d = c + 1; d < n; d++) for (let e = d + 1; e < n; e++) {
+    const s = pkEval5([cs[a], cs[b], cs[c], cs[d], cs[e]]);
+    if (!best || pkCmp(s, best) > 0) best = s;
+  }
+  return best;
+}
+const pkName = s => !s ? '' : s[0] === 8 && s[1] === 14 ? 'Quinte flush royale' : PK_HANDS[s[0]];
+MPG.pk = {
+  lateJoin: true,
+  init: name => ({ step: 'lobby', players: [casinoNew({ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true })], cfg: { blinds: store.get('pkBlinds', [10, 20]) }, hand: null, btnCid: null, n: 0 }),
+  join: p => casinoNew(p),
+  act(cid, d) {
+    const H = MP.H, p = mpP(cid);
+    if (!p) return;
+    if (d.t === 'pk-act') pkAct(cid, d);
+    else if (d.t === 'pk-rebuy' && (H.step !== 'hand' || !H.hand.seats.includes(cid))) casinoRebuy(p);
+  },
+  view(cid) {
+    const H = MP.H, h = H.hand, show = H.step === 'show';
+    const v = { game: 'pk', step: H.step, blinds: H.cfg.blinds, n: H.n,
+      players: H.players.map(p => ({ name: p.name, chips: p.chips, on: !!p.on, re: p.re || 0, me: p.cid === cid })) };
+    if (!h) return v;
+    const shown = show && h.res ? h.res.shown : [];
+    Object.assign(v, { board: h.board, pot: h.seats.reduce((s, c) => s + (h.total[c] || 0), 0), street: h.street, last: h.last, res: show && h.res ? { lines: h.res.lines, showdown: shown.length > 0 } : null,
+      seats: h.seats.map((c, i) => { const p = mpP(c); return { name: p.name, chips: p.chips, bet: h.bet[c] || 0, folded: !!h.folded[c], allin: !!h.allin[c], on: !!p.on,
+        btn: i === h.btn, sb: i === h.sb, bb: i === h.bb, turn: H.step === 'hand' && i === h.cur, me: c === cid,
+        cards: c === cid || shown.includes(c) ? h.hole[c] : null, hn: shown.includes(c) ? pkName(pkBest(h.hole[c].concat(h.board))) : '' }; }) });
+    if (h.hole[cid]) {
+      const p = mpP(cid), bet = h.bet[cid] || 0;
+      v.me = { hole: h.hole[cid], hn: h.board.length >= 3 ? pkName(pkBest(h.hole[cid].concat(h.board))) : '', folded: !!h.folded[cid] };
+      if (H.step === 'hand' && h.seats[h.cur] === cid) {
+        const max = p.chips + bet, toCall = Math.min(h.curBet - bet, p.chips);
+        Object.assign(v.me, { turn: true, toCall, max, minTo: Math.min(max, h.curBet + h.minRaise), canRaise: max > h.curBet, pot: v.pot });
+      }
+    }
+    return v;
+  },
+  notify(prev, v) {
+    const t = v.me && v.me.turn, was = prev && prev.me && prev.me.turn;
+    if (t && !was) { MP.pkTo = null; try { navigator.vibrate && navigator.vibrate([70, 50, 70]); } catch (e) {} }
+  },
+  screen() { return pkScreen(MP.role === 'host' ? MPG.pk.view(MP_CID) : MP.view); },
+};
+const pkCan = (h, c) => !h.folded[c] && !h.allin[c];
+function pkPut(c, amt) {
+  const h = MP.H.hand, p = mpP(c), a = Math.max(0, Math.min(amt, p.chips));
+  p.chips -= a; h.bet[c] = (h.bet[c] || 0) + a; h.total[c] = (h.total[c] || 0) + a;
+  if (!p.chips) h.allin[c] = true;
+  return a;
+}
+function pkStart() {
+  const H = MP.H, [SB, BB] = H.cfg.blinds;
+  const seats = H.players.filter(p => p.on && p.chips > 0).map(p => p.cid);
+  if (seats.length < 2) { toast('Il faut au moins 2 joueurs connectés avec des jetons.'); return; }
+  const order = H.players.map(p => p.cid), start = order.indexOf(H.btnCid);
+  let btnCid = seats[0];
+  for (let k = 1; k <= order.length; k++) { const c = order[(start + k + order.length) % order.length]; if (seats.includes(c)) { btnCid = c; break; } }
+  H.btnCid = btnCid;
+  const n = seats.length, btn = seats.indexOf(btnCid), sb = n === 2 ? btn : (btn + 1) % n, bb = (sb + 1) % n;
+  const deck = newDeck();
+  H.hand = { seats, btn, sb, bb, deck, hole: {}, board: [], bet: {}, total: {}, folded: {}, allin: {}, acted: {}, street: 0, curBet: BB, minRaise: BB, cur: -1, last: '', res: null };
+  seats.forEach(c => { H.hand.hole[c] = [deck.pop(), deck.pop()]; });
+  pkPut(seats[sb], SB); pkPut(seats[bb], BB);
+  H.hand.last = `Blindes ${SB} / ${BB}`;
+  H.step = 'hand';
+  pkProgress(n === 2 ? sb : (bb + 1) % n);
+}
+function pkAct(cid, d) {
+  const H = MP.H, h = H.hand;
+  if (H.step !== 'hand' || !h || h.seats[h.cur] !== cid) return;
+  const p = mpP(cid), bet = h.bet[cid] || 0, toCall = h.curBet - bet;
+  if (d.a === 'fold') { h.folded[cid] = true; h.last = `${p.name} se couche`; }
+  else if (d.a === 'check') { if (toCall > 0) return; h.last = `${p.name} parole`; }
+  else if (d.a === 'call') { if (toCall <= 0) return; pkPut(cid, toCall); h.last = `${p.name} suit${h.allin[cid] ? ' (tapis)' : ''}`; }
+  else if (d.a === 'raise') {
+    const max = p.chips + bet;
+    let to = Math.floor(+d.to);
+    if (!(to > h.curBet)) return;
+    if (to >= max) to = max;
+    const by = to - h.curBet;
+    if (by < h.minRaise && to < max) return;
+    pkPut(cid, to - bet);
+    if (by >= h.minRaise) { h.minRaise = by; h.acted = {}; }
+    h.curBet = to;
+    h.last = h.allin[cid] ? `${p.name} fait tapis (${to})` : `${p.name} ${bet || h.street === 0 ? 'relance' : 'mise'} à ${to}`;
+  } else return;
+  h.acted[cid] = true;
+  pkProgress(h.cur + 1);
+}
+function pkProgress(from) {
+  const h = MP.H.hand, n = h.seats.length;
+  if (h.seats.filter(c => !h.folded[c]).length === 1) return pkEnd();
+  const actors = h.seats.filter(c => pkCan(h, c));
+  // Seul joueur pouvant encore parler face à des tapis : rien à décider s'il a déjà suivi
+  const lone = actors.length === 1 && (h.bet[actors[0]] || 0) >= h.curBet;
+  for (let k = 0; k < n && !lone; k++) {
+    const i = (from + k) % n, c = h.seats[i];
+    if (pkCan(h, c) && !(h.acted[c] && (h.bet[c] || 0) === h.curBet)) { h.cur = i; mpPush(); return; }
+  }
+  // Tour d'enchères terminé
+  h.bet = {}; h.curBet = 0; h.minRaise = MP.H.cfg.blinds[1]; h.acted = {}; h.cur = -1;
+  if (h.street >= 3) return pkEnd();
+  if (actors.length <= 1) { while (h.board.length < 5) h.board.push(h.deck.pop()); h.street = 3; return pkEnd(); }
+  h.street++;
+  h.board.push(...h.deck.splice(-(h.street === 1 ? 3 : 1)));
+  pkProgress((h.btn + 1) % n);
+}
+function pkEnd() {
+  const H = MP.H, h = H.hand, seats = h.seats, live = seats.filter(c => !h.folded[c]);
+  // Rend la part d'une mise que personne n'a pu suivre
+  const tops = seats.map(c => h.total[c] || 0), max = Math.max(...tops);
+  if (tops.filter(t => t === max).length === 1) {
+    const c = seats[tops.indexOf(max)], second = Math.max(0, ...tops.filter((t, i) => i !== tops.indexOf(max))), back = max - second;
+    if (back > 0) { h.total[c] -= back; mpP(c).chips += back; if (mpP(c).chips) delete h.allin[c]; }
+  }
+  const won = {};
+  const give = (c, a) => { won[c] = (won[c] || 0) + a; mpP(c).chips += a; };
+  const all = seats.reduce((s, c) => s + (h.total[c] || 0), 0);
+  if (live.length === 1) { give(live[0], all); h.res = { lines: [{ name: mpP(live[0]).name, amount: all, hn: '' }], shown: [] }; }
+  else {
+    const score = {}; live.forEach(c => { score[c] = pkBest(h.hole[c].concat(h.board)); });
+    const levels = [...new Set(live.map(c => h.total[c] || 0))].filter(x => x > 0).sort((a, b) => a - b);
+    const byPos = c => (seats.indexOf(c) - h.btn - 1 + seats.length * 2) % seats.length; // l'éventuel jeton restant va au premier après le bouton
+    let prev = 0, dealt = 0;
+    levels.forEach((L, li) => {
+      let amount = seats.reduce((s, c) => s + Math.max(0, Math.min(h.total[c] || 0, L) - prev), 0);
+      if (li === levels.length - 1) amount = all - dealt;
+      dealt += amount; prev = L;
+      const elig = live.filter(c => (h.total[c] || 0) >= L);
+      const best = elig.reduce((b, c) => !b || pkCmp(score[c], b) > 0 ? score[c] : b, null);
+      const wins = elig.filter(c => pkCmp(score[c], best) === 0).sort((a, b) => byPos(a) - byPos(b));
+      const share = Math.floor(amount / wins.length);
+      wins.forEach((c, i) => give(c, share + (i === 0 ? amount - share * wins.length : 0)));
+    });
+    h.res = { lines: Object.keys(won).map(c => ({ name: mpP(c).name, amount: won[c], hn: pkName(score[c]) })).sort((a, b) => b.amount - a.amount), shown: live };
+  }
+  H.step = 'show'; H.n++; h.cur = -1;
+  mpPush();
+}
+function pkScreen(v) {
+  const host = MP.role === 'host', mine = v.players.find(p => p.me) || { chips: 0 };
+  if (v.step === 'lobby') return casinoLobby(v, { start: 'pk-start', min: 2, panel: `<section class="panel"><h3><span>Blindes</span><span>${chipsTxt(CASINO_STACK)} chacun</span></h3>
+    <div class="levels three" role="group" aria-label="Blindes">${PK_BLINDS.map(b => `<button data-a="pk-blinds" data-v="${b.join('/')}" aria-pressed="${v.blinds.join('/') === b.join('/')}">${b.join(' / ')}</button>`).join('')}</div>
+    <p class="hint">Texas Hold'em sans limite. Le bouton tourne à chaque main.</p></section>` });
+  const seated = v.seats && v.seats.find(s => s.me);
+  const slots = [0, 1, 2, 3, 4].map(i => v.board[i] ? pcard(v.board[i]) : `<span class="pc slot"></span>`).join('');
+  const table = `<div class="felt-table"><small>${v.step === 'show' ? 'Fin de la main' : PK_STREET[v.street]} · main ${v.n + (v.step === 'show' ? 0 : 1)}</small><span class="pcs">${slots}</span><span class="pot">Pot ${v.pot}</span>${v.last ? `<span class="hint">${esc(v.last)}</span>` : ''}</div>`;
+  const res = v.res ? `<div class="card compact"><p class="kind">${v.res.showdown ? 'Abattage' : 'Tout le monde s\'est couché'}</p>${v.res.lines.map(l => `<p class="text">${esc(l.name)} gagne <em>${l.amount}</em>${l.hn ? `<br><span class="sub">avec ${l.hn === 'Brelan' || l.hn === 'Carré' || l.hn === 'Full' ? 'un' : 'une'} ${l.hn.toLowerCase()}</span>` : ''}</p>`).join('')}</div>` : '';
+  const seats = `<ul class="plist">${v.seats.map(s => `<li class="${s.turn ? 'now' : ''} ${s.folded ? 'dead' : ''}">
+      <span class="nm"><b>${esc(s.name)}${s.btn ? '<span class="badge d">D</span>' : ''}${s.sb ? '<span class="badge">PB</span>' : ''}${s.bb ? '<span class="badge">GB</span>' : ''}</b>
+      <small>${s.chips} jetons${s.bet ? ` · mise ${s.bet}` : ''}${s.folded ? ' · couché·e' : s.allin ? ' · tapis' : ''}${s.turn ? ' · réfléchit…' : ''}${s.on ? '' : ' · déconnecté·e'}${s.hn ? ` · ${s.hn}` : ''}</small></span>
+      ${s.folded ? '' : s.cards ? pcards(s.cards, 'sm') : pcards([null, null], 'sm')}</li>`).join('')}</ul>`;
+  let zone = '';
+  if (seated && v.me) {
+    const me = v.me, hidden = MP.pkHide;
+    zone = `<section class="panel my-hand"><h3><span>Tes cartes</span><span>${seated.chips} jetons</span></h3>
+      <button class="hand-btn" data-a="pk-hide" aria-label="${hidden ? 'Montrer' : 'Cacher'} mes cartes">${hidden ? pcards([null, null], 'lg') : pcards(me.hole, 'lg')}</button>
+      <p class="hint">${hidden ? 'Touche pour voir tes cartes.' : `${me.hn ? `<b>${me.hn}</b> · ` : ''}Touche pour cacher.`}</p></section>`;
+    if (me.turn) {
+      const to = Math.min(me.max, Math.max(me.minTo, MP.pkTo || me.minTo));
+      MP.pkTo = to;
+      const quick = [['Mini', me.minTo], ['½ pot', Math.floor(me.pot / 2) + me.toCall], ['Pot', me.pot + me.toCall]].filter(([, x]) => x > me.minTo && x < me.max);
+      zone += `<div class="banner gold">À toi de parler${me.toCall ? ` : ${me.toCall} pour suivre` : ''}</div>
+      <div class="row"><button class="btn red" data-a="pk-act" data-v="fold">Se coucher</button>${me.toCall ? `<button class="btn" data-a="pk-act" data-v="call">Suivre ${me.toCall}</button>` : `<button class="btn" data-a="pk-act" data-v="check">Parole</button>`}</div>
+      ${me.canRaise ? `<div class="panel raise">${me.max > me.minTo ? `<input type="range" id="pkRaise" min="${me.minTo}" max="${me.max}" step="${Math.max(1, v.blinds[0])}" value="${to}" aria-label="Montant de la relance">
+        <div class="chips qs">${quick.map(([l, x]) => `<button class="chip tap" data-a="pk-to" data-v="${x}">${l}</button>`).join('')}<button class="chip tap" data-a="pk-to" data-v="${me.max}">Tapis</button></div>` : ''}
+        <button class="btn paper" data-a="pk-act" data-v="raise" id="pkRaiseBtn">${to >= me.max ? `Tapis (${me.max})` : `${me.toCall || v.street === 0 ? 'Relancer' : 'Miser'} à ${to}`}</button></div>` : ''}`;
+    } else if (v.step === 'hand') zone += `<p class="howto">${me.folded ? 'Tu t\'es couché·e pour cette main.' : `Au tour de ${esc((v.seats.find(s => s.turn) || {}).name || '…')}.`}</p>`;
+  } else if (v.step === 'hand') zone = `<p class="howto">Tu joueras à la prochaine main.</p>`;
+  const cur = v.seats.find(s => s.turn);
+  if (host && v.step === 'hand' && cur && !cur.on) zone += `<button class="btn ghost" data-a="pk-skip">${esc(cur.name)} est déconnecté·e : ${v.seats.find(s => s.turn).bet >= Math.max(...v.seats.map(s => s.bet)) ? 'parole' : 'il se couche'}</button>`;
+  if (v.step === 'show') zone += mine.chips < 10 ? `<button class="btn" data-a="pk-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>` : '';
+  if (v.step === 'show') zone += host ? `<button class="btn big" data-a="pk-next">Main suivante</button>` : `<p class="howto">L'hôte lance la main suivante.</p>`;
+  const others = v.players.filter(p => !v.seats.some(s => s.name === p.name));
+  return `${table}${res}${seats}${zone}${others.length ? `<p class="hint">En attente de la prochaine main : ${esc(others.map(p => `${p.name} (${p.chips})`).join(', '))}</p>` : ''}`;
+}
+
+Object.assign(actions, {
+  'bj-gages'() { MP.H.cfg.gages = !MP.H.cfg.gages; mpPush(); },
+  'bj-open'() { MP.H.step = 'bet'; mpPush(); },
+  'bj-add'(k) {
+    const v = MP.role === 'host' ? MPG.bj.view(MP_CID) : MP.view, p = v.players.find(x => x.me);
+    MP.bjBet = Math.min(p.chips, (MP.bjBet == null ? 0 : MP.bjBet) + +k); render(false);
+  },
+  'bj-clear'() { MP.bjBet = 0; render(false); },
+  'bj-all'() { const v = MP.role === 'host' ? MPG.bj.view(MP_CID) : MP.view; MP.bjBet = v.players.find(x => x.me).chips; render(false); },
+  'bj-bet'(v) { mpSend({ t: 'bj-bet', v: +v }); },
+  'bj-unbet'() { mpSend({ t: 'bj-unbet' }); },
+  'bj-rebuy'() { mpSend({ t: 'bj-rebuy' }); },
+  'bj-act'(a) { mpSend({ t: 'bj-act', a }); },
+  'bj-deal'() { bjDeal(); },
+  'bj-skip'() { const p = bjCur(); if (p) bjMove(p, 'stand'); },
+  'bj-next'() {
+    const H = MP.H;
+    H.players.forEach(p => Object.assign(p, { bet: 0, ready: false, hand: [], st: '', res: '', gain: 0 }));
+    Object.assign(H, { step: 'bet', dealer: [], order: [], turn: -1 }); MP.bjBet = null;
+    mpPush();
+  },
+  'pk-blinds'(v) { MP.H.cfg.blinds = v.split('/').map(Number); store.set('pkBlinds', MP.H.cfg.blinds); mpPush(); },
+  'pk-start'() { pkStart(); },
+  'pk-next'() { pkStart(); },
+  'pk-hide'() { MP.pkHide = !MP.pkHide; render(false); },
+  'pk-to'(x) { MP.pkTo = +x; render(false); },
+  'pk-act'(a) { mpSend(a === 'raise' ? { t: 'pk-act', a, to: MP.pkTo } : { t: 'pk-act', a }); },
+  'pk-rebuy'() { mpSend({ t: 'pk-rebuy' }); },
+  'pk-skip'() { const h = MP.H.hand, c = h.seats[h.cur]; pkAct(c, { a: (h.bet[c] || 0) >= h.curBet ? 'check' : 'fold' }); },
+});
+app.addEventListener('input', e => {
+  if (e.target.id !== 'pkRaise') return;
+  MP.pkTo = +e.target.value;
+  const b = document.getElementById('pkRaiseBtn'), v = MP.role === 'host' ? MPG.pk.view(MP_CID) : MP.view;
+  if (b && v.me) b.textContent = MP.pkTo >= v.me.max ? `Tapis (${v.me.max})` : `${v.me.toCall || v.street === 0 ? 'Relancer' : 'Miser'} à ${MP.pkTo}`;
+});
+
 
 // Tout autre geste arrête le chrono (on a changé de carte ou d'écran)
 const KEEP_TIMER = new Set(['timer-go', 'sip', 'sip-minus', 'target', 'info', 'info-close', 'music-toggle', 'music-style']);
