@@ -98,7 +98,7 @@ Les mentions légales propres à chaque appli (public, alcool, absence d'argent 
 
 ## Sur iPhone
 
-- **Version web (le plus simple, gratuit)** : https://geordhann.github.io/jeux/ — ouvre la page dans Safari, touche une appli, puis Partager › « Sur l'écran d'accueil ». L'appli s'ouvre en plein écran avec son icône, et les iPhone jouent avec les Android dans les mêmes parties. Publiée automatiquement à chaque modification (`.github/workflows/web.yml`, branche `gh-pages`, préparée par `tools/build-web.py`).
+- **Version web (le plus simple, gratuit)** : https://geordhann.github.io/jeux/ — ouvre la page dans Safari, touche une appli, puis Partager › « Sur l'écran d'accueil ». L'appli s'ouvre en plein écran avec son icône, et les iPhone jouent avec les Android dans les mêmes parties. Publiée automatiquement à chaque modification (`.github/workflows/web.yml`, branche `gh-pages`, préparée par `tools/build-web.py`). À activer une seule fois : Settings › Pages › « Deploy from a branch » › `gh-pages` / `(root)`. En attendant, la même version passe par https://raw.githack.com/Geordhann/jeux/gh-pages/index.html (gratuit, une page d'avertissement s'affiche avant).
 - **Appli iOS native** : GitHub compile les trois applis pour iPhone sur un Mac (`.github/workflows/ios.yml`) et publie des fichiers `.ipa` **non signés** dans les Releases (`veillee-ios-v1.0.N`…). Apple n'autorise pas l'installation d'une appli non signée : il faut la signer avec un identifiant Apple depuis un ordinateur (Sideloadly ou AltStore, gratuit, à refaire tous les 7 jours), ou passer par TestFlight / l'App Store avec un compte développeur Apple (99 € par an). Icônes et écran de démarrage : `make_icons.py`, `tools/prepare-ios.sh`.
 
 ## Tester avant de jouer

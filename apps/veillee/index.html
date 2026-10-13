@@ -1355,14 +1355,14 @@ Object.assign(APP, {
   },
   ambiances: {
     // Nuit d'été : vent léger, ruisseau au loin, grillons, crapaud, chouette
-    night(out, parts) { vWind(out, parts, .05); vStream(out, parts, .032); vCrickets(out, parts, 4, .011);
+    night(out, parts) { vWind(out, parts, .011); vStream(out, parts, .032); vCrickets(out, parts, 4, .011);
       every(parts, 2.1, 2.7, t => tone(out, t, 1260, .09, .009, { a: .01, pan: -.55 }));
       every(parts, 24, 50, t => SFX.owl(t, out, .7));
       every(parts, 45, 90, t => SFX.howl(t, out, .35)); },
     // Soir : les grillons commencent, un merle chante encore
-    evening(out, parts) { vWind(out, parts, .045); vStream(out, parts, .028); vCrickets(out, parts, 2, .008); vBirds(out, parts, .011, 7, 16); },
+    evening(out, parts) { vWind(out, parts, .009); vStream(out, parts, .028); vCrickets(out, parts, 2, .008); vBirds(out, parts, .011, 7, 16); },
     // Après-midi : cigales, oiseaux, brise
-    day(out, parts) { vWind(out, parts, .03); vCicadas(out, parts, .045); vBirds(out, parts, .015, 3, 8); vStream(out, parts, .014); },
+    day(out, parts) { vWind(out, parts, .007); vCicadas(out, parts, .045); vBirds(out, parts, .015, 3, 8); vStream(out, parts, .014); },
   },
   scene: veilleeScene,
   decor() {
@@ -1370,7 +1370,7 @@ Object.assign(APP, {
     document.body.dataset.scene = v && v.step === 'game' && v.phase === 'day' ? 'day' : 'night';
   },
 });
-const vWind = (out, parts, v) => loopNoise(out, parts, { f: 520, q: .5, v, lfoF: .06, lfoDepth: 280, lfoV: v * .6 });
+const vWind = (out, parts, v) => loopNoise(out, parts, { f: 340, q: .4, v, lfoF: .05, lfoDepth: 140, lfoV: v * .5 });
 function vStream(out, parts, v) {
   const a = loopNoise(out, parts, { buf: SON.noise, type: 'bandpass', f: 1700, q: .8, v, pan: .35 });
   const b = loopNoise(out, parts, { buf: SON.noise, type: 'bandpass', f: 700, q: .9, v: v * .8, pan: .45 });

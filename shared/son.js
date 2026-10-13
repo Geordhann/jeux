@@ -271,7 +271,18 @@ document.addEventListener('visibilitychange', () => {
   else { SON.ctx.resume().catch(() => {}); SON.next = sonNow() + .1; }
 });
 // Le navigateur n'autorise le son qu'après un premier geste
-document.addEventListener('pointerdown', () => { if (sonInit()) sonUpdate(); }, { passive: true });
+// Sur iPhone : le son passe même si le bouton silencieux est activé (mode « lecture »),
+// et une courte piste muette débloque la sortie audio au premier toucher
+function sonUnlock() {
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+  if (!SON.unlocked && /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) && 'ontouchend' in document) {
+    SON.unlocked = true;
+    const a = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=');
+    a.setAttribute('playsinline', ''); a.loop = true; a.play().catch(() => { SON.unlocked = false; });
+  }
+  if (sonInit()) sonUpdate();
+}
+['pointerdown', 'touchend', 'click'].forEach(e => document.addEventListener(e, sonUnlock, { passive: true }));
 
 /* ---------- Bouton et réglages « Sons » ---------- */
 const fab = document.createElement('button');
