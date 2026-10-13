@@ -146,7 +146,8 @@ app.addEventListener('submit', e => {
 // Appli Android : le bouton retour revient en arrière au lieu de quitter
 const capApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
 if (capApp) capApp.addListener('backButton', () => {
-  if (S.info) actions['info-close']();
+  if (scan.box) scanStop();
+  else if (S.info) actions['info-close']();
   else if (S.intro) { if (!APP.adult || S.adult) actions['intro-go'](); else capApp.exitApp(); }
   else if (S.screen === 'mp') actions[S.confirm === 'mpquit' ? 'mp-quit-no' : 'mp-quit']();
   else if (S.screen !== 'home') actions.home();
@@ -458,8 +459,86 @@ function mpQuitBox() {
 function roomBox(host) {
   const m = MP;
   if (m.status === 'connecting') return `<section class="room"><small>${host ? 'Ouverture de la partie' : 'Connexion'}</small><strong class="code wait">${esc(m.code)}</strong><span class="hint">Un instant…</span></section>`;
+  const qr = host ? qrSvg(mpJoinUrl(m.code)) : '';
   return `<section class="room"><small>Code de la partie</small><strong class="code">${esc(m.code)}</strong>
-    <span class="hint">${host ? `Les autres ouvrent ${APP.name} › « Rejoindre une partie » et tapent ce code.` : 'Tu es dans la partie.'}</span></section>`;
+    ${qr ? `<div class="qr" role="img" aria-label="QR code pour rejoindre la partie ${esc(m.code)}">${qr}</div>` : ''}
+    <span class="hint">${host ? `Les autres scannent ce QR code avec l'appareil photo, ou ouvrent ${APP.name} › « Rejoindre une partie » et tapent le code.` : 'Tu es dans la partie.'}</span></section>`;
+}
+/* --- QR code pour rejoindre --- */
+// Le lien ouvre la version web (iPhone compris) directement sur « Rejoindre », avec le code déjà rempli
+const WEB_BASE = 'https://geordhann.github.io/jeux/';
+function mpJoinUrl(code) {
+  const web = /^https?:$/.test(location.protocol) && !/^(localhost|127\.|\[::1\])/.test(location.hostname);
+  return (web ? location.origin + location.pathname.replace(/index\.html$/, '') : WEB_BASE + APP.id + '/') + '?code=' + code;
+}
+function qrSvg(text) {
+  if (typeof qrcode !== 'function') return '';
+  const q = qrcode(0, 'M'); q.addData(text); q.make();
+  const n = q.getModuleCount();
+  let d = '';
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) d += `M${x + 2} ${y + 2}h1v1h-1z`;
+  return `<svg viewBox="0 0 ${n + 4} ${n + 4}" shape-rendering="crispEdges" aria-hidden="true"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+}
+// Lire le code d'un QR : le lien ...?code=ABCD, ou juste les 4 lettres
+function qrCode(txt) {
+  const m = /[?&]code=([A-Za-z]{4})\b/.exec(txt || '') || /^\s*([A-Za-z]{4})\s*$/.exec(txt || '');
+  return m ? m[1].toUpperCase() : '';
+}
+// Scanner à la caméra : détecteur du navigateur s'il existe, sinon jsQR (chargé seulement à ce moment-là)
+const scan = { box: null, stream: null, raf: 0 };
+function scanStop() {
+  cancelAnimationFrame(scan.raf);
+  if (scan.stream) scan.stream.getTracks().forEach(t => t.stop());
+  if (scan.box) scan.box.remove();
+  Object.assign(scan, { box: null, stream: null });
+}
+function loadScript(src) {
+  return new Promise((ok, ko) => { const e = document.createElement('script'); e.src = src; e.onload = ok; e.onerror = ko; document.head.append(e); });
+}
+async function scanStart() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast("Pas d'accès à la caméra ici : tape le code."); return; }
+  scanStop();
+  const box = scan.box = document.createElement('div');
+  box.className = 'scan'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Scanner le QR code');
+  box.innerHTML = '<video playsinline muted></video><span class="frame" aria-hidden="true"></span><p>Vise le QR code affiché sur le téléphone de l\'hôte</p><button class="btn ghost" type="button">Annuler</button>';
+  box.querySelector('button').onclick = scanStop;
+  document.body.append(box);
+  const video = box.querySelector('video');
+  try {
+    scan.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+  } catch (e) { scanStop(); toast("Caméra refusée : autorise-la dans les réglages, ou tape le code."); return; }
+  if (scan.box !== box) { scan.stream.getTracks().forEach(t => t.stop()); return; }
+  video.srcObject = scan.stream; video.play().catch(() => {});
+  let detect;
+  if ('BarcodeDetector' in window) {
+    try { const bd = new BarcodeDetector({ formats: ['qr_code'] }); detect = async () => { const r = await bd.detect(video); return r[0] && r[0].rawValue; }; } catch (e) {}
+  }
+  if (!detect) {
+    try { if (!window.jsQR) await loadScript('shared/jsqr.min.js'); } catch (e) { scanStop(); toast('Lecteur indisponible : tape le code.'); return; }
+    const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
+    detect = async () => {
+      const w = video.videoWidth, h = video.videoHeight;
+      if (!w) return '';
+      const k = Math.min(1, 480 / Math.max(w, h)); cv.width = w * k | 0; cv.height = h * k | 0;
+      cx.drawImage(video, 0, 0, cv.width, cv.height);
+      const r = jsQR(cx.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height, { inversionAttempts: 'dontInvert' });
+      return r && r.data;
+    };
+  }
+  const loop = async () => {
+    if (scan.box !== box) return;
+    let code = '';
+    try { code = qrCode(await detect()); } catch (e) {}
+    if (code) {
+      scanStop(); buzz(60);
+      S.mpCode = code; S.mpForm = 'join'; S.screen = 'mpjoin'; render();
+      const n = document.getElementById('jName');
+      if (n && mpCleanName(n.value)) document.getElementById('joinForm').requestSubmit(); else if (n) n.focus();
+      return;
+    }
+    scan.raf = requestAnimationFrame(() => setTimeout(loop, 120));
+  };
+  loop();
 }
 function mp() {
   const m = MP;
@@ -482,7 +561,8 @@ function mpjoin() {
   return `${topbar(host ? mpGameName(S.mpForm) : 'Rejoindre une partie')}
   <form class="panel" id="joinForm">
     ${host ? '' : `<label class="hint" for="jCode">Code de la partie</label>
-    <input id="jCode" class="code-in" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" value="${esc(S.mpCode || (PHONE ? localCode() : ''))}">`}
+    <input id="jCode" class="code-in" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" value="${esc(S.mpCode || (PHONE ? localCode() : ''))}">
+    <button class="btn ghost scan-btn" type="button" data-a="mp-scan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/></svg>Scanner le QR code</button>`}
     <label class="hint" for="jName">Ton prénom</label>
     <input id="jName" maxlength="20" autocomplete="off" placeholder="Prénom" value="${esc(last.name || (PHONE ? 'Joueur ' + PHONE : ''))}">
     <button class="btn big" type="submit">${host ? 'Créer la partie' : 'Rejoindre'}</button>
@@ -500,6 +580,7 @@ Object.assign(actions, {
     if (MPG[v].narrator) { mpHost(v); return; } // le maître du jeu ne joue pas : pas besoin de son prénom
     S.mpForm = v; S.screen = 'mpjoin'; render();
   },
+  'mp-scan'() { scanStart(); },
   'mp-joinform'() { S.mpForm = 'join'; S.screen = 'mpjoin'; render(); },
   'mp-resume'() { const s = mpSaved(); if (s) mpHost(s.game, { resume: s }); else { toast('Partie introuvable.'); render(); } },
   'mp-forget'() { store.set('mpHost', null); render(false); },

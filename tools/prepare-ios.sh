@@ -13,4 +13,6 @@ for key in UISupportedInterfaceOrientations "UISupportedInterfaceOrientations~ip
   /usr/libexec/PlistBuddy -c "Delete :$key" "$PLIST" 2>/dev/null || true
   /usr/libexec/PlistBuddy -c "Add :$key array" -c "Add :$key:0 string UIInterfaceOrientationPortrait" "$PLIST"
 done
+/usr/libexec/PlistBuddy -c "Delete :NSCameraUsageDescription" "$PLIST" 2>/dev/null || true
+/usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string La caméra sert à scanner le QR code des parties et à prendre ta photo de joueur." "$PLIST"
 echo "Projet iOS prêt"

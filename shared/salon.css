@@ -222,3 +222,14 @@ body.son-hidden .son-fab, body.son-hidden .son-sheet { display: none; }
 .vote { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
 .vote button { padding: 16px 10px; border-radius: 12px; background: var(--paper); color: var(--ink); font-weight: 800; overflow-wrap: anywhere; box-shadow: 0 3px 0 var(--paper-edge); }
 .vote button[aria-pressed="true"] { background: var(--red); color: var(--paper); box-shadow: 0 3px 0 #8a2229; }
+/* QR code pour rejoindre, et scanner plein écran */
+.room .qr { width: min(64vw, 210px); margin: 6px auto 4px; padding: 8px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+.room .qr svg { display: block; width: 100%; height: auto; }
+.scan-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.scan-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.scan { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: max(20px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)); background: #000; color: #fff; text-align: center; }
+.scan video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .9; }
+.scan .frame { position: relative; width: min(70vw, 280px); aspect-ratio: 1; border-radius: 22px; box-shadow: 0 0 0 100vmax rgba(0,0,0,.45), inset 0 0 0 3px #fff; }
+.scan p, .scan button { position: relative; margin: 0; }
+.scan p { font-weight: 700; text-shadow: 0 1px 4px #000; max-width: 30ch; }
+.scan .btn { min-width: 180px; color: #fff; border-color: rgba(255,255,255,.6); background: rgba(0,0,0,.4); }
