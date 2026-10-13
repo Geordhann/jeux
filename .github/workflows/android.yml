@@ -3,7 +3,7 @@ name: Applis Android
 # Compile l'APK de chaque appli à chaque modification et le publie dans les Releases
 on:
   push:
-    branches: [claude/sweet-dirac-7wcg8q, main, master]
+    branches: [claude/sweet-dirac-7wcg8q, claude/new-multiplayer-games-j4imit, main, master]
     paths:
       - index.html
       - apps/**
