@@ -110,8 +110,10 @@ function render(scroll = true) {
   const s = S.screen;
   app.innerHTML = S.intro ? intro() : S.info ? rules() : SCREENS[s]();
   document.body.classList.toggle('on-intro', S.intro);
-  const key = (S.intro && 'intro') || (S.info && 'info') || s;
-  if (scroll && key !== lastScreen) window.scrollTo(0, 0);
+  // En partie, chaque nouvelle étape (mises, tirage, résultats…) repart du haut de l'écran
+  const step = s === 'mp' && MP ? (MP.role === 'host' ? MP.H.step : MP.view && MP.view.step) : '';
+  const key = (S.intro && 'intro') || (S.info && 'info') || s + (step ? '-' + step : '');
+  if ((scroll || step) && key !== lastScreen) window.scrollTo(0, 0);
   lastScreen = key;
   if (s === 'mp' && !S.intro && !S.info) mpAfter();
 }

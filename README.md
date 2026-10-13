@@ -6,7 +6,7 @@ Trois applis, un seul dépôt :
 | --- | --- | --- |
 | **La Tournée** | Action ou Vérité, Undercover, Paranoïa, La Roue… | Un seul téléphone qui fait le tour de la table, hors ligne |
 | **La Veillée** | Loup-Garou, Téléphone dessiné | Chacun sur son téléphone, en ligne |
-| **Le Tapis** | Poker, Blackjack (jetons fictifs, 18+) | Chacun sur son téléphone, en ligne |
+| **Le Tapis** | Poker, Blackjack, Roulette (jetons fictifs, 18+) | Chacun sur son téléphone, en ligne |
 
 Chaque appli a son icône, son APK et ses mentions légales.
 
@@ -66,12 +66,13 @@ Jeux où chaque joueur utilise son propre téléphone. Celui qui crée la partie
 
 # Le Tapis
 
-Poker et Blackjack entre amis, chacun sur son téléphone, avec 1 000 jetons **fictifs** par joueur (recave possible) : jamais d'argent réel. Réservé aux majeurs (confirmation au premier lancement). On peut rejoindre la table entre deux mains.
+Poker, Blackjack et Roulette entre amis, chacun sur son téléphone, avec 1 000 jetons **fictifs** par joueur (recave possible) : jamais d'argent réel. Réservé aux majeurs (confirmation au premier lancement). On peut rejoindre la table entre deux mains.
 - **Poker** (Texas Hold'em sans limite, 2 à 10 joueurs) : deux cartes secrètes sur ton téléphone, le tapis au centre (flop, turn, river), blindes au choix (5/10, 10/20, 25/50). L'appli gère le bouton, les relances, les tapis, les pots partagés et l'abattage.
 - **Blackjack** : tout le monde contre la banque tenue par l'appli (sabot de 6 jeux, la banque tire jusqu'à 17, blackjack payé 3 pour 2, doubler possible). Gages de soirée au choix : aucun, gorgées ou gages.
+- **Roulette** (européenne, un seul zéro) : chacun pose ses jetons sur le tapis de son téléphone (pleins, rouge/noir, pair/impair, manque/passe, douzaines, colonnes), puis la bille est lancée et la roue tourne en même temps sur tous les téléphones. Historique des derniers numéros, « rejouer mes mises », gages en option.
 
 ## Fonctionnement en ligne (La Veillée et Le Tapis)
-Connexion internet nécessaire. Le téléphone de l'hôte sert de serveur ; les autres s'y connectent en direct (WebRTC via [PeerJS](https://peerjs.com), inclus dans `shared/`, avec le service gratuit de mise en relation de PeerJS). Un téléphone qui se met en veille se reconnecte tout seul et retrouve sa place ; si l'hôte ferme l'appli, il peut reprendre la partie depuis l'accueil.
+Chacun installe l'APK de l'appli sur son téléphone. L'hôte crée la partie et donne le code, les autres le tapent : **jusqu'à 20 téléphones par partie**. Connexion internet nécessaire. Le téléphone de l'hôte sert de serveur ; les autres s'y connectent en direct (WebRTC via [PeerJS](https://peerjs.com), inclus dans `shared/`, avec le service gratuit de mise en relation de PeerJS). Un téléphone qui se met en veille se reconnecte tout seul et retrouve sa place ; si l'hôte ferme l'appli, il peut reprendre la partie depuis l'accueil.
 
 Pour tester sur un ordinateur : `tools/build-www.sh veillee` (ou `tapis`), puis servir le dossier `build/veillee/www` (par exemple `python3 -m http.server`). Avec `index.html?local`, plusieurs onglets du même navigateur jouent ensemble sans réseau.
 
