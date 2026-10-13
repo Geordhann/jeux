@@ -19,5 +19,6 @@ else
 fi
 cp -r fonts "$OUT/www/"
 # Hors ligne : les polices sont incluses, pas besoin de Google Fonts
-sed -i '/fonts.googleapis.com\|fonts.gstatic.com/d' "$OUT/www/index.html"
+# (forme compatible Linux et Mac)
+sed -E -i.bak '/fonts\.googleapis\.com|fonts\.gstatic\.com/d' "$OUT/www/index.html" && rm "$OUT/www/index.html.bak"
 echo "Appli $APP prête dans $OUT"
