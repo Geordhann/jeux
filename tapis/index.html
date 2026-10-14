@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120c1e">
+<meta name="description" content="Poker, Blackjack, Roulette et Machine à sous entre amis, chacun sur son téléphone, avec des jetons fictifs.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Le Tapis">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Le Tapis</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="shared/salon.css">
+<style>
+/* Le Tapis : nuit de Las Vegas années 80, néons adoucis et or ; tables en feutre vert */
+:root { --felt: #120c1e; --felt-2: #1f1533; --felt-line: #3d2c5a; --muted: #c3b3d9; --red: #d6456a; --gold: #eab94e; --neon: #ff5fa2; --teal: #3fd0c9; }
+.pcs { display: inline-flex; gap: 5px; flex-wrap: wrap; justify-content: center; flex: none; }
+.pc { width: 44px; height: 62px; border-radius: 7px; background: #fff; color: var(--ink); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; font-weight: 800; box-shadow: 0 2px 0 var(--paper-edge), 0 4px 10px rgba(0,0,0,.3); animation: deal .3s ease-out; }
+.pc b { font-size: 1.15rem; }
+.pc i { font-style: normal; font-size: 1.2rem; }
+.pc.red { color: var(--red); }
+.pc.back { background: var(--red) repeating-linear-gradient(45deg, rgba(255,255,255,.16) 0 4px, transparent 4px 9px); border: 3px solid #fff; }
+.pc.slot { background: transparent; border: 2px dashed rgba(255,255,255,.25); box-shadow: none; animation: none; }
+.pc.sm { width: 30px; height: 43px; border-radius: 5px; }
+.pc.sm b, .pc.sm i { font-size: .8rem; }
+.pc.sm.back { border-width: 2px; }
+.pc.lg { width: 76px; height: 106px; border-radius: 10px; }
+.pc.lg b { font-size: 1.9rem; }
+.pc.lg i { font-size: 2rem; }
+@media (prefers-reduced-motion: reduce) { .pc { animation: none; } }
+.felt-table { background: radial-gradient(120% 90% at 50% 30%, #2a7a55, #17513a); border: 6px solid #6b4426; border-radius: 26px; padding: 16px 12px; display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; box-shadow: inset 0 0 30px rgba(0,0,0,.45), 0 10px 26px rgba(0,0,0,.35); }
+.felt-table > small { text-transform: uppercase; letter-spacing: .14em; font-size: .72rem; font-weight: 800; color: var(--paper); opacity: .85; }
+.felt-table .hint { color: var(--paper); opacity: .85; }
+.pot { font-family: var(--font-display); font-size: 1.7rem; color: var(--gold); line-height: 1.1; }
+.badge { display: inline-block; font-size: .64rem; font-weight: 800; background: var(--paper); color: var(--ink); border-radius: 999px; padding: 1px 6px; margin-left: 5px; vertical-align: middle; }
+.badge.d { background: var(--gold); }
+.plist li.now { border-color: var(--gold); box-shadow: inset 0 0 0 2px var(--gold); }
+.chipline { font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 800; }
+.betbar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.jeton { width: 60px; height: 60px; border-radius: 50%; font-weight: 800; color: #fff; border: 4px dashed rgba(255,255,255,.75); box-shadow: 0 3px 0 rgba(0,0,0,.4); }
+.jeton.j10 { background: #2a62c9; } .jeton.j25 { background: #2f9e5a; } .jeton.j100 { background: #221c17; } .jeton.j500 { background: #8e44ad; }
+.hand-btn { display: flex; justify-content: center; padding: 4px; }
+.my-hand { align-items: center; text-align: center; }
+.my-hand h3 { width: 100%; }
+.raise input[type=range] { width: 100%; accent-color: var(--gold); }
+/* Roulette */
+.rl-box { position: relative; width: min(100%, 320px); aspect-ratio: 1; margin: 6px auto 0; flex: none; }
+.rl-wheel { width: 100%; height: 100%; display: block; border-radius: 50%; box-shadow: 0 0 0 6px #6b4426, 0 0 0 9px var(--gold), 0 16px 36px rgba(0,0,0,.5); }
+.rl-pointer { position: absolute; left: 50%; top: -16px; transform: translateX(-50%); border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 28px solid var(--paper); z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,.5)); }
+.rl-hist { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.rl-num { min-width: 30px; height: 30px; border-radius: 50%; display: inline-grid; place-items: center; font-weight: 800; font-size: .85rem; color: #fff; font-variant-numeric: tabular-nums; }
+.rl-num.red { background: var(--red); } .rl-num.black { background: #221c17; border: 1px solid #555; } .rl-num.green { background: #2f9e5a; }
+.rl-hist .rl-num:first-child { box-shadow: 0 0 0 3px var(--gold); }
+.rl-board { display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: 18px; background: #17513a; border: 5px solid #6b4426; }
+.rl-grid, .rl-row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.rl-row6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.rl-cell { position: relative; min-height: 38px; border-radius: 6px; border: 1px solid rgba(255,255,255,.35); color: #fff; font-weight: 800; font-size: .9rem; background: rgba(0,0,0,.15); padding: 2px; }
+.rl-cell.red { background: var(--red); } .rl-cell.black { background: #221c17; } .rl-cell.green { background: #2f9e5a; }
+.rl-cell.zero { min-height: 44px; font-size: 1.1rem; }
+.rl-row6 .rl-cell { font-size: .74rem; }
+.rl-chip { position: absolute; right: -4px; top: -6px; min-width: 24px; height: 24px; padding: 0 4px; border-radius: 999px; background: var(--gold); color: var(--ink); border: 2px dashed #fff; font-size: .7rem; display: grid; place-items: center; z-index: 1; box-shadow: 0 2px 4px rgba(0,0,0,.4); }
+.jeton.j5 { background: #c93a3f; }
+.jeton[aria-pressed="true"] { outline: 3px solid var(--gold); outline-offset: 3px; }
+/* Machine à sous : borne néon années 80 */
+.sl-jack { text-align: center; padding: 10px 14px; border-radius: 16px; background: linear-gradient(180deg, #2a1640, #1a0f2b); box-shadow: 0 0 0 2px var(--gold), 0 0 18px rgba(234,185,78,.35); }
+.sl-jack small { display: block; text-transform: uppercase; letter-spacing: .16em; font-size: .7rem; font-weight: 800; color: var(--neon); }
+.sl-jack strong { font-family: var(--font-display); font-weight: 400; font-size: 2.2rem; line-height: 1.1; color: var(--gold); text-shadow: 0 0 10px rgba(234,185,78,.6); font-variant-numeric: tabular-nums; }
+.sl-feed:empty { display: none; }
+.sl-feed { display: flex; flex-direction: column; gap: 6px; }
+.sl-news { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; background: rgba(63,208,201,.12); border: 1px solid rgba(63,208,201,.45); font-size: .9rem; animation: deal .35s ease-out; }
+.sl-news.jackpot { background: rgba(234,185,78,.18); border-color: var(--gold); }
+.sl-news .icn, .sl-news .sl-sym { width: 30px; height: 30px; flex: none; }
+.sl-cab { position: relative; margin: 2px 26px 0 0; padding: 14px 12px 16px; border-radius: 26px 26px 18px 18px; background: linear-gradient(180deg, #3a1d55, #22123a 60%, #180d29); box-shadow: 0 0 0 3px var(--neon), 0 0 24px rgba(255,95,162,.4), inset 0 2px 0 rgba(255,255,255,.12); }
+.sl-top { text-align: center; font-family: var(--font-display); color: #fff4fb; letter-spacing: .08em; margin-bottom: 10px; text-shadow: 0 0 8px rgba(63,208,201,.8); }
+.sl-reels { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 8px; border-radius: 14px; background: #0d0716; box-shadow: inset 0 0 0 2px var(--gold); }
+.sl-win { position: relative; height: 92px; overflow: hidden; border-radius: 9px; background: #fffaf0; }
+.sl-win::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.45), transparent 26%, transparent 74%, rgba(0,0,0,.45)); }
+.sl-strip { display: flex; flex-direction: column; will-change: transform; }
+.sl-strip .sl-sym { height: 92px; flex: none; display: grid; place-items: center; padding: 10px; font-weight: 900; font-size: 1.6rem; color: var(--ink); }
+.sl-sym .icn { width: 100%; height: 100%; }
+.sl-sym.sm { width: 26px; height: 26px; padding: 0; display: inline-grid; place-items: center; font-size: .7rem; font-weight: 900; }
+.sl-line { position: absolute; left: 4px; right: 4px; top: 50%; height: 2px; background: rgba(214,69,106,.55); pointer-events: none; }
+.sl-lever { position: absolute; right: -26px; top: 46px; width: 14px; height: 74px; border-radius: 7px; background: linear-gradient(90deg, #8d8d99, #e8e8f0, #8d8d99); transform-origin: 50% 100%; }
+.sl-lever i { position: absolute; left: 50%; top: -14px; width: 26px; height: 26px; margin-left: -13px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ff9bc4, var(--neon) 55%, #b02a67); box-shadow: 0 0 10px rgba(255,95,162,.6); }
+.sl-lever.pull { animation: pull .45s ease-in-out; }
+@keyframes pull { 40% { transform: scaleY(-.55); } 100% { transform: none; } }
+.sl-res { text-align: center; font-family: var(--font-display); font-size: 1.5rem; line-height: 1.2; color: var(--muted); padding: 4px 0; }
+.sl-res small { display: block; font-family: var(--font-body); font-size: .9rem; color: var(--teal); font-weight: 800; }
+.sl-res.gold { color: var(--gold); text-shadow: 0 0 12px rgba(234,185,78,.55); }
+.sl-res.jackpot { font-size: 2rem; animation: blink .5s steps(2) 6; }
+@keyframes blink { 50% { color: var(--neon); } }
+.sl-go { background: linear-gradient(180deg, #ff86b8, var(--neon)) !important; color: #2a0b1c; }
+.sl-pay summary { cursor: pointer; font-weight: 800; color: var(--muted); }
+.sl-pay ul { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.sl-pay li { display: flex; align-items: center; gap: 4px; }
+.sl-pay li span:last-child { margin-left: auto; color: var(--gold); font-weight: 800; }
+.sl-rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.sl-rank li { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px; }
+.sl-rank li small { grid-column: 2 / 4; color: var(--muted); font-size: .78rem; margin-top: -4px; }
+.sl-rank li.me { background: rgba(255,95,162,.14); }
+.sl-rank li.off { opacity: .5; }
+.sl-rank .pos { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .8rem; background: rgba(255,255,255,.1); }
+.sl-rank li:first-child .pos { background: var(--gold); color: var(--ink); }
+.podium { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: end; gap: 8px; }
+.podium .pl { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.podium .pl b { overflow-wrap: anywhere; }
+.podium .step { width: 100%; display: grid; place-items: center; border-radius: 10px 10px 0 0; font-family: var(--font-display); font-size: 1.6rem; color: var(--ink); background: var(--paper); }
+.podium .p1 { order: 2; } .podium .p1 .step { height: 92px; background: var(--gold); }
+.podium .p2 { order: 1; } .podium .p2 .step { height: 66px; }
+.podium .p3 { order: 3; } .podium .p3 .step { height: 48px; background: #e0b38a; }
+/* Salle de jeu : moquette bordeaux à losanges dorés, néons */
+body { background-color: var(--felt);
+  background-image: linear-gradient(180deg, rgba(255,95,162,.16) 0%, rgba(234,120,80,.10) 18%, transparent 42%),
+    linear-gradient(0deg, rgba(63,208,201,.10), transparent 30%),
+    repeating-linear-gradient(45deg, rgba(234,185,78,.05) 0 2px, transparent 2px 28px), repeating-linear-gradient(-45deg, rgba(234,185,78,.05) 0 2px, transparent 2px 28px);
+  background-attachment: fixed; }
+/* Enseigne au néon, façon Las Vegas des années 80 */
+.logo { color: var(--gold); text-shadow: 0 0 6px rgba(255,95,162,.55), 0 0 18px rgba(255,95,162,.35); }
+.logo span { color: #fff4fb; text-shadow: 0 0 6px rgba(63,208,201,.6), 0 0 18px rgba(63,208,201,.35); }
+.home-head::after { content: ""; display: block; height: 3px; margin-top: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--neon), var(--gold), var(--teal)); box-shadow: 0 0 10px rgba(255,95,162,.5); }
+.sec-title span:last-child { color: var(--teal); }
+.btn { background: var(--gold); }
+.btn.big { background: linear-gradient(180deg, #f3c862, #e0a63c); }
+.panel { border-color: #4a3570; background: rgba(20,12,34,.55); }
+.son-fab { border-color: var(--neon); } .son-fab svg { stroke: var(--neon); } .son-fab svg path:first-child { fill: var(--neon); }
+.son-fab.on { background: var(--neon); }
+.room { box-shadow: 0 0 0 3px var(--neon), 0 0 22px rgba(255,95,162,.35); }
+.turn strong { color: var(--gold); text-shadow: 0 0 12px rgba(255,95,162,.45); }
+.felt-table, .rl-board { box-shadow: inset 0 0 30px rgba(0,0,0,.45), 0 0 0 2px rgba(231,181,82,.5), 0 12px 30px rgba(0,0,0,.45); }
+.banner.gold { box-shadow: 0 0 20px rgba(231,181,82,.45); }
+</style>
+</head>
+<body>
+<div id="app" aria-live="polite"></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+window.APP = {
+  id: 'tapis', name: 'Le Tapis', of: 'du Tapis', logo: ['Le', 'Tapis'],
+  tagline: 'Poker, Blackjack, Roulette et Machine à sous entre amis, chacun sur son téléphone.',
+  hooks: ['Faites vos jeux, rien ne va plus.', 'Ce soir, le bluff est obligatoire.', 'Tapis ! Pour la gloire, jamais pour l\'argent.', 'La banque ne perd jamais… ou presque.', 'Garde ton meilleur visage de joueur de poker.'],
+  deal: ['♥', '♠', '♦'],
+  adult: true,
+  adultNote: 'Réservé aux majeurs. Jetons fictifs : aucun argent réel, rien à gagner.',
+  homeNote: '<strong>Jetons fictifs :</strong> 1 000 par joueur, qui ne s\'achètent pas, ne se gagnent pas et ne s\'échangent contre rien. On joue pour la gloire.',
+  games: [
+    { id: 'pk', name: 'Poker', icon: 'jeu-pk', color: '#3fd0c9', players: '2 à 20 joueurs', desc: "Texas Hold'em : tes cartes sur ton téléphone, l'appli gère pot, blindes et abattage." },
+    { id: 'bj', name: 'Blackjack', icon: 'jeu-bj', color: '#ff7aa8', players: '1 à 20 joueurs', desc: "Tout le monde contre la banque, tenue par l'appli. Gages de soirée en option." },
+    { id: 'rl', name: 'Roulette', icon: 'jeu-rl', color: '#f2c45a', players: '1 à 20 joueurs', desc: "Pose tes jetons sur le tapis depuis ton téléphone, la bille tourne pour tout le monde." },
+    { id: 'sl', name: 'Machine à sous', icon: 'jeu-sl', color: '#b98cff', players: '1 à 20 joueurs', desc: "Chacun sa machine sur son téléphone, un jackpot commun qui grimpe pour tout le monde. Tournoi en option." },
+  ],
+  legal: {
+    what: 'est un jeu de casino entre amis en ligne (Poker, Blackjack, Roulette, Machine à sous) sans argent',
+    dataExtra: ' (cartes, mises en jetons fictifs)',
+    sections: [
+      ['Public concerné', `<p>Le Tapis est réservé aux personnes majeures (18 ans et plus). Une confirmation est demandée au premier lancement.</p>`],
+      ['Aucun argent réel', `<p>Le Tapis est un jeu de simulation, sans argent. Les jetons sont fictifs : ils sont distribués gratuitement, ne peuvent pas être achetés, ni gagnés, ni échangés contre de l'argent, un lot ou un avantage quelconque. Aucun paiement n'est possible dans l'application.</p>
+        <p>Il est interdit d'utiliser Le Tapis comme support à des paris ou des mises en argent entre joueurs.</p>
+        <p>Les jeux d'argent comportent des risques : endettement, dépendance… Si tu ressens le besoin d'en parler, Joueurs Info Service répond au 09 74 75 13 13 (appel non surtaxé).</p>`],
+      ['Alcool', `<p>L'option « gorgées » du Blackjack, de la Roulette et de la Machine à sous est facultative. L'abus d'alcool est dangereux pour la santé, à consommer avec modération. L'option « gages » ou « aucun » permet de jouer sans alcool.</p>`],
+    ],
+    ip: `<p>Le Poker (Texas Hold'em), le Blackjack, la Roulette et la machine à sous sont des jeux traditionnels dont les règles sont libres. Les tirages (cartes, numéro de la roulette, rouleaux de la machine) sont faits au hasard par le téléphone de l'hôte. Le Tapis n'est affilié à aucun casino, opérateur de jeux ou site de poker.</p>`,
+  },
+};
+</script>
+<script src="shared/qrcode.min.js"></script>
+<script src="shared/icones.js"></script>
+<script src="shared/ic-tapis.js"></script>
+<script src="shared/salon.js"></script>
+<script src="shared/son.js"></script>
+<script>
+/* ---------- Cartes et jetons communs ---------- */
+// Jetons fictifs uniquement : aucun argent réel, aucune mise réelle, aucun achat possible.
+const SUIT_SYM = { s: '♠', h: '♥', d: '♦', c: '♣' };
+const RANKS = '23456789TJQKA';
+const CASINO_STACK = 1000;
+const newDeck = (k = 1) => shuffle(Array.from({ length: 52 * k }, (_, i) => RANKS[i % 13] + 'shdc'[Math.floor(i / 13) % 4]));
+const isCard = c => typeof c === 'string' && c.length === 2 && RANKS.includes(c[0]) && SUIT_SYM[c[1]];
+const pcard = (c, cls = '') => isCard(c)
+  ? `<span class="pc ${'hd'.includes(c[1]) ? 'red' : ''} ${cls}" aria-label="${c[0] === 'T' ? '10' : c[0]} ${SUIT_SYM[c[1]]}"><b>${c[0] === 'T' ? '10' : c[0]}</b><i>${SUIT_SYM[c[1]]}</i></span>`
+  : `<span class="pc back ${cls}" aria-label="carte cachée"></span>`;
+const pcards = (l, cls = '') => `<span class="pcs">${(l || []).map(c => pcard(c, cls)).join('')}</span>`;
+const chipsTxt = n => `${(n || 0).toLocaleString('fr-FR')} jetons`;
+const casinoNew = p => Object.assign(p, { chips: CASINO_STACK, re: 0 });
+// Recave : un joueur à sec repart avec un tapis neuf (compté, pour la frime)
+function casinoRebuy(p) { if (p && p.chips < 10) { p.chips = CASINO_STACK; p.re = (p.re || 0) + 1; mpPush(); } }
+const casinoLobby = (v, opts) => {
+  if (MP.role !== 'host') return `${roomBox(false)}<section class="panel"><h3><span>À la table</span><span>${v.players.length}</span></h3>
+    <div class="chips">${v.players.map(p => `<span class="chip tap">${avatar(p.name)}${esc(p.name)}</span>`).join('')}</div></section>
+    <p class="howto">L'hôte va ouvrir la table. Chacun commence avec ${chipsTxt(CASINO_STACK)} (fictifs).</p>`;
+  const H = MP.H, n = H.players.filter(p => p.on).length;
+  return `${roomBox(true)}
+  <section class="panel"><h3><span>À la table</span><span>${H.players.length}</span></h3>
+    <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${avatar(p.name)}${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
+    <p class="hint">On peut aussi rejoindre la table en cours de partie, entre deux mains.</p>
+  </section>
+  ${opts.panel}
+  <button class="btn big" data-a="${opts.start}" ${n < opts.min || MP.status !== 'open' ? 'disabled' : ''}>${n < opts.min ? `Il faut au moins ${opts.min} joueurs` : `Ouvrir la table (${n} joueurs)`}</button>`;
+};
+
+/* ---------- Blackjack ---------- */
+// Chacun joue contre la banque, tenue par l'appli. Sabot de 6 jeux, la banque tire jusqu'à 17.
+function bjTotal(cards) {
+  let t = 0, aces = 0;
+  cards.forEach(c => { if (!c) return; if (c[0] === 'A') { t += 11; aces++; } else t += 'TJQK'.includes(c[0]) ? 10 : +c[0]; });
+  while (t > 21 && aces) { t -= 10; aces--; }
+  return { t, soft: aces > 0 };
+}
+function bjDraw() { const H = MP.H; if (H.shoe.length < 60) H.shoe = newDeck(6); return H.shoe.pop(); }
+const bjCur = () => { const H = MP.H; return H.step === 'play' ? mpP(H.order[H.turn]) : null; };
+MPG.bj = {
+  rules: () => ({ title: 'Blackjack', steps: [
+    "Un joueur crée la table et donne le code ; les autres la rejoignent. La banque est tenue par l'appli.",
+    "Chacun mise avec ses jetons (1 000 au départ, fictifs).",
+    "Tu reçois deux cartes, la banque en montre une. But : t'approcher de 21 sans dépasser. Figures = 10, as = 1 ou 11.",
+    "À ton tour : « Carte » pour en tirer une, « Je reste » pour t'arrêter, ou « Doubler » ta mise contre une seule carte.",
+    "La banque tire jusqu'à 17. Tu gagnes si tu fais mieux qu'elle ou si elle saute. Un blackjack (as + 10 d'entrée) paie 3 pour 2.",
+  ], tips: [
+    "Gages de soirée (au choix de l'hôte) : chaque main perdue = une gorgée ou un gage, un blackjack = 2 à distribuer. L'abus d'alcool est dangereux pour la santé.",
+    "Plus de jetons ? La recave te redonne 1 000 jetons.",
+    "Jetons fictifs uniquement : on joue pour la gloire, jamais d'argent.",
+  ] }),
+  lateJoin: true,
+  init: name => ({ step: 'lobby', players: [casinoNew({ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true })], cfg: { gages: store.get('bjGages', 'sips') }, shoe: newDeck(6), dealer: [], order: [], turn: -1, n: 0 }),
+  join: p => { casinoNew(p); Object.assign(p, { bet: 0, ready: false, hand: [], st: '' }); },
+  resume() { if (MP.H.step === 'dealer') bjDealer(); },
+  act(cid, d) {
+    const H = MP.H, p = mpP(cid);
+    if (!p) return;
+    if (d.t === 'bj-bet' && H.step === 'bet' && !p.ready) {
+      const v = Math.floor(+d.v);
+      if (!(v >= 10 && v <= p.chips)) return;
+      Object.assign(p, { bet: v, last: v, ready: true }); p.chips -= v;
+      const want = H.players.filter(x => x.on && (x.ready || x.chips >= 10));
+      if (want.every(x => x.ready)) bjDeal(); else mpPush();
+    } else if (d.t === 'bj-unbet' && H.step === 'bet' && p.ready) {
+      p.chips += p.bet; Object.assign(p, { bet: 0, ready: false }); mpPush();
+    } else if (d.t === 'bj-rebuy' && !['play', 'dealer'].includes(H.step) && !p.ready) casinoRebuy(p);
+    else if (d.t === 'bj-act' && bjCur() === p) bjMove(p, d.a);
+  },
+  view(cid) {
+    const H = MP.H, hide = H.step === 'play';
+    const dc = hide ? [H.dealer[0], null] : H.dealer;
+    return { game: 'bj', step: H.step, n: H.n, gages: H.cfg.gages !== 'off', mode: H.cfg.gages, alc: H.cfg.gages === 'sips',
+      dealer: { cards: dc, t: H.dealer.length ? bjTotal(dc).t : null },
+      turn: (bjCur() || {}).name || null,
+      players: H.players.map(p => ({ name: p.name, on: !!p.on, chips: p.chips, bet: p.bet || 0, ready: !!p.ready, last: p.last || 50, hand: p.hand || [], t: p.hand && p.hand.length ? bjTotal(p.hand).t : null,
+        st: p.st || '', res: p.res || '', gain: p.gain || 0, re: p.re || 0, me: p.cid === cid, inHand: H.order.includes(p.cid), canDouble: !!(p.hand && p.hand.length === 2 && p.chips >= p.bet) })) };
+  },
+  notify(prev, v) {
+    const me = v.players.find(p => p.me);
+    if (v.step === 'play' && v.turn === (me || {}).name && !(prev && prev.turn === v.turn && prev.step === 'play')) try { navigator.vibrate && navigator.vibrate(80); } catch (e) {}
+    if (v.step === 'bet' && (!prev || prev.step !== 'bet')) MP.bjBet = null;
+  },
+  screen() { return bjScreen(MP.role === 'host' ? MPG.bj.view(MP_CID) : MP.view); },
+};
+function bjDeal() {
+  const H = MP.H;
+  mpTimer('bjT');
+  H.order = H.players.filter(p => p.ready).map(p => p.cid);
+  if (!H.order.length) return;
+  H.players.forEach(p => { p.hand = []; p.st = ''; p.res = ''; p.gain = 0; });
+  H.order.forEach(c => { const p = mpP(c); p.hand = [bjDraw(), bjDraw()]; p.st = bjTotal(p.hand).t === 21 ? 'bj' : 'play'; });
+  H.dealer = [bjDraw(), bjDraw()]; H.n++; H.turn = -1;
+  if (bjTotal(H.dealer).t === 21) { H.step = 'dealer'; bjSettle(); return; } // la banque a un blackjack : on révèle tout de suite
+  bjNext();
+}
+function bjNext() {
+  const H = MP.H;
+  let i = H.turn + 1;
+  while (i < H.order.length && mpP(H.order[i]).st !== 'play') i++;
+  if (i < H.order.length) { H.turn = i; H.step = 'play'; mpPush(); return; }
+  H.turn = -1; H.step = 'dealer'; mpPush(); bjDealer();
+}
+function bjMove(p, a) {
+  if (a === 'hit') {
+    p.hand.push(bjDraw());
+    const t = bjTotal(p.hand).t;
+    if (t > 21) p.st = 'bust'; else if (t === 21) p.st = 'stand';
+  } else if (a === 'stand') p.st = 'stand';
+  else if (a === 'double' && p.hand.length === 2 && p.chips >= p.bet) {
+    p.chips -= p.bet; p.bet *= 2; p.hand.push(bjDraw());
+    p.st = bjTotal(p.hand).t > 21 ? 'bust' : 'stand';
+  } else return;
+  if (p.st === 'play') mpPush(); else bjNext();
+}
+// La banque retourne sa carte puis tire, une carte à la fois pour le suspense
+function bjDealer() {
+  const H = MP.H, m = MP;
+  const stands = H.order.some(c => ['stand', 'play'].includes(mpP(c).st));
+  const go = () => {
+    if (MP !== m || H.step !== 'dealer') return;
+    if (stands && bjTotal(H.dealer).t < 17) { H.dealer.push(bjDraw()); mpPush(); mpTimer('bjT', go, 850); }
+    else bjSettle();
+  };
+  mpTimer('bjT', go, 900);
+}
+function bjSettle() {
+  const H = MP.H, d = bjTotal(H.dealer).t, dbj = H.dealer.length === 2 && d === 21;
+  H.order.forEach(c => {
+    const p = mpP(c), t = bjTotal(p.hand).t, b = p.bet;
+    let res, back = 0;
+    if (p.st === 'bust') res = 'lose';
+    else if (p.st === 'bj') { if (dbj) { res = 'push'; back = b; } else { res = 'bj'; back = b + Math.floor(b * 1.5); } }
+    else if (dbj) res = 'lose';
+    else if (d > 21 || t > d) { res = 'win'; back = 2 * b; }
+    else if (t === d) { res = 'push'; back = b; }
+    else res = 'lose';
+    p.chips += back; p.res = res; p.gain = back - b;
+  });
+  H.step = 'result'; mpPush();
+}
+const BJ_RES = { win: 'Gagné', bj: 'Blackjack !', push: 'Égalité', lose: 'Perdu' };
+const BJ_ST = { bust: 'Sauté', bj: 'Blackjack', stand: 'Reste', play: 'Joue…' };
+function bjScreen(v) {
+  const host = MP.role === 'host', me = v.players.find(p => p.me) || { chips: 0, hand: [] };
+  if (v.step === 'lobby') return casinoLobby(v, { start: 'bj-open', min: 1, panel: `<section class="panel">
+    <h3><span>Gages de soirée</span></h3>
+    <div class="levels three" role="group" aria-label="Gages de soirée">${[['off', 'Aucun'], ['sips', 'Gorgées'], ['gages', 'Gages']].map(([k, l]) => `<button data-a="bj-gages" data-v="${k}" aria-pressed="${v.mode === k}">${l}</button>`).join('')}</div>
+    <p class="hint">${v.gages ? `Chaque main perdue : ${v.alc ? 'une gorgée' : 'un gage'}. Un blackjack : tu en distribues 2.` : 'On joue seulement pour les jetons.'}</p>
+    <p class="hint">Blackjack payé 3 pour 2, la banque tire jusqu'à 17. Tu peux doubler sur tes deux premières cartes.</p></section>` });
+  const stack = `<p class="howto"><span class="chipline">${chipsTxt(me.chips)}</span>${me.re ? ` · ${me.re} recave${me.re > 1 ? 's' : ''}` : ''}</p>`;
+  if (v.step === 'bet') {
+    const ready = v.players.filter(p => p.ready).length;
+    let mine;
+    if (me.ready) mine = `<div class="card compact"><p class="kind">Ta mise</p><p class="text big-result">${me.bet}</p><p class="sub">En attente des autres joueurs…</p></div>
+      <button class="btn ghost" data-a="bj-unbet">Changer ma mise</button>`;
+    else if (me.chips < 10) mine = `<div class="card"><p class="kind">Plus de jetons</p><p class="text">Tu es à sec !</p></div><button class="btn big" data-a="bj-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>`;
+    else {
+      const bet = MP.bjBet == null ? Math.min(me.last, me.chips) : Math.min(MP.bjBet, me.chips);
+      mine = `<div class="card compact"><p class="kind">Ta mise</p><p class="text big-result">${bet}</p></div>
+      <div class="betbar">${[10, 25, 100, 500].map(k => `<button class="jeton j${k}" data-a="bj-add" data-v="${k}" ${me.chips < 10 ? 'disabled' : ''}>+${k}</button>`).join('')}</div>
+      <div class="row"><button class="btn ghost" data-a="bj-clear">Effacer</button><button class="btn ghost" data-a="bj-all">Tapis</button></div>
+      <button class="btn big" data-a="bj-bet" data-v="${bet}" ${bet < 10 ? 'disabled' : ''}>${bet < 10 ? 'Mise minimum : 10' : `Miser ${bet}`}</button>`;
+    }
+    return `<div class="turn"><small>Main ${v.n + 1}</small><strong>Faites vos jeux</strong></div>${stack}${mine}
+      <section class="panel"><h3><span>La table</span><span>${ready} prêt${ready > 1 ? 's' : ''}</span></h3><div class="chips">${v.players.map(p => `<span class="chip tap ${p.ready ? 'on' : ''} ${p.on ? '' : 'off'}">${p.ready ? '✓ ' : ''}${avatar(p.name)}${esc(p.name)}<span class="n">${p.ready ? p.bet : p.chips}</span></span>`).join('')}</div></section>
+      ${host ? `<button class="btn" data-a="bj-deal" ${ready ? '' : 'disabled'}>Distribuer sans attendre les autres</button>` : ''}`;
+  }
+  // Main en cours ou résultats
+  const dealer = `<div class="felt-table"><small>La banque</small>${pcards(v.dealer.cards)}${v.dealer.t != null ? `<span class="pot">${v.dealer.t > 21 ? 'Sautée !' : v.dealer.t}</span>` : ''}</div>`;
+  const seats = `<ul class="plist">${v.players.filter(p => p.inHand).map(p => `<li class="${v.turn === p.name ? 'now' : ''} ${p.res === 'lose' ? 'dead' : ''}">
+      <span class="nm"><b>${avatar(p.name)}${esc(p.name)}${p.me ? ' (toi)' : ''}</b><small>Mise ${p.bet} · ${v.step === 'result' ? `${BJ_RES[p.res]} ${p.gain > 0 ? '+' + p.gain : p.gain < 0 ? p.gain : ''}` : BJ_ST[p.st] || ''}</small></span>
+      ${pcards(p.hand, 'sm')}<b class="chipline">${p.t}</b></li>`).join('')}</ul>`;
+  const myTurn = v.step === 'play' && v.turn === me.name;
+  let zone = '';
+  if (myTurn) zone = `<div class="banner gold">À toi de jouer : ${bjTotal(me.hand).t}${bjTotal(me.hand).soft ? ' (as compté 11)' : ''}</div>
+    <div class="row"><button class="btn big" data-a="bj-act" data-v="hit">Carte</button><button class="btn big red" data-a="bj-act" data-v="stand">Je reste</button></div>
+    ${me.canDouble ? `<button class="btn paper" data-a="bj-act" data-v="double">Doubler (+${me.bet}) et une seule carte</button>` : ''}`;
+  else if (v.step === 'play') zone = `<p class="howto">Au tour de ${esc(v.turn || '…')}.</p>${host && v.turn && !(v.players.find(p => p.name === v.turn) || {}).on ? `<button class="btn ghost" data-a="bj-skip">${esc(v.turn)} est déconnecté·e : il reste</button>` : ''}`;
+  else if (v.step === 'dealer') zone = `<p class="howto">La banque joue…</p>`;
+  else {
+    const losers = v.players.filter(p => p.inHand && p.res === 'lose').map(p => p.name), bjs = v.players.filter(p => p.res === 'bj').map(p => p.name);
+    const unit = v.alc ? 'gorgée' : 'gage';
+    zone = `${me.inHand ? `<div class="banner ${me.res === 'lose' ? '' : 'gold'}">${BJ_RES[me.res]}${me.gain ? ` (${me.gain > 0 ? '+' : ''}${me.gain})` : ''}</div>` : ''}
+      ${v.gages && (losers.length || bjs.length) ? `<p class="howto">${losers.length ? `${esc(losers.join(', '))} : ${v.alc ? 'une gorgée' : 'un gage'} chacun·e.` : ''} ${bjs.length ? `${esc(bjs.join(', '))} distribue${bjs.length > 1 ? 'nt' : ''} 2 ${unit}s.` : ''}</p>` : ''}
+      ${host ? `<button class="btn big" data-a="bj-next">Main suivante</button>` : `<p class="howto">L'hôte lance la main suivante.</p>`}`;
+  }
+  return `<div class="turn"><small>Main ${v.n}</small><strong class="q">${v.step === 'result' ? 'Résultats' : 'Blackjack'}</strong></div>${dealer}${seats}${zone}${stack}`;
+}
+
+/* ---------- Poker (Texas Hold'em, sans limite) ---------- */
+const PK_HANDS = ['Carte haute', 'Paire', 'Double paire', 'Brelan', 'Quinte', 'Couleur', 'Full', 'Carré', 'Quinte flush'];
+const PK_BLINDS = [[5, 10], [10, 20], [25, 50]];
+const PK_STREET = ['Avant le flop', 'Flop', 'Turn', 'River'];
+const RV = c => RANKS.indexOf(c[0]) + 2;
+// Valeur d'une main de 5 cartes : [catégorie, départages…], comparée case par case
+function pkEval5(cs) {
+  const v = cs.map(RV).sort((a, b) => b - a), flush = cs.every(c => c[1] === cs[0][1]);
+  let straight = 0;
+  if (new Set(v).size === 5) { if (v[0] - v[4] === 4) straight = v[0]; else if (v.join() === '14,5,4,3,2') straight = 5; }
+  const cnt = {}; v.forEach(x => { cnt[x] = (cnt[x] || 0) + 1; });
+  const g = Object.entries(cnt).map(([x, n]) => [n, +x]).sort((a, b) => b[0] - a[0] || b[1] - a[1]), k = g.map(x => x[1]);
+  if (straight && flush) return [8, straight];
+  if (g[0][0] === 4) return [7, ...k];
+  if (g[0][0] === 3 && g[1][0] === 2) return [6, ...k];
+  if (flush) return [5, ...v];
+  if (straight) return [4, straight];
+  if (g[0][0] === 3) return [3, ...k];
+  if (g[0][0] === 2 && g[1][0] === 2) return [2, ...k];
+  if (g[0][0] === 2) return [1, ...k];
+  return [0, ...v];
+}
+const pkCmp = (a, b) => { for (let i = 0; i < Math.max(a.length, b.length); i++) { const d = (a[i] || 0) - (b[i] || 0); if (d) return d; } return 0; };
+function pkBest(cs) {
+  let best = null;
+  const n = cs.length;
+  for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) for (let c = b + 1; c < n; c++) for (let d = c + 1; d < n; d++) for (let e = d + 1; e < n; e++) {
+    const s = pkEval5([cs[a], cs[b], cs[c], cs[d], cs[e]]);
+    if (!best || pkCmp(s, best) > 0) best = s;
+  }
+  return best;
+}
+const pkName = s => !s ? '' : s[0] === 8 && s[1] === 14 ? 'Quinte flush royale' : PK_HANDS[s[0]];
+MPG.pk = {
+  rules: () => ({ title: 'Poker', steps: [
+    "Un joueur crée la table et donne le code ; les autres la rejoignent depuis leur téléphone. Tout le monde commence avec 1 000 jetons fictifs.",
+    "Chacun reçoit deux cartes secrètes sur son téléphone. Le bouton (D), la petite blinde (PB) et la grosse blinde (GB) tournent à chaque main.",
+    "À ton tour : te coucher, parler (si personne n'a misé), suivre, ou relancer avec le curseur. Tapis = tout miser.",
+    "Le flop (3 cartes), le turn puis la river s'affichent au centre. Une relance à chaque étape.",
+    "À l'abattage, la meilleure combinaison de 5 cartes parmi tes 2 cartes et les 5 du centre gagne le pot. L'appli calcule tout, y compris les pots partagés et les tapis.",
+  ], tips: [
+    "Combinaisons, de la plus faible à la plus forte : carte haute, paire, double paire, brelan, quinte, couleur, full, carré, quinte flush.",
+    "Touche tes cartes pour les cacher si ton voisin est trop curieux.",
+    "Plus de jetons ? La recave te redonne 1 000 jetons entre deux mains.",
+    "Jetons fictifs uniquement : on joue pour la gloire, jamais d'argent.",
+  ] }),
+  lateJoin: true,
+  init: name => ({ step: 'lobby', players: [casinoNew({ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true })], cfg: { blinds: store.get('pkBlinds', [10, 20]) }, hand: null, btnCid: null, n: 0 }),
+  join: p => casinoNew(p),
+  act(cid, d) {
+    const H = MP.H, p = mpP(cid);
+    if (!p) return;
+    if (d.t === 'pk-act') pkAct(cid, d);
+    else if (d.t === 'pk-rebuy' && (H.step !== 'hand' || !H.hand.seats.includes(cid))) casinoRebuy(p);
+  },
+  view(cid) {
+    const H = MP.H, h = H.hand, show = H.step === 'show';
+    const v = { game: 'pk', step: H.step, blinds: H.cfg.blinds, n: H.n,
+      players: H.players.map(p => ({ name: p.name, chips: p.chips, on: !!p.on, re: p.re || 0, me: p.cid === cid })) };
+    if (!h) return v;
+    const shown = show && h.res ? h.res.shown : [];
+    Object.assign(v, { board: h.board, pot: h.seats.reduce((s, c) => s + (h.total[c] || 0), 0), street: h.street, last: h.last, res: show && h.res ? { lines: h.res.lines, showdown: shown.length > 0 } : null,
+      seats: h.seats.map((c, i) => { const p = mpP(c); return { name: p.name, chips: p.chips, bet: h.bet[c] || 0, folded: !!h.folded[c], allin: !!h.allin[c], on: !!p.on,
+        btn: i === h.btn, sb: i === h.sb, bb: i === h.bb, turn: H.step === 'hand' && i === h.cur, me: c === cid,
+        cards: c === cid || shown.includes(c) ? h.hole[c] : null, hn: shown.includes(c) ? pkName(pkBest(h.hole[c].concat(h.board))) : '' }; }) });
+    if (h.hole[cid]) {
+      const p = mpP(cid), bet = h.bet[cid] || 0;
+      v.me = { hole: h.hole[cid], hn: h.board.length >= 3 ? pkName(pkBest(h.hole[cid].concat(h.board))) : '', folded: !!h.folded[cid] };
+      if (H.step === 'hand' && h.seats[h.cur] === cid) {
+        const max = p.chips + bet, toCall = Math.min(h.curBet - bet, p.chips);
+        Object.assign(v.me, { turn: true, toCall, max, minTo: Math.min(max, h.curBet + h.minRaise), canRaise: max > h.curBet, pot: v.pot });
+      }
+    }
+    return v;
+  },
+  notify(prev, v) {
+    const t = v.me && v.me.turn, was = prev && prev.me && prev.me.turn;
+    if (t && !was) { MP.pkTo = null; try { navigator.vibrate && navigator.vibrate([70, 50, 70]); } catch (e) {} }
+  },
+  screen() { return pkScreen(MP.role === 'host' ? MPG.pk.view(MP_CID) : MP.view); },
+};
+const pkCan = (h, c) => !h.folded[c] && !h.allin[c];
+function pkPut(c, amt) {
+  const h = MP.H.hand, p = mpP(c), a = Math.max(0, Math.min(amt, p.chips));
+  p.chips -= a; h.bet[c] = (h.bet[c] || 0) + a; h.total[c] = (h.total[c] || 0) + a;
+  if (!p.chips) h.allin[c] = true;
+  return a;
+}
+function pkStart() {
+  const H = MP.H, [SB, BB] = H.cfg.blinds;
+  const seats = H.players.filter(p => p.on && p.chips > 0).map(p => p.cid);
+  if (seats.length < 2) { toast('Il faut au moins 2 joueurs connectés avec des jetons.'); return; }
+  const order = H.players.map(p => p.cid), start = order.indexOf(H.btnCid);
+  let btnCid = seats[0];
+  for (let k = 1; k <= order.length; k++) { const c = order[(start + k + order.length) % order.length]; if (seats.includes(c)) { btnCid = c; break; } }
+  H.btnCid = btnCid;
+  const n = seats.length, btn = seats.indexOf(btnCid), sb = n === 2 ? btn : (btn + 1) % n, bb = (sb + 1) % n;
+  const deck = newDeck();
+  H.hand = { seats, btn, sb, bb, deck, hole: {}, board: [], bet: {}, total: {}, folded: {}, allin: {}, acted: {}, street: 0, curBet: BB, minRaise: BB, cur: -1, last: '', res: null };
+  seats.forEach(c => { H.hand.hole[c] = [deck.pop(), deck.pop()]; });
+  pkPut(seats[sb], SB); pkPut(seats[bb], BB);
+  H.hand.last = `Blindes ${SB} / ${BB}`;
+  H.step = 'hand';
+  pkProgress(n === 2 ? sb : (bb + 1) % n);
+}
+function pkAct(cid, d) {
+  const H = MP.H, h = H.hand;
+  if (H.step !== 'hand' || !h || h.seats[h.cur] !== cid) return;
+  const p = mpP(cid), bet = h.bet[cid] || 0, toCall = h.curBet - bet;
+  if (d.a === 'fold') { h.folded[cid] = true; h.last = `${p.name} se couche`; }
+  else if (d.a === 'check') { if (toCall > 0) return; h.last = `${p.name} parole`; }
+  else if (d.a === 'call') { if (toCall <= 0) return; pkPut(cid, toCall); h.last = `${p.name} suit${h.allin[cid] ? ' (tapis)' : ''}`; }
+  else if (d.a === 'raise') {
+    const max = p.chips + bet;
+    let to = Math.floor(+d.to);
+    if (!(to > h.curBet)) return;
+    if (to >= max) to = max;
+    const by = to - h.curBet;
+    if (by < h.minRaise && to < max) return;
+    pkPut(cid, to - bet);
+    if (by >= h.minRaise) { h.minRaise = by; h.acted = {}; }
+    h.curBet = to;
+    h.last = h.allin[cid] ? `${p.name} fait tapis (${to})` : `${p.name} ${bet || h.street === 0 ? 'relance' : 'mise'} à ${to}`;
+  } else return;
+  h.acted[cid] = true;
+  pkProgress(h.cur + 1);
+}
+function pkProgress(from) {
+  const h = MP.H.hand, n = h.seats.length;
+  if (h.seats.filter(c => !h.folded[c]).length === 1) return pkEnd();
+  const actors = h.seats.filter(c => pkCan(h, c));
+  // Seul joueur pouvant encore parler face à des tapis : rien à décider s'il a déjà suivi
+  const lone = actors.length === 1 && (h.bet[actors[0]] || 0) >= h.curBet;
+  for (let k = 0; k < n && !lone; k++) {
+    const i = (from + k) % n, c = h.seats[i];
+    if (pkCan(h, c) && !(h.acted[c] && (h.bet[c] || 0) === h.curBet)) { h.cur = i; mpPush(); return; }
+  }
+  // Tour d'enchères terminé
+  h.bet = {}; h.curBet = 0; h.minRaise = MP.H.cfg.blinds[1]; h.acted = {}; h.cur = -1;
+  if (h.street >= 3) return pkEnd();
+  if (actors.length <= 1) { while (h.board.length < 5) h.board.push(h.deck.pop()); h.street = 3; return pkEnd(); }
+  h.street++;
+  h.board.push(...h.deck.splice(-(h.street === 1 ? 3 : 1)));
+  pkProgress((h.btn + 1) % n);
+}
+function pkEnd() {
+  const H = MP.H, h = H.hand, seats = h.seats, live = seats.filter(c => !h.folded[c]);
+  // Rend la part d'une mise que personne n'a pu suivre
+  const tops = seats.map(c => h.total[c] || 0), max = Math.max(...tops);
+  if (tops.filter(t => t === max).length === 1) {
+    const c = seats[tops.indexOf(max)], second = Math.max(0, ...tops.filter((t, i) => i !== tops.indexOf(max))), back = max - second;
+    if (back > 0) { h.total[c] -= back; mpP(c).chips += back; if (mpP(c).chips) delete h.allin[c]; }
+  }
+  const won = {};
+  const give = (c, a) => { won[c] = (won[c] || 0) + a; mpP(c).chips += a; };
+  const all = seats.reduce((s, c) => s + (h.total[c] || 0), 0);
+  if (live.length === 1) { give(live[0], all); h.res = { lines: [{ name: mpP(live[0]).name, amount: all, hn: '' }], shown: [] }; }
+  else {
+    const score = {}; live.forEach(c => { score[c] = pkBest(h.hole[c].concat(h.board)); });
+    const levels = [...new Set(live.map(c => h.total[c] || 0))].filter(x => x > 0).sort((a, b) => a - b);
+    const byPos = c => (seats.indexOf(c) - h.btn - 1 + seats.length * 2) % seats.length; // l'éventuel jeton restant va au premier après le bouton
+    let prev = 0, dealt = 0;
+    levels.forEach((L, li) => {
+      let amount = seats.reduce((s, c) => s + Math.max(0, Math.min(h.total[c] || 0, L) - prev), 0);
+      if (li === levels.length - 1) amount = all - dealt;
+      dealt += amount; prev = L;
+      const elig = live.filter(c => (h.total[c] || 0) >= L);
+      const best = elig.reduce((b, c) => !b || pkCmp(score[c], b) > 0 ? score[c] : b, null);
+      const wins = elig.filter(c => pkCmp(score[c], best) === 0).sort((a, b) => byPos(a) - byPos(b));
+      const share = Math.floor(amount / wins.length);
+      wins.forEach((c, i) => give(c, share + (i === 0 ? amount - share * wins.length : 0)));
+    });
+    h.res = { lines: Object.keys(won).map(c => ({ name: mpP(c).name, amount: won[c], hn: pkName(score[c]) })).sort((a, b) => b.amount - a.amount), shown: live };
+  }
+  H.step = 'show'; H.n++; h.cur = -1;
+  mpPush();
+}
+function pkScreen(v) {
+  const host = MP.role === 'host', mine = v.players.find(p => p.me) || { chips: 0 };
+  if (v.step === 'lobby') return casinoLobby(v, { start: 'pk-start', min: 2, panel: `<section class="panel"><h3><span>Blindes</span><span>${chipsTxt(CASINO_STACK)} chacun</span></h3>
+    <div class="levels three" role="group" aria-label="Blindes">${PK_BLINDS.map(b => `<button data-a="pk-blinds" data-v="${b.join('/')}" aria-pressed="${v.blinds.join('/') === b.join('/')}">${b.join(' / ')}</button>`).join('')}</div>
+    <p class="hint">Texas Hold'em sans limite. Le bouton tourne à chaque main.</p></section>` });
+  const seated = v.seats && v.seats.find(s => s.me);
+  const slots = [0, 1, 2, 3, 4].map(i => v.board[i] ? pcard(v.board[i]) : `<span class="pc slot"></span>`).join('');
+  const table = `<div class="felt-table"><small>${v.step === 'show' ? 'Fin de la main' : PK_STREET[v.street]} · main ${v.n + (v.step === 'show' ? 0 : 1)}</small><span class="pcs">${slots}</span><span class="pot">Pot ${v.pot}</span>${v.last ? `<span class="hint">${esc(v.last)}</span>` : ''}</div>`;
+  const res = v.res ? `<div class="card compact"><p class="kind">${v.res.showdown ? 'Abattage' : 'Tout le monde s\'est couché'}</p>${v.res.lines.map(l => `<p class="text">${esc(l.name)} gagne <em>${l.amount}</em>${l.hn ? `<br><span class="sub">avec ${l.hn === 'Brelan' || l.hn === 'Carré' || l.hn === 'Full' ? 'un' : 'une'} ${l.hn.toLowerCase()}</span>` : ''}</p>`).join('')}</div>` : '';
+  const seats = `<ul class="plist">${v.seats.map(s => `<li class="${s.turn ? 'now' : ''} ${s.folded ? 'dead' : ''}">
+      <span class="nm"><b>${avatar(s.name)}${esc(s.name)}${s.btn ? '<span class="badge d">D</span>' : ''}${s.sb ? '<span class="badge">PB</span>' : ''}${s.bb ? '<span class="badge">GB</span>' : ''}</b>
+      <small>${s.chips} jetons${s.bet ? ` · mise ${s.bet}` : ''}${s.folded ? ' · couché·e' : s.allin ? ' · tapis' : ''}${s.turn ? ' · réfléchit…' : ''}${s.on ? '' : ' · déconnecté·e'}${s.hn ? ` · ${s.hn}` : ''}</small></span>
+      ${s.folded ? '' : s.cards ? pcards(s.cards, 'sm') : pcards([null, null], 'sm')}</li>`).join('')}</ul>`;
+  let zone = '';
+  if (seated && v.me) {
+    const me = v.me, hidden = MP.pkHide;
+    zone = `<section class="panel my-hand"><h3><span>Tes cartes</span><span>${seated.chips} jetons</span></h3>
+      <button class="hand-btn" data-a="pk-hide" aria-label="${hidden ? 'Montrer' : 'Cacher'} mes cartes">${hidden ? pcards([null, null], 'lg') : pcards(me.hole, 'lg')}</button>
+      <p class="hint">${hidden ? 'Touche pour voir tes cartes.' : `${me.hn ? `<b>${me.hn}</b> · ` : ''}Touche pour cacher.`}</p></section>`;
+    if (me.turn) {
+      const to = Math.min(me.max, Math.max(me.minTo, MP.pkTo || me.minTo));
+      MP.pkTo = to;
+      const quick = [['Mini', me.minTo], ['½ pot', Math.floor(me.pot / 2) + me.toCall], ['Pot', me.pot + me.toCall]].filter(([, x]) => x > me.minTo && x < me.max);
+      zone += `<div class="banner gold">À toi de parler${me.toCall ? ` : ${me.toCall} pour suivre` : ''}</div>
+      <div class="row"><button class="btn red" data-a="pk-act" data-v="fold">Se coucher</button>${me.toCall ? `<button class="btn" data-a="pk-act" data-v="call">Suivre ${me.toCall}</button>` : `<button class="btn" data-a="pk-act" data-v="check">Parole</button>`}</div>
+      ${me.canRaise ? `<div class="panel raise">${me.max > me.minTo ? `<input type="range" id="pkRaise" min="${me.minTo}" max="${me.max}" step="${Math.max(1, v.blinds[0])}" value="${to}" aria-label="Montant de la relance">
+        <div class="chips qs">${quick.map(([l, x]) => `<button class="chip tap" data-a="pk-to" data-v="${x}">${l}</button>`).join('')}<button class="chip tap" data-a="pk-to" data-v="${me.max}">Tapis</button></div>` : ''}
+        <button class="btn paper" data-a="pk-act" data-v="raise" id="pkRaiseBtn">${to >= me.max ? `Tapis (${me.max})` : `${me.toCall || v.street === 0 ? 'Relancer' : 'Miser'} à ${to}`}</button></div>` : ''}`;
+    } else if (v.step === 'hand') zone += `<p class="howto">${me.folded ? 'Tu t\'es couché·e pour cette main.' : `Au tour de ${esc((v.seats.find(s => s.turn) || {}).name || '…')}.`}</p>`;
+  } else if (v.step === 'hand') zone = `<p class="howto">Tu joueras à la prochaine main.</p>`;
+  const cur = v.seats.find(s => s.turn);
+  if (host && v.step === 'hand' && cur && !cur.on) zone += `<button class="btn ghost" data-a="pk-skip">${esc(cur.name)} est déconnecté·e : ${v.seats.find(s => s.turn).bet >= Math.max(...v.seats.map(s => s.bet)) ? 'parole' : 'il se couche'}</button>`;
+  if (v.step === 'show') zone += mine.chips < 10 ? `<button class="btn" data-a="pk-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>` : '';
+  if (v.step === 'show') zone += host ? `<button class="btn big" data-a="pk-next">Main suivante</button>` : `<p class="howto">L'hôte lance la main suivante.</p>`;
+  const others = v.players.filter(p => !v.seats.some(s => s.name === p.name));
+  return `${table}${res}${seats}${zone}${others.length ? `<p class="hint">En attente de la prochaine main : ${esc(others.map(p => `${p.name} (${p.chips})`).join(', '))}</p>` : ''}`;
+}
+
+Object.assign(actions, {
+  'bj-gages'(k) { MP.H.cfg.gages = k; store.set('bjGages', k); mpPush(); },
+  'bj-open'() { MP.H.step = 'bet'; mpPush(); },
+  'bj-add'(k) {
+    const v = MP.role === 'host' ? MPG.bj.view(MP_CID) : MP.view, p = v.players.find(x => x.me);
+    MP.bjBet = Math.min(p.chips, (MP.bjBet == null ? 0 : MP.bjBet) + +k); sfx('chip'); render(false);
+  },
+  'bj-clear'() { MP.bjBet = 0; render(false); },
+  'bj-all'() { sfx('chips'); const v = MP.role === 'host' ? MPG.bj.view(MP_CID) : MP.view; MP.bjBet = v.players.find(x => x.me).chips; render(false); },
+  'bj-bet'(v) { sfx('chips'); mpSend({ t: 'bj-bet', v: +v }); },
+  'bj-unbet'() { mpSend({ t: 'bj-unbet' }); },
+  'bj-rebuy'() { mpSend({ t: 'bj-rebuy' }); },
+  'bj-act'(a) { if (a === 'double') sfx('chips'); mpSend({ t: 'bj-act', a }); },
+  'bj-deal'() { bjDeal(); },
+  'bj-skip'() { const p = bjCur(); if (p) bjMove(p, 'stand'); },
+  'bj-next'() {
+    const H = MP.H;
+    H.players.forEach(p => Object.assign(p, { bet: 0, ready: false, hand: [], st: '', res: '', gain: 0 }));
+    Object.assign(H, { step: 'bet', dealer: [], order: [], turn: -1 }); MP.bjBet = null;
+    mpPush();
+  },
+  'pk-blinds'(v) { MP.H.cfg.blinds = v.split('/').map(Number); store.set('pkBlinds', MP.H.cfg.blinds); mpPush(); },
+  'pk-start'() { pkStart(); },
+  'pk-next'() { pkStart(); },
+  'pk-hide'() { MP.pkHide = !MP.pkHide; render(false); },
+  'pk-to'(x) { MP.pkTo = +x; sfx('chip'); render(false); },
+  'pk-act'(a) { if (a === 'fold') sfx('flip'); else if (a === 'check') sfx('tick'); mpSend(a === 'raise' ? { t: 'pk-act', a, to: MP.pkTo } : { t: 'pk-act', a }); },
+  'pk-rebuy'() { mpSend({ t: 'pk-rebuy' }); },
+  'pk-skip'() { const h = MP.H.hand, c = h.seats[h.cur]; pkAct(c, { a: (h.bet[c] || 0) >= h.curBet ? 'check' : 'fold' }); },
+});
+app.addEventListener('input', e => {
+  if (e.target.id !== 'pkRaise') return;
+  MP.pkTo = +e.target.value;
+  const b = document.getElementById('pkRaiseBtn'), v = MP.role === 'host' ? MPG.pk.view(MP_CID) : MP.view;
+  if (b && v.me) b.textContent = MP.pkTo >= v.me.max ? `Tapis (${v.me.max})` : `${v.me.toCall || v.street === 0 ? 'Relancer' : 'Miser'} à ${MP.pkTo}`;
+});
+
+
+/* ---------- Roulette (européenne, un seul zéro) ---------- */
+// L'appli tient le rôle du croupier. Chacun pose ses jetons sur son téléphone, puis la bille est lancée pour tous.
+const RL_WHEEL = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+const RL_RED = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
+const RL_SPIN = 5200, RL_CHIPS = [5, 10, 25, 100];
+const rlColor = n => n === 0 ? 'green' : RL_RED.has(n) ? 'red' : 'black';
+// Mises extérieures : [libellé, gagne si…, paiement en comptant la mise]
+const RL_BETS = {
+  red: ['Rouge', n => RL_RED.has(n), 2], black: ['Noir', n => n > 0 && !RL_RED.has(n), 2],
+  even: ['Pair', n => n > 0 && n % 2 === 0, 2], odd: ['Impair', n => n % 2 === 1, 2],
+  low: ['1 à 18', n => n >= 1 && n <= 18, 2], high: ['19 à 36', n => n >= 19, 2],
+  d1: ['1 à 12', n => n >= 1 && n <= 12, 3], d2: ['13 à 24', n => n >= 13 && n <= 24, 3], d3: ['25 à 36', n => n >= 25, 3],
+  c1: ['Colonne 1', n => n > 0 && n % 3 === 1, 3], c2: ['Colonne 2', n => n > 0 && n % 3 === 2, 3], c3: ['Colonne 3', n => n > 0 && n % 3 === 0, 3],
+};
+const rlOuter = k => Object.prototype.hasOwnProperty.call(RL_BETS, k);
+const rlValid = k => rlOuter(k) || /^n([0-9]|[12][0-9]|3[0-6])$/.test(k);
+const rlLabel = k => rlOuter(k) ? RL_BETS[k][0] : `Plein ${k.slice(1)}`;
+const rlPays = (k, n) => rlOuter(k) ? (RL_BETS[k][1](n) ? RL_BETS[k][2] : 0) : +k.slice(1) === n ? 36 : 0;
+const rlSum = bets => Object.values(bets || {}).reduce((s, a) => s + a, 0);
+const rlNum = n => `<span class="rl-num ${rlColor(n)}">${n}</span>`;
+MPG.rl = {
+  lateJoin: true,
+  rules: () => ({ title: 'Roulette', steps: [
+    "Un joueur crée la table et donne le code ; les autres la rejoignent. L'appli est le croupier. Chacun commence avec 1 000 jetons fictifs.",
+    "Choisis la valeur de ton jeton, puis touche les cases du tapis pour poser tes mises. Tu peux en poser autant que tu veux, sur plusieurs cases.",
+    "Valide tes mises. Quand tout le monde est prêt (ou quand l'hôte le décide), la bille est lancée sur tous les téléphones.",
+    "Un numéro plein paie 35 fois la mise. Douzaine ou colonne : 2 fois. Rouge, noir, pair, impair, 1 à 18 ou 19 à 36 : 1 fois.",
+    "Le zéro est vert : seules les mises sur le 0 gagnent.",
+  ], tips: [
+    "« Rejouer mes mises » repose les mêmes jetons qu'au tour précédent.",
+    "Gages de soirée (au choix de l'hôte) : un tour perdu = une gorgée ou un gage, un numéro plein touché = 3 à distribuer. L'abus d'alcool est dangereux pour la santé.",
+    "Jetons fictifs uniquement : on joue pour la gloire, jamais d'argent.",
+  ] }),
+  init: name => ({ step: 'lobby', players: [MPG.rl.join({ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true })], cfg: { gages: store.get('rlGages', 'sips') }, hist: [], n: 0, num: null, spin: null }),
+  join: p => Object.assign(casinoNew(p), { bets: {}, ready: false, gain: 0, hits: [] }),
+  resume() { if (MP.H.step === 'spin') rlFinish(); },
+  after: () => rlSpinAnim(),
+  act(cid, d) {
+    const H = MP.H, p = mpP(cid);
+    if (!p) return;
+    if (d.t === 'rl-bet' && H.step === 'bet' && !p.ready) {
+      const bets = {};
+      for (const [k, v] of Object.entries(d.bets || {})) {
+        const a = Math.floor(+v);
+        if (!rlValid(k) || !(a >= 1)) return;
+        bets[k] = a;
+      }
+      const sum = rlSum(bets);
+      if (!sum || sum > p.chips) return;
+      Object.assign(p, { bets, last: bets, ready: true }); p.chips -= sum;
+      const want = H.players.filter(x => x.on && (x.ready || x.chips >= 5));
+      if (want.every(x => x.ready)) rlSpin(); else mpPush();
+    } else if (d.t === 'rl-unbet' && H.step === 'bet' && p.ready) {
+      p.chips += rlSum(p.bets); Object.assign(p, { bets: {}, ready: false }); mpPush();
+    } else if (d.t === 'rl-rebuy' && H.step !== 'spin' && !p.ready) casinoRebuy(p);
+  },
+  view(cid) {
+    const H = MP.H, p = mpP(cid) || {};
+    return { game: 'rl', step: H.step, n: H.n, hist: H.hist, gages: H.cfg.gages !== 'off', mode: H.cfg.gages, alc: H.cfg.gages === 'sips',
+      num: H.step === 'result' ? H.num : null,
+      wheel: H.spin ? (H.step === 'spin' ? H.spin.from : H.spin.to) : 0,
+      spin: H.step === 'spin' ? { to: H.spin.to, left: Math.max(0, RL_SPIN - (Date.now() - H.spin.at)) } : null,
+      players: H.players.map(x => ({ name: x.name, on: !!x.on, chips: x.chips, ready: !!x.ready, stake: rlSum(x.bets), gain: x.gain || 0, re: x.re || 0, me: x.cid === cid, hits: x.hits || [] })),
+      bets: p.bets || {}, last: p.last || null };
+  },
+  notify(prev, v) {
+    if (v.step === 'bet' && (!prev || prev.step !== 'bet')) MP.rlDraft = null;
+    if (v.spin && (!prev || !prev.spin)) MP.rlStart = Date.now() - (RL_SPIN - v.spin.left);
+    if (v.step === 'result' && prev && prev.step === 'spin') { const me = v.players.find(x => x.me); buzz(me && me.gain > 0 ? [80, 60, 80, 60, 160] : 120); }
+  },
+  screen() { return rlScreen(MP.role === 'host' ? MPG.rl.view(MP_CID) : MP.view); },
+};
+// La bille : le numéro est tiré tout de suite par l'hôte, la roue tourne jusqu'à lui sur tous les téléphones
+function rlSpin() {
+  const H = MP.H;
+  if (H.step !== 'bet' || !H.players.some(p => p.ready)) return;
+  H.num = rand(37);
+  const seg = 360 / 37, from = H.spin ? H.spin.to % 360 : 0;
+  const target = (360 - (RL_WHEEL.indexOf(H.num) * seg + seg / 2)) % 360;
+  H.spin = { from, to: from + 360 * 6 + ((target - from) % 360 + 360) % 360, at: Date.now() };
+  H.step = 'spin';
+  mpPush();
+  mpTimer('rlT', rlFinish, RL_SPIN + 300);
+}
+function rlFinish() {
+  const H = MP.H, n = H.num;
+  H.players.forEach(p => {
+    if (!p.ready) { p.gain = 0; p.hits = []; return; }
+    const won = Object.entries(p.bets).reduce((s, [k, a]) => s + a * rlPays(k, n), 0);
+    p.chips += won; p.gain = won - rlSum(p.bets);
+    p.hits = Object.keys(p.bets).filter(k => rlPays(k, n));
+  });
+  H.hist = [n].concat(H.hist).slice(0, 14);
+  H.step = 'result'; H.n++;
+  ring(); mpPush();
+}
+function rlWheelSvg(angle) {
+  const seg = 360 / 37, R = 96, C = 100;
+  const pt = (a, r) => [C + r * Math.sin(a * Math.PI / 180), C - r * Math.cos(a * Math.PI / 180)];
+  const fill = { green: '#2f9e5a', red: '#c93a3f', black: '#221c17' };
+  const parts = RL_WHEEL.map((n, i) => {
+    const [x0, y0] = pt(i * seg, R), [x1, y1] = pt((i + 1) * seg, R), mid = i * seg + seg / 2, [tx, ty] = pt(mid, R - 9);
+    return `<path d="M${C} ${C}L${x0.toFixed(2)} ${y0.toFixed(2)}A${R} ${R} 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)}Z" fill="${fill[rlColor(n)]}" stroke="#e7b552" stroke-width=".4"/>
+      <text x="${tx.toFixed(2)}" y="${ty.toFixed(2)}" transform="rotate(${mid.toFixed(2)} ${tx.toFixed(2)} ${ty.toFixed(2)})" text-anchor="middle" dominant-baseline="middle" fill="#fff" style="font:800 7px var(--font-body)">${n}</text>`;
+  }).join('');
+  return `<div class="rl-box"><span class="rl-pointer" aria-hidden="true"></span>
+    <svg class="rl-wheel" id="rlWheel" viewBox="0 0 200 200" role="img" aria-label="Roue de la roulette" style="transform:rotate(${angle}deg)">${parts}
+      <circle cx="100" cy="100" r="62" fill="#6b4426"/><circle cx="100" cy="100" r="54" fill="#17513a"/><circle cx="100" cy="100" r="9" fill="#e7b552"/></svg></div>`;
+}
+function rlSpinAnim() {
+  const v = MP.role === 'host' ? MPG.rl.view(MP_CID) : MP.view;
+  if (!v || !v.spin) return;
+  const start = MP.role === 'host' ? MP.H.spin.at : MP.rlStart || Date.now() - (RL_SPIN - v.spin.left);
+  spinWheel('rlWheel', v.wheel, v.spin.to, start, RL_SPIN);
+}
+function rlScreen(v) {
+  const host = MP.role === 'host', me = v.players.find(p => p.me) || { chips: 0 };
+  if (v.step === 'lobby') return casinoLobby(v, { start: 'rl-open', min: 1, panel: `<section class="panel"><h3><span>Gages de soirée</span></h3>
+    <div class="levels three" role="group" aria-label="Gages de soirée">${[['off', 'Aucun'], ['sips', 'Gorgées'], ['gages', 'Gages']].map(([k, l]) => `<button data-a="rl-gages" data-v="${k}" aria-pressed="${v.mode === k}">${l}</button>`).join('')}</div>
+    <p class="hint">${v.gages ? `Tour perdu : ${v.alc ? 'une gorgée' : 'un gage'}. Numéro plein touché : 3 à distribuer.` : 'On joue seulement pour les jetons.'} Roulette européenne, un seul zéro.</p></section>` });
+  const stack = `<p class="howto"><span class="chipline">${chipsTxt(me.chips)}</span>${me.re ? ` · ${me.re} recave${me.re > 1 ? 's' : ''}` : ''}</p>`;
+  const hist = v.hist.length ? `<div class="rl-hist" aria-label="Derniers numéros">${v.hist.map(rlNum).join('')}</div>` : '';
+  const table = `<section class="panel"><h3><span>La table</span><span>${v.players.filter(p => p.ready).length} prêt·s</span></h3>
+    <div class="chips">${v.players.map(p => `<span class="chip tap ${p.ready ? 'on' : ''} ${p.on ? '' : 'off'}">${p.ready ? '✓ ' : ''}${avatar(p.name)}${esc(p.name)}<span class="n">${v.step === 'result' && p.stake ? (p.gain > 0 ? '+' + p.gain : p.gain) : p.ready ? p.stake : p.chips}</span></span>`).join('')}</div></section>`;
+  if (v.step === 'bet') {
+    let zone;
+    if (me.ready) zone = `<div class="card compact"><p class="kind">Tes mises</p><p class="text big-result">${rlSum(v.bets)}</p>
+        <p class="sub">${Object.entries(v.bets).map(([k, a]) => `${rlLabel(k)} : ${a}`).join(' · ')}</p><p class="sub">En attente des autres joueurs…</p></div>
+      <button class="btn ghost" data-a="rl-unbet">Changer mes mises</button>`;
+    else if (me.chips < 5) zone = `<div class="card compact"><p class="kind">Plus de jetons</p><p class="text">Tu es à sec !</p></div><button class="btn big" data-a="rl-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>`;
+    else {
+      const d = MP.rlDraft || {}, chip = MP.rlChip || 10, tot = rlSum(d);
+      const cell = (k, label, cls = '') => `<button class="rl-cell ${cls}" data-a="rl-put" data-v="${k}" aria-label="${rlLabel(k)}${d[k] ? `, ${d[k]} misés` : ''}">${label}${d[k] ? `<span class="rl-chip">${d[k]}</span>` : ''}</button>`;
+      const grid = Array.from({ length: 12 }, (_, r) => [1, 2, 3].map(c => { const n = r * 3 + c; return cell('n' + n, n, rlColor(n)); }).join('')).join('');
+      zone = `<div class="betbar">${RL_CHIPS.map(k => `<button class="jeton j${k}" data-a="rl-chip" data-v="${k}" aria-pressed="${chip === k}" aria-label="Jeton de ${k}">${k}</button>`).join('')}</div>
+      <p class="hint" style="text-align:center">Jeton de ${chip} : touche une case pour miser. Mise totale : <b class="chipline">${tot}</b></p>
+      <div class="rl-board">
+        ${cell('n0', '0', 'green zero')}
+        <div class="rl-grid">${grid}</div>
+        <div class="rl-row3">${cell('c1', '2 pour 1')}${cell('c2', '2 pour 1')}${cell('c3', '2 pour 1')}</div>
+        <div class="rl-row3">${cell('d1', '1-12')}${cell('d2', '13-24')}${cell('d3', '25-36')}</div>
+        <div class="rl-row6">${cell('low', '1-18')}${cell('even', 'Pair')}${cell('red', '◆', 'red')}${cell('black', '◆', 'black')}${cell('odd', 'Impair')}${cell('high', '19-36')}</div>
+      </div>
+      <div class="row"><button class="btn ghost" data-a="rl-clear" ${tot ? '' : 'disabled'}>Effacer</button>${v.last ? `<button class="btn ghost" data-a="rl-again">Rejouer mes mises</button>` : ''}</div>
+      <button class="btn big" data-a="rl-bet" ${tot ? '' : 'disabled'}>${tot ? `Valider (${tot})` : 'Pose au moins un jeton'}</button>`;
+    }
+    return `<div class="turn"><small>Tour ${v.n + 1}</small><strong>Faites vos jeux</strong></div>${hist}${stack}${zone}${table}
+      ${host ? `<button class="btn" data-a="rl-spin" ${v.players.some(p => p.ready) ? '' : 'disabled'}>Lancer la bille sans attendre</button>` : ''}`;
+  }
+  if (v.step === 'spin') return `<div class="turn"><small>Tour ${v.n + 1}</small><strong>Rien ne va plus !</strong></div>${rlWheelSvg(v.wheel)}${stack}${table}`;
+  // Résultat
+  const losers = v.players.filter(p => p.stake && p.gain < 0).map(p => p.name), plein = v.players.filter(p => p.hits.some(k => k[0] === 'n')).map(p => p.name);
+  return `<div class="turn"><small>Tour ${v.n}</small><strong>Le ${v.num}, ${{ green: 'vert', red: 'rouge', black: 'noir' }[rlColor(v.num)]}${v.num ? `, ${v.num % 2 ? 'impair' : 'pair'}` : ''}</strong></div>
+    ${rlWheelSvg(v.wheel)}
+    ${me.stake ? `<div class="banner ${me.gain > 0 ? 'gold' : ''}">${me.gain > 0 ? `Gagné : +${me.gain}` : me.gain === 0 ? 'Mise récupérée' : `Perdu : ${me.gain}`}${me.hits.length ? ` (${me.hits.map(rlLabel).join(', ')})` : ''}</div>` : ''}
+    ${v.gages && (losers.length || plein.length) ? `<p class="howto">${losers.length ? `${esc(losers.join(', '))} : ${v.alc ? 'une gorgée' : 'un gage'} chacun·e.` : ''} ${plein.length ? `${esc(plein.join(', '))} distribue${plein.length > 1 ? 'nt' : ''} 3 ${v.alc ? 'gorgées' : 'gages'}.` : ''}</p>` : ''}
+    ${hist}${stack}${table}
+    ${me.chips < 5 ? `<button class="btn" data-a="rl-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>` : ''}
+    ${host ? `<button class="btn big" data-a="rl-next">Nouveau tour</button>` : `<p class="howto">L'hôte lance le tour suivant.</p>`}`;
+}
+Object.assign(actions, {
+  'rl-gages'(k) { MP.H.cfg.gages = k; store.set('rlGages', k); mpPush(); },
+  'rl-open'() { MP.H.step = 'bet'; mpPush(); },
+  'rl-chip'(k) { MP.rlChip = +k; render(false); },
+  'rl-put'(k) {
+    const v = MP.role === 'host' ? MPG.rl.view(MP_CID) : MP.view, me = v.players.find(p => p.me), chip = MP.rlChip || 10;
+    const d = MP.rlDraft = MP.rlDraft || {};
+    if (rlSum(d) + chip > me.chips) { toast('Pas assez de jetons pour cette mise.'); return; }
+    d[k] = (d[k] || 0) + chip; sfx('chip'); render(false);
+  },
+  'rl-clear'() { MP.rlDraft = null; render(false); },
+  'rl-again'() {
+    const v = MP.role === 'host' ? MPG.rl.view(MP_CID) : MP.view, me = v.players.find(p => p.me);
+    if (rlSum(v.last) > me.chips) { toast('Pas assez de jetons pour rejouer les mêmes mises.'); return; }
+    MP.rlDraft = { ...v.last }; render(false);
+  },
+  'rl-bet'() { if (MP.rlDraft) sfx('chips'); if (MP.rlDraft) mpSend({ t: 'rl-bet', bets: MP.rlDraft }); },
+  'rl-unbet'() { mpSend({ t: 'rl-unbet' }); },
+  'rl-rebuy'() { mpSend({ t: 'rl-rebuy' }); },
+  'rl-spin'() { rlSpin(); },
+  'rl-next'() {
+    const H = MP.H;
+    H.players.forEach(p => Object.assign(p, { bets: {}, ready: false, gain: 0, hits: [] }));
+    H.step = 'bet'; MP.rlDraft = null;
+    mpPush();
+  },
+});
+
+/* ---------- Machine à sous ---------- */
+// Chacun sa machine sur son téléphone, tirée au hasard par l'hôte. Un jackpot commun grimpe à chaque partie.
+const SL_SYM = ['cerise', 'citron', 'cloche', 'bar', 'etoile', 'diamant', 'sept'];
+const SL_W = [22, 24, 18, 15, 11, 7, 3]; // chances sur 100, pour chaque rouleau
+const SL_PAY = { cerise: 5, citron: 10, cloche: 15, bar: 25, etoile: 50, diamant: 100, sept: 200 };
+const SL_NAME = { cerise: 'Cerise', citron: 'Citron', cloche: 'Cloche', bar: 'BAR', etoile: 'Étoile', diamant: 'Diamant', sept: '7' };
+const SL_BETS = [5, 10, 25, 50], SL_JACK = 500, SL_SPIN = 2200, SL_REEL = [1250, 1700, 2150];
+function slPick() { let r = rand(100); for (let i = 0; i < SL_SYM.length; i++) if ((r -= SL_W[i]) < 0) return SL_SYM[i]; return SL_SYM[0]; }
+// Gains (mise comprise) : trois pareils, deux cerises, ou une cerise sur le premier rouleau
+function slWin(reels, bet) {
+  const [a, b, c] = reels;
+  if (a === b && b === c) return { win: bet * SL_PAY[a], kind: a === 'sept' ? 'jackpot' : 'trois' };
+  const cer = reels.filter(x => x === 'cerise').length;
+  if (cer === 2) return { win: bet * 2, kind: 'deux' };
+  if (a === 'cerise' && cer === 1) return { win: bet, kind: 'une' };
+  return { win: 0, kind: '' };
+}
+const slSym = (k, cls = '') => `<span class="sl-sym ${cls}" aria-label="${SL_NAME[k]}">${ic('sl-' + k) || SL_NAME[k]}</span>`;
+MPG.sl = {
+  lateJoin: true,
+  rules: () => ({ title: 'Machine à sous', steps: [
+    "Un joueur crée la partie et donne le code ; les autres la rejoignent. Chacun a sa propre machine sur son téléphone et 1 000 jetons fictifs.",
+    "Choisis ta mise (5, 10, 25 ou 50), puis tire le levier. Les trois rouleaux s'arrêtent l'un après l'autre.",
+    "Trois symboles pareils : de 5 fois (cerises) à 100 fois la mise (diamants). Deux cerises : 2 fois. Une cerise sur le premier rouleau : mise remboursée.",
+    "Trois 7 : JACKPOT ! Tu gagnes 200 fois ta mise plus le jackpot commun, qui grossit à chaque partie de n'importe quel joueur.",
+    "En mode tournoi, chacun a le même nombre de tirages : le plus gros tapis à la fin gagne.",
+  ], tips: [
+    "Les gros gains et les jackpots s'affichent sur tous les téléphones.",
+    "Gages de soirée (au choix de l'hôte) : trois symboles pareils = 2 à distribuer, jackpot = 5 ; en tournoi, le dernier prend un gage.",
+    "Jetons fictifs uniquement : on joue pour la gloire, jamais d'argent.",
+  ] }),
+  init: name => ({ step: 'lobby', players: [MPG.sl.join({ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true })], cfg: { mode: store.get('slMode', 'libre'), spins: store.get('slSpins', 20), gages: store.get('slGages', 'sips') }, jack: SL_JACK, feed: [], n: 0 }),
+  join: p => Object.assign(casinoNew(p), { left: MP && MP.H && MP.H.cfg ? MP.H.cfg.spins : 20, last: null, best: 0, busy: 0 }),
+  act(cid, d) {
+    const H = MP.H, p = mpP(cid);
+    if (!p) return;
+    if (d.t === 'sl-spin' && H.step === 'play') {
+      const bet = +d.bet, now = Date.now(), tour = H.cfg.mode === 'tournoi';
+      if (!SL_BETS.includes(bet) || bet > p.chips || now < p.busy || (tour && p.left <= 0)) return;
+      const reels = [slPick(), slPick(), slPick()], r = slWin(reels, bet);
+      p.chips -= bet; H.jack += Math.ceil(bet / 10);
+      let win = r.win;
+      if (r.kind === 'jackpot') { win += H.jack; H.jack = SL_JACK; }
+      p.chips += win; p.best = Math.max(p.best || 0, win - bet);
+      if (tour) p.left--;
+      p.last = { id: ++H.n, reels, bet, win, kind: r.kind };
+      p.busy = now + SL_SPIN - 150;
+      if (r.kind === 'jackpot' || r.kind === 'trois' && SL_PAY[reels[0]] >= 25) H.feed = [{ id: H.n, name: p.name, kind: r.kind, sym: reels[0], win, at: now + SL_SPIN }].concat(H.feed).slice(0, 4);
+      if (tour && H.players.every(x => !x.on || x.left <= 0)) mpTimer('slEnd', () => { if (MP.H.step === 'play') { MP.H.step = 'end'; mpPush(); } }, SL_SPIN + 900);
+      mpPush();
+    } else if (d.t === 'sl-rebuy' && H.cfg.mode !== 'tournoi') casinoRebuy(p);
+  },
+  view(cid) {
+    const H = MP.H, p = mpP(cid) || {}, now = Date.now();
+    const rank = H.players.slice().sort((a, b) => b.chips - a.chips);
+    return { game: 'sl', step: H.step, mode: H.cfg.mode, spins: H.cfg.spins, gages: H.cfg.gages !== 'off', gm: H.cfg.gages, alc: H.cfg.gages === 'sips', jack: H.jack,
+      // Un gain n'apparaît chez les autres qu'une fois les rouleaux arrêtés
+      feed: H.feed.map(f => ({ ...f, wait: Math.max(0, f.at - now) })),
+      me: { chips: p.chips || 0, left: p.left || 0, last: p.last || null, re: p.re || 0 },
+      players: rank.map(x => ({ name: x.name, on: !!x.on, chips: x.chips - (x.last && x.cid !== cid && now < x.busy ? x.last.win - x.last.bet : 0), left: x.left, me: x.cid === cid, best: x.best || 0 })) };
+  },
+  // Chez les invités, l'attente reçue devient une heure locale
+  notify(prev, v) { const now = Date.now(); (v.feed || []).forEach(f => { f.until = now + f.wait; }); },
+  patch: () => slPatch(),
+  after: () => slAfter(),
+  screen() { return slScreen(MP.role === 'host' ? MPG.sl.view(MP_CID) : MP.view); },
+};
+const slView = () => MP.role === 'host' ? MPG.sl.view(MP_CID) : MP.view;
+// Pendant que les rouleaux tournent, le tapis affiché reste celui d'avant le tirage
+const slSpinning = v => v && v.me.last && MP.slAnim && MP.slAnim.id === v.me.last.id && Date.now() - MP.slAnim.at < SL_SPIN;
+const slChips = v => v.me.chips - (slSpinning(v) ? v.me.last.win : 0);
+function slBoard(v) {
+  const tour = v.mode === 'tournoi';
+  return `<h3><span>Classement</span><span>${tour ? `${v.spins} tirages` : 'partie libre'}</span></h3>
+    <ol class="sl-rank">${v.players.map((p, i) => `<li class="${p.me ? 'me' : ''} ${p.on ? '' : 'off'}"><span class="pos">${i + 1}</span><b>${avatar(p.name)}${esc(p.name)}</b><span class="chipline">${p.chips.toLocaleString('fr-FR')}</span>${tour ? `<small>${p.left} restant${p.left > 1 ? 's' : ''}</small>` : ''}</li>`).join('')}</ol>`;
+}
+const slLeft = f => f.until ? Math.max(0, f.until - Date.now()) : f.wait;
+function slFeed(v) {
+  const f = v.feed.filter(x => !slLeft(x));
+  return f.length ? f.map(x => `<div class="sl-news ${x.kind}">${x.kind === 'jackpot' ? ic('jackpot') : slSym(x.sym, 'sm')}<span><b>${esc(x.name)}</b> ${x.kind === 'jackpot' ? 'décroche le JACKPOT' : `aligne trois ${SL_NAME[x.sym]}`} : +${x.win.toLocaleString('fr-FR')}</span></div>`).join('') : '';
+}
+function slMeLine(v) {
+  return `<span class="chipline">${chipsTxt(slChips(v))}</span>${v.mode === 'tournoi' ? ` · ${v.me.left} tirage${v.me.left > 1 ? 's' : ''} restant${v.me.left > 1 ? 's' : ''}` : v.me.re ? ` · ${v.me.re} recave${v.me.re > 1 ? 's' : ''}` : ''}`;
+}
+function slResult(v) {
+  const l = v.me.last;
+  if (!l || slSpinning(v)) return '';
+  const gain = l.win - l.bet;
+  const txt = l.kind === 'jackpot' ? `JACKPOT ! +${l.win.toLocaleString('fr-FR')}` : l.kind === 'trois' ? `Trois ${SL_NAME[l.reels[0]]} ! +${l.win}` : l.kind === 'deux' ? `Deux cerises : +${l.win}` : l.kind === 'une' ? 'Une cerise : mise remboursée' : 'Pas cette fois…';
+  const g = v.gages && (l.kind === 'trois' || l.kind === 'jackpot') ? `<small>${l.kind === 'jackpot' ? 5 : 2} ${v.alc ? 'gorgées' : 'gages'} à distribuer !</small>` : '';
+  return `<div class="sl-res ${gain > 0 ? 'gold' : ''} ${l.kind}">${txt}${g}</div>`;
+}
+function slScreen(v) {
+  const host = MP.role === 'host';
+  if (v.step === 'lobby') return casinoLobby(v, { start: 'sl-open', min: 1, panel: `<section class="panel"><h3><span>Mode de jeu</span></h3>
+    <div class="levels two" role="group" aria-label="Mode de jeu">${[['libre', 'Partie libre'], ['tournoi', 'Tournoi']].map(([k, l]) => `<button data-a="sl-mode" data-v="${k}" aria-pressed="${v.mode === k}">${l}</button>`).join('')}</div>
+    ${v.mode === 'tournoi' ? `<div class="levels three" role="group" aria-label="Nombre de tirages">${[10, 20, 30].map(n => `<button data-a="sl-spins" data-v="${n}" aria-pressed="${v.spins === n}">${n} tirages</button>`).join('')}</div>` : ''}
+    <p class="hint">${v.mode === 'tournoi' ? 'Même nombre de tirages pour tout le monde : le plus gros tapis gagne.' : 'Chacun joue à son rythme, le classement est en direct.'}</p></section>
+    <section class="panel"><h3><span>Gages de soirée</span></h3>
+    <div class="levels three" role="group" aria-label="Gages de soirée">${[['off', 'Aucun'], ['sips', 'Gorgées'], ['gages', 'Gages']].map(([k, l]) => `<button data-a="sl-gages" data-v="${k}" aria-pressed="${v.gm === k}">${l}</button>`).join('')}</div></section>` });
+  if (v.step === 'end') {
+    const top = v.players.slice(0, 3), last = v.players[v.players.length - 1];
+    return `<div class="turn"><small>Fin du tournoi</small><strong>${esc(top[0].name)} gagne !</strong></div>
+      <div class="podium">${top.map((p, i) => `<div class="pl p${i + 1}"><b>${avatar(p.name)}${esc(p.name)}</b><span class="chipline">${p.chips.toLocaleString('fr-FR')}</span><span class="step">${i + 1}</span></div>`).join('')}</div>
+      ${v.gages && v.players.length > 1 ? `<p class="howto">${esc(last.name)}, dernier·e : ${v.alc ? 'trois gorgées' : 'un gage'} !</p>` : ''}
+      <section class="panel">${slBoard(v)}</section>
+      ${host ? `<div class="row"><button class="btn big" data-a="sl-again">Nouveau tournoi</button><button class="btn ghost" data-a="sl-libre">Partie libre</button></div>` : `<p class="howto">L'hôte peut relancer un tournoi.</p>`}`;
+  }
+  const bet = MP.slBet && SL_BETS.includes(MP.slBet) ? MP.slBet : 10, l = v.me.last;
+  const reels = (l ? l.reels : MP.slIdle || (MP.slIdle = [slPick(), slPick(), slPick()])).map((k, i) => `<div class="sl-win"><div class="sl-strip" id="slR${i}">${slSym(k)}</div></div>`).join('');
+  const out = v.mode === 'tournoi' && v.me.left <= 0, broke = v.me.chips < SL_BETS[0];
+  return `<div class="sl-jack" id="slJack"><small>Jackpot commun</small><strong>${v.jack.toLocaleString('fr-FR')}</strong></div>
+    <div class="sl-feed" id="slFeed" aria-live="polite">${slFeed(v)}</div>
+    <div class="sl-cab" id="slCab">
+      <div class="sl-top">Le Tapis · 777</div>
+      <div class="sl-reels">${reels}<span class="sl-line" aria-hidden="true"></span></div>
+      <div class="sl-lever" id="slLever" aria-hidden="true"><i></i></div>
+    </div>
+    <div id="slRes">${slResult(v)}</div>
+    <p class="howto" id="slMe">${slMeLine(v)}</p>
+    ${out ? `<div class="banner">Tu as fait tous tes tirages. Attends les autres…</div>` : broke && v.mode !== 'tournoi' ? `<button class="btn big" data-a="sl-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>` : broke ? `<div class="banner">Plus de jetons : fin du tournoi pour toi.</div>` : `
+    <div class="betbar" role="group" aria-label="Mise">${SL_BETS.map(k => `<button class="jeton j${k === 50 ? 500 : k}" data-a="sl-bet" data-v="${k}" aria-pressed="${bet === k}" aria-label="Miser ${k}">${k}</button>`).join('')}</div>
+    <button class="btn big sl-go" data-a="sl-spin" id="slGo">Tirer le levier (${bet})</button>`}
+    <details class="panel sl-pay"><summary>Table des gains</summary><ul>
+      ${SL_SYM.slice().reverse().map(k => `<li>${slSym(k, 'sm')}${slSym(k, 'sm')}${slSym(k, 'sm')}<span>${k === 'sept' ? `×200 + jackpot` : `×${SL_PAY[k]}`}</span></li>`).join('')}
+      <li>${slSym('cerise', 'sm')}${slSym('cerise', 'sm')}<span>×2</span></li><li>${slSym('cerise', 'sm')}<span>×1 (1er rouleau)</span></li></ul></details>
+    <section class="panel" id="slBoard">${slBoard(v)}</section>
+    ${host ? `<button class="btn ghost" data-a="sl-stop">${v.mode === 'tournoi' ? 'Terminer le tournoi' : 'Fermer la machine'}</button>` : ''}`;
+}
+// Mise à jour légère : on ne redessine pas les rouleaux pendant qu'ils tournent
+function slPatch() {
+  const v = slView();
+  if (!v || v.step !== 'play' || !document.getElementById('slCab')) return false;
+  const prevOut = !document.getElementById('slGo');
+  const out = (v.mode === 'tournoi' && v.me.left <= 0) || v.me.chips < SL_BETS[0];
+  if (!slSpinning(v) && prevOut !== out) return false;
+  document.getElementById('slJack').querySelector('strong').textContent = v.jack.toLocaleString('fr-FR');
+  document.getElementById('slFeed').innerHTML = slFeed(v);
+  document.getElementById('slBoard').innerHTML = slBoard(v);
+  document.getElementById('slMe').innerHTML = slMeLine(v);
+  if (!slSpinning(v)) document.getElementById('slRes').innerHTML = slResult(v);
+  slAfter();
+  return true;
+}
+function slAfter() {
+  const v = slView();
+  if (!v || v.step !== 'play') return;
+  // Les gains des autres s'affichent quand leurs rouleaux s'arrêtent
+  // Le jackpot d'un autre joueur sonne chez tout le monde quand ses rouleaux s'arrêtent
+  const jn = v.feed.find(f => f.kind === 'jackpot' && !slLeft(f)), jid = jn ? jn.id : 0;
+  if (!('slJack' in MP)) MP.slJack = jid;
+  else if (jid && jid !== MP.slJack) { MP.slJack = jid; if (!(v.me.last && v.me.last.id === jid)) { sfx('tada'); buzz(200); } }
+  const next = v.feed.map(slLeft).filter(Boolean);
+  if (next.length) mpTimer('slFeedT', () => mpRefresh(), Math.min(...next) + 30);
+  const a = MP.slAnim, l = v.me.last;
+  if (!a || !l || a.id !== l.id || a.done) return;
+  a.done = true;
+  const t0 = Date.now() - a.at;
+  if (t0 >= SL_SPIN) return;
+  const lever = document.getElementById('slLever');
+  if (lever) { lever.classList.remove('pull'); void lever.offsetWidth; lever.classList.add('pull'); }
+  const go = document.getElementById('slGo'); if (go) go.disabled = true;
+  l.reels.forEach((k, i) => {
+    const el = document.getElementById('slR' + i);
+    if (!el) return;
+    const cells = Array.from({ length: 12 + i * 4 }, () => slPick()).concat(k);
+    el.innerHTML = cells.map(c => slSym(c)).join('');
+    const h = el.firstElementChild.getBoundingClientRect().height, dur = Math.max(200, SL_REEL[i] - t0);
+    const anim = el.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${-(cells.length - 1) * h - 10}px)`, offset: .93 }, { transform: `translateY(${-(cells.length - 1) * h}px)` }],
+      { duration: dur, easing: 'cubic-bezier(.2,.6,.3,1)', fill: 'forwards' });
+    anim.onfinish = () => { el.innerHTML = slSym(k); anim.cancel(); };
+  });
+  setTimeout(() => {
+    const go = document.getElementById('slGo'); if (go) go.disabled = false;
+    const r = document.getElementById('slRes'); if (r) r.innerHTML = slResult(slView());
+    const m = document.getElementById('slMe'); if (m) m.innerHTML = slMeLine(slView());
+    const w = l.win - l.bet;
+    if (l.kind === 'jackpot') { sfx('jackpot'); buzz([100, 60, 100, 60, 300]); }
+    else if (l.kind === 'trois') { sfx('coins', 14); buzz([80, 60, 160]); }
+    else if (w > 0) sfx('coins', 4);
+    else if (l.kind === 'une') sfx('chip');
+  }, Math.max(0, SL_SPIN - t0));
+}
+Object.assign(actions, {
+  'sl-mode'(k) { MP.H.cfg.mode = k; store.set('slMode', k); mpPush(); },
+  'sl-spins'(n) { MP.H.cfg.spins = +n; store.set('slSpins', +n); mpPush(); },
+  'sl-gages'(k) { MP.H.cfg.gages = k; store.set('slGages', k); mpPush(); },
+  'sl-open'() { const H = MP.H; H.players.forEach(p => { p.left = H.cfg.spins; p.last = null; }); H.step = 'play'; mpPush(); },
+  'sl-bet'(k) {
+    MP.slBet = +k; sfx('chip');
+    document.querySelectorAll('[data-a=sl-bet]').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === String(k)));
+    const go = document.getElementById('slGo'); if (go) go.textContent = `Tirer le levier (${k})`;
+  },
+  'sl-spin'() {
+    const v = slView();
+    if (slSpinning(v)) return;
+    const bet = MP.slBet && SL_BETS.includes(MP.slBet) ? MP.slBet : 10;
+    if (bet > v.me.chips) { toast('Pas assez de jetons pour cette mise.'); return; }
+    const go = document.getElementById('slGo'), id = v.me.last && v.me.last.id;
+    if (go) go.disabled = true;
+    sfx('lever');
+    mpSend({ t: 'sl-spin', bet });
+    // Si l'hôte n'a pas répondu (tirage refusé, connexion lente), le levier se débloque
+    setTimeout(() => { const w = slView(), g = document.getElementById('slGo'); if (g && w && !slSpinning(w) && (w.me.last && w.me.last.id) === id) g.disabled = false; }, 1500);
+  },
+  'sl-rebuy'() { mpSend({ t: 'sl-rebuy' }); },
+  'sl-stop'() { const H = MP.H; if (H.cfg.mode === 'tournoi') H.step = 'end'; else H.step = 'lobby'; mpPush(); },
+  'sl-again'() { const H = MP.H; H.cfg.mode = 'tournoi'; H.players.forEach(p => Object.assign(p, { chips: CASINO_STACK, re: 0, left: H.cfg.spins, last: null, best: 0 })); H.step = 'play'; mpPush(); },
+  'sl-libre'() { const H = MP.H; H.cfg.mode = 'libre'; H.players.forEach(p => { p.last = null; }); H.step = 'play'; mpPush(); },
+});
+
+/* ---------- Musique : jazz lounge de salle de jeu ---------- */
+// Grille ii-V-I-VI en do : contrebasse qui marche, piano électrique, balais et vibraphone
+const TP_PROG = [[50, [3, 7, 10, 14]], [43, [4, 10, 14, 16]], [48, [4, 7, 11, 14]], [45, [4, 10, 13, 16]]];
+const C_MAJ = [0, 2, 4, 5, 7, 9, 11];
+const V80_PROG = [[45, [0, 3, 7, 10]], [41, [0, 4, 7, 11]], [48, [0, 4, 7, 11]], [43, [0, 4, 7, 10]]];
+Object.assign(APP, {
+  tuneLabel: 'Jazz lounge ou Vegas 80',
+  sfxLabel: 'Cartes, jetons, roulette, gains…',
+  tunes: {
+    // Vegas 80 : synthés, arpège et boîte à rythmes, comme un néon qui clignote
+    vegas: { label: 'Vegas 80', bpm: 106, div: 4, play(step, t, sd) {
+      const s = step % 16, barN = Math.floor(step / 16), [root, iv] = V80_PROG[barN % 4];
+      if (s % 8 === 0) INST.kick(t, .28);
+      if (s === 4 || s === 12) INST.snare(t, .07);
+      if (s % 2 === 0) INST.hat(t, s % 4 === 2 ? .03 : .018);
+      if (s % 4 === 0) INST.bass(t, root - 12 + (s === 8 ? 12 : 0), sd * 2.6, .16);
+      if (s === 0) iv.forEach(i => INST.saw(t, root + 12 + i, sd * 15, .014, 900));
+      if (barN % 8 >= 2) { const arp = iv.concat(iv[0] + 12); tone('music', t, mtof(root + 24 + arp[s % arp.length]), sd * .9, .02, { type: 'square', fx: .35 }); }
+    } },
+    lounge: { label: 'Jazz lounge', bpm: 94, div: 2, play(step, t, sd) {
+      const s = step % 8, barN = Math.floor(step / 8), bar = barN % 4, [root, iv] = TP_PROG[bar], next = TP_PROG[(bar + 1) % 4][0];
+      const sw = s % 2 ? sd * .34 : 0, at = t + sw; // swing : les croches du contretemps sont retardées
+      if (s % 2 === 0) { // contrebasse : une noire par temps, et une note d'approche vers l'accord suivant
+        const walk = [root, root + [7, 3, 4][rand(3)], root + [12, 10, 7][rand(3)], next + (rand(2) ? 1 : -1)][s / 2];
+        INST.bass(at, walk - 12, sd * 1.7, .19);
+        INST.ride(at, s === 2 || s === 6 ? .04 : .025);
+      } else if (rand(3) === 0) INST.ride(at, .018);
+      if (s === 2 || s === 6) INST.brush(at, .22, .028);
+      if ((s === 3 && rand(2)) || (s === 6 && rand(3) === 0) || (s === 0 && bar === 0)) iv.forEach((i, k) => INST.ep(at + k * .008, root + 12 + i, sd * 2.2, .03));
+      if (barN % 8 < 6 && Math.random() < .22) { // quelques notes de vibraphone
+        const pcs = C_MAJ.concat(iv.map(i => (root + i) % 12));
+        let m = 72 + rand(14);
+        while (!pcs.includes(m % 12)) m++;
+        INST.vibe(at, m, sd * (1 + rand(3)), .035);
+      }
+    } },
+  },
+});
+const tpMe = v => v.players.find(p => p.me) || {};
+const readyCount = v => v.players.filter(p => p.ready).length;
+MPG.pk.sound = (prev, v) => {
+  if (v.step === 'hand' && prev.step !== 'hand') { sfx('shuffle'); [600, 800].forEach(d => setTimeout(() => sfx('deal'), d)); return; }
+  if (v.board && prev.board && v.board.length > prev.board.length) for (let i = 0; i < v.board.length - prev.board.length; i++) setTimeout(() => sfx('flip'), i * 160);
+  if (v.step === 'hand' && v.pot > prev.pot) sfx('chips');
+  if (v.me && v.me.turn && !(prev.me && prev.me.turn)) setTimeout(() => sfx('ping'), 250);
+  if (v.step === 'show' && prev.step !== 'show' && v.res) sfx(v.res.lines.some(l => l.name === tpMe(v).name) ? 'win' : 'flip');
+};
+MPG.bj.sound = (prev, v) => {
+  const me = tpMe(v), was = tpMe(prev);
+  if (v.step === 'bet' && readyCount(v) > readyCount(prev)) sfx('chip');
+  if (['play', 'dealer', 'result'].includes(v.step) && prev.step === 'bet') { [0, 180, 360, 540].forEach(d => setTimeout(() => sfx('deal'), d)); return; }
+  if (v.dealer.cards.filter(Boolean).length > prev.dealer.cards.filter(Boolean).length) sfx('flip');
+  if (me.hand && was.hand && me.hand.length > was.hand.length) sfx('deal');
+  if (v.step === 'play' && v.turn === me.name && prev.turn !== me.name) setTimeout(() => sfx('ping'), 300);
+  if (v.step === 'result' && prev.step !== 'result' && me.inHand) setTimeout(() => sfx(['win', 'bj'].includes(me.res) ? 'win' : me.res === 'lose' ? 'lose' : 'chip'), 400);
+};
+MPG.rl.sound = (prev, v) => {
+  if (v.step === 'bet' && readyCount(v) > readyCount(prev)) sfx('chip');
+  if (v.step === 'spin' && prev.step !== 'spin' && v.spin) sfx('roulette', v.spin.left);
+  if (v.step === 'result' && prev.step !== 'result') { const me = tpMe(v); if (me.stake) sfx(me.gain > 0 ? 'win' : me.gain < 0 ? 'lose' : 'chip'); }
+};
+
+MPG.sl.sound = (prev, v) => {
+  const l = v.me && v.me.last, pl = prev.me && prev.me.last;
+  if (l && (!pl || pl.id !== l.id)) { MP.slAnim = { id: l.id, at: Date.now() }; sfx('reels'); }
+  if (v.step === 'end' && prev.step !== 'end') sfx('fanfare');
+};
+// Bruitages de la machine à sous
+Object.assign(SFX, {
+  lever(t) { hiss('sfx', t, .18, .25, { f: 900, to: 300, q: 2 }); tone('sfx', t + .16, 140, .12, .12, { to: 80 }); },
+  // Les rouleaux tournent (cliquetis), puis s'arrêtent un par un avec un « clonk »
+  reels(t) {
+    const end = SL_REEL.map(ms => ms / 1000);
+    for (let s = 0; s < end[2]; s += .055) { const n = end.filter(e => e > s).length; hiss('sfx', t + s, .02, .05 * n, { f: 2400, q: 4 }); }
+    end.forEach((e, i) => { tone('sfx', t + e, 180 - i * 20, .12, .16, { to: 90, type: 'triangle' }); hiss('sfx', t + e, .05, .2, { f: 1200, q: 2 }); });
+  },
+  coins(t, n = 6) { for (let i = 0; i < n; i++) { const s = t + i * .075 + Math.random() * .02; tone('sfx', s, 2200 + rand(900), .14, .05, { type: 'triangle', fx: .3 }); tone('sfx', s, 3300 + rand(700), .08, .025); } },
+  jackpot(t) {
+    SFX.tada(t);
+    for (let i = 0; i < 4; i++) [72, 76, 79, 84].forEach((m, k) => tone('sfx', t + .5 + i * .32 + k * .06, mtof(m + (i % 2) * 2), .18, .045, { type: 'square', fx: .3 }));
+    SFX.coins(t + .3, 30);
+  },
+});
+
+start();
+</script>
+<script>if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});</script>
+</body>
+</html>

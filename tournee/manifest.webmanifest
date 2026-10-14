@@ -1,0 +1,26 @@
+{
+ "name": "La Tournée",
+ "short_name": "Tournée",
+ "description": "Jeux de soirée sur un seul téléphone qui fait le tour de la table.",
+ "lang": "fr",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#10261e",
+ "theme_color": "#10261e",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}

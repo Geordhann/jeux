@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f16">
+<meta name="description" content="La Tournée, La Veillée et Le Tapis : jeux de soirée entre amis, sur iPhone et Android.">
+<title>Jeux de soirée</title>
+<link rel="stylesheet" href="tournee/fonts/fonts.css">
+<style>
+/* Page d'accueil de la version web : trois applis comme trois cartes posées sur la table */
+:root { color-scheme: dark; --bg: #0d0f16; --card: #f4ecdb; --ink: #221c17; --soft: #6d6255; --gold: #e7b552; --fg: #eef0f4; --muted: #a8adbd;
+  --display: "Bagel Fat One", "Arial Rounded MT Bold", system-ui, sans-serif; --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: radial-gradient(120% 70% at 50% 0%, #1b2030, var(--bg) 70%) fixed; color: var(--fg); font: 16px/1.5 var(--body); }
+main { max-width: 560px; margin: 0 auto; padding-inline: 16px; padding-block: max(28px, env(safe-area-inset-top)) 48px; display: flex; flex-direction: column; gap: 22px; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2.4rem, 11vw, 3.4rem); line-height: 1; margin: 0; color: var(--gold); }
+.lead { color: var(--muted); margin: 0; max-width: 40ch; }
+.apps { display: flex; flex-direction: column; gap: 12px; }
+.app { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; padding: 14px; border-radius: 18px; background: var(--card); color: var(--ink); text-decoration: none; box-shadow: 0 3px 0 #d9ccb0, 0 12px 26px rgba(0,0,0,.35); }
+.app img { width: 64px; height: 64px; border-radius: 14px; }
+.app b { font-family: var(--display); font-weight: 400; font-size: 1.35rem; display: block; line-height: 1.1; }
+.app span { color: var(--soft); font-size: .9rem; line-height: 1.35; display: block; }
+.app em { font-style: normal; font-size: 1.4rem; color: var(--soft); }
+.app:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+section { display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; border: 1px solid #2c3244; background: rgba(0,0,0,.2); }
+h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); margin: 0; }
+ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; }
+p { margin: 0; color: var(--muted); }
+a { color: var(--gold); }
+.foot { font-size: .85rem; text-align: center; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <header><h1>Jeux de soirée</h1></header>
+  <p class="lead">Trois applis pour vos soirées, sur iPhone comme sur Android. Les iPhone et les Android jouent ensemble dans les mêmes parties.</p>
+  <div class="apps">
+    <a class="app" href="tournee/"><img src="icon-tournee.png" alt=""><span><b>La Tournée</b><span>Un seul téléphone qui fait le tour de la table. Marche sans internet.</span></span><em aria-hidden="true">›</em></a>
+    <a class="app" href="veillee/"><img src="icon-veillee.png" alt=""><span><b>La Veillée</b><span>Loup-Garou (jusqu'à 47 joueurs), Téléphone dessiné, Tu préfères, Action ou Vérité. Chacun sur son téléphone, on rejoint en scannant un QR code.</span></span><em aria-hidden="true">›</em></a>
+    <a class="app" href="tapis/"><img src="icon-tapis.png" alt=""><span><b>Le Tapis</b><span>Poker, Blackjack, Roulette et Machine à sous entre amis, jetons fictifs, 18 ans et plus.</span></span><em aria-hidden="true">›</em></a>
+  </div>
+  <section>
+    <h2>Installer sur iPhone</h2>
+    <ol>
+      <li>Ouvre cette page dans <b>Safari</b>.</li>
+      <li>Touche une appli ci-dessus pour l'ouvrir.</li>
+      <li>Touche le bouton <b>Partager</b> (le carré avec une flèche), puis <b>Sur l'écran d'accueil</b>.</li>
+      <li>L'appli apparaît avec son icône et s'ouvre en plein écran, comme une vraie appli.</li>
+    </ol>
+    <p>Gratuit, sans App Store : c'est la même appli que sur Android, et les iPhone jouent dans les mêmes parties. Pas de son ? Touche l'écran une fois, puis monte le volume ; sur un iPhone ancien, désactive aussi le bouton silencieux sur le côté.</p>
+  </section>
+  <section>
+    <h2>Sur Android</h2>
+    <p>Télécharge l'appli (fichier APK) dans les <a href="https://github.com/Geordhann/jeux/releases">versions publiées</a>, ou installe la version web de la même façon depuis Chrome (menu ⋮ › Ajouter à l'écran d'accueil).</p>
+  </section>
+  <p class="foot">Pour jouer à plusieurs : une personne crée la partie et donne le code à 4 lettres, les autres le tapent dans « Rejoindre une partie ».</p>
+</main>
+</body>
+</html>
