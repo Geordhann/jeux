@@ -155,6 +155,8 @@ if (capApp) capApp.addListener('backButton', () => {
   else capApp.exitApp();
 });
 function start() {
+  // Mode test : un bandeau rappelle que ces téléphones virtuels ne parlent qu'aux onglets de ce navigateur
+  if (MP_LOCAL) { const b = document.createElement('div'); b.className = 'local-band'; b.textContent = `Mode test${PHONE ? ' · téléphone ' + PHONE : ''} : seulement avec les onglets de ce navigateur`; document.body.append(b); }
   // Lien d'invitation : ...?code=ABCD ouvre directement l'écran pour rejoindre
   const code = (new URLSearchParams(location.search).get('code') || '').toUpperCase().replace(/[^A-Z]/g, '');
   if (code.length === 4) { S.intro = APP.adult && !S.adult; S.mpCode = code; S.mpForm = 'join'; S.screen = 'mpjoin'; }
@@ -373,7 +375,9 @@ function mpGuestConnect() {
   peer.on('error', e => {
     if (MP !== m || m.peer !== peer) return;
     if (e.type === 'peer-unavailable' && !m.ever) {
-      m.status = 'error'; m.err = `Aucune partie ouverte avec le code ${m.code}. Vérifie le code avec l'hôte.`;
+      m.status = 'error'; m.err = MP_LOCAL
+        ? `Aucune partie ${m.code} dans ce navigateur. Mode test (« ?local » dans l'adresse) : seuls les onglets de ce navigateur jouent ensemble. Pour jouer avec un vrai téléphone, enlève « ?local » de l'adresse.`
+        : `Aucune partie ouverte avec le code ${m.code}. Vérifie le code avec l'hôte.`;
       mpRefresh(); return;
     }
     mpLost();
