@@ -131,6 +131,35 @@ async function run() {
     t.metric('taille d\'un message envoyé à un joueur', await t.eval(mj, () => (JSON.stringify(MPG.lg.view(MP.H.players[0].cid)).length / 1024).toFixed(1) + ' Ko'));
   });
 
+  await scenario('lgfin', 'Loup-Garou : fin automatique, victoire ou défaite selon le camp', 'veillee', async t => {
+    const [mj, code] = await t.host('lg', true);
+    const names = ['Léa', 'Hugo', 'Inès', 'Tom', 'Zoé'], ps = [];
+    for (let i = 0; i < names.length; i++) ps.push((await t.join(i + 2, code, names[i]))[0]);
+    // Partie 1 : le village élimine le dernier loup
+    const deal = async loups => {
+      await t.eval(mj, n => { MP.H.cfg.roles = ['voyante']; MP.H.cfg.loups = n; mpPush(); }, loups);
+      await mj.click('[data-a=lg-spin]');
+      await t.until(ps, () => MP.view && MP.view.me);
+      await mj.click('[data-a=lg-start]');
+      await t.eval(mj, () => { MP.H.phase = 'day'; mpPush(); });
+    };
+    await deal(1);
+    const wolf = await t.eval(mj, () => MP.H.players.find(p => p.role === 'loup').cid);
+    await t.eval(mj, c => actions['lg-kill'](c), wolf);
+    await t.until(ps, () => MP.view.step === 'end');
+    let r = await Promise.all(ps.map(p => t.eval(p, () => [MP.view.winner, MP.view.won, MP.view.me.wolf, !!document.querySelector('.lg-end.' + (MP.view.won ? 'win' : 'lose'))])));
+    t.check(r.every(([w, won, isWolf, shown]) => w === 'village' && won === !isWolf && shown), 'victoire du village mal affichée : ' + JSON.stringify(r));
+    // Partie 2 : les loups deviennent aussi nombreux que les villageois
+    await mj.click('[data-a=lg-again]');
+    await deal(2);
+    const vill = await t.eval(mj, () => MP.H.players.filter(p => p.role !== 'loup').map(p => p.cid));
+    t.check(await t.eval(mj, () => MP.H.step) !== 'end', 'fin trop tôt (2 loups contre 3)');
+    await t.eval(mj, c => actions['lg-kill'](c), vill[0]); // 2 loups contre 2 : le village ne peut plus gagner
+    await t.until(ps, () => MP.view.step === 'end');
+    r = await Promise.all(ps.map(p => t.eval(p, () => [MP.view.winner, MP.view.won, MP.view.me.wolf])));
+    t.check(r.every(([w, won, isWolf]) => w === 'loups' && won === isWolf), 'victoire des loups mal attribuée : ' + JSON.stringify(r));
+  });
+
   await scenario('lg47', 'Loup-Garou : charge maximale, 47 joueurs + le meneur', 'veillee', async t => {
     const [mj, code] = await t.host('lg', true);
     // 47 joueurs : 3 vrais téléphones et 44 téléphones « robots » légers (connexion réelle, sans écran)

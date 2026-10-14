@@ -103,6 +103,20 @@ body:not([data-scene="day"]) #scene .flies circle { animation: firefly 7s ease-i
 .card.has-sash > .sash { position: absolute; top: 18px; right: -10px; transform: rotate(32deg); padding: 4px 28px; z-index: 2; margin: 0; }
 .mayor-band { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 12px; background: rgba(255,255,255,.08); font-weight: 800; }
 .tag-i { margin-left: 4px; }
+/* Fin du Loup-Garou : victoire ou défaite, selon ton camp */
+.lg-end { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 22px 16px; border-radius: var(--r); background: var(--paper); color: var(--ink); box-shadow: 0 3px 0 var(--paper-edge), 0 14px 30px rgba(0,0,0,.35); }
+.lg-end .medal svg.icn { width: 112px; height: 112px; }
+.lg-end small { text-transform: uppercase; letter-spacing: .14em; font-size: .75rem; font-weight: 800; color: var(--ink-soft); margin-top: 6px; }
+.lg-end strong { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.4rem, 13vw, 3.4rem); line-height: 1.05; }
+.lg-end p { margin: 0; font-weight: 700; }
+.lg-end .sub { font-weight: 400; color: var(--ink-soft); }
+.lg-end.win { box-shadow: 0 0 0 4px var(--gold), 0 0 34px rgba(241,185,92,.55), 0 14px 30px rgba(0,0,0,.35); }
+.lg-end.win strong { color: #b07a10; }
+.lg-end.win .medal { animation: winpop .9s cubic-bezier(.2,1.6,.4,1); }
+.lg-end.lose strong { color: var(--red); }
+.lg-end.lose .medal svg { filter: grayscale(.9) brightness(.85); }
+@keyframes winpop { from { transform: scale(.3) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.roles .won span:first-child::after { content: " ★"; color: var(--gold); }
 .camp-t { font-size: .75rem; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); font-weight: 800; margin-top: 4px; }
 .card.call { text-align: left; align-items: stretch; }
 .card.call .kind { text-align: left; }
@@ -351,8 +365,29 @@ function lgWinner(H) {
   if (a.length === 1 && a[0].role === 'pyromane') return 'pyromane';
   const wolves = a.filter(lgWolf), solos = a.filter(p => ['loupblanc', 'pyromane', 'flute', 'sectaire'].includes(p.role));
   if (!wolves.length && !solos.length) return 'village';
-  if (wolves.length === a.length && !a.some(p => p.role === 'loupblanc')) return 'loups';
+  // Les loups gagnent dès qu'ils sont au moins aussi nombreux que les autres vivants : le village ne peut plus les battre au vote
+  if (wolves.length && !solos.length && wolves.length >= a.length - wolves.length && !a.some(p => p.role === 'loupblanc')) return 'loups';
   return null;
+}
+const LG_SOLO = ['loupblanc', 'pyromane', 'flute', 'sectaire'];
+// Qui a gagné ? Les morts gagnent aussi avec leur camp
+function lgWinners(H, w) {
+  const mixed = H.lovers.length === 2 && lgWolf(mpP(H.lovers[0]) || {}) !== lgWolf(mpP(H.lovers[1]) || {});
+  return H.players.filter(p => {
+    if (w === 'amoureux') return H.lovers.includes(p.cid);
+    if (mixed && H.lovers.includes(p.cid)) return false; // un couple loup + villageois ne gagne qu'à deux
+    if (w === 'village') return !lgWolf(p) && !LG_SOLO.includes(p.role) && !(p.role === 'ange' && !H.angeWon && H.firstOut === p.cid);
+    if (w === 'loups') return lgWolf(p) && p.role !== 'loupblanc';
+    if (['loupblanc', 'pyromane', 'flute', 'sectaire', 'ange'].includes(w)) return p.role === w;
+    return false;
+  }).map(p => p.cid);
+}
+// Fin automatique dès qu'un camp a gagné (sauf si un chasseur mort doit encore tirer : le meneur annonce alors la fin)
+function lgAutoEnd(out) {
+  const H = MP.H, w = lgWinner(H);
+  if (!w || out.some(d => d.role === 'chasseur')) return false;
+  Object.assign(H, { step: 'end', winner: w, wins: lgWinners(H, w), endNews: H.news });
+  return true;
 }
 // Élimine des joueurs et déroule les conséquences : amoureux, enfant sauvage, maire, ange…
 function lgKill(list, why) {
@@ -506,7 +541,7 @@ MPG.lg = {
     "Le meneur compose les cartes (composition rapide ou à la main), puis lance la roue : chacun reçoit sa carte en secret sur son téléphone.",
     "La nuit, tout le monde ferme les yeux. Le meneur suit l'ordre officiel affiché et appelle chaque personnage. Ceux qui ont un pouvoir l'utilisent sur leur téléphone : la voyante voit la carte choisie, Cupidon désigne les amoureux, la sorcière boit ou verse ses potions…",
     "Au réveil, les morts sont annoncés sur tous les téléphones. Le village élit son maire (écharpe tricolore, voix double), débat, puis vote sur les téléphones. Le meneur élimine le condamné.",
-    "Le village gagne quand tous les loups sont morts. Les loups gagnent quand il ne reste qu'eux. Amoureux, joueur de flûte, loup blanc, ange, sectaire et pyromane ont leur propre victoire.",
+    "Le village gagne quand tous les loups sont morts. Les loups gagnent dès qu'ils sont aussi nombreux que les autres joueurs en vie. La partie s'arrête toute seule et chaque téléphone affiche « Victoire » ou « Défaite » selon ton camp (les morts gagnent avec leur camp). Amoureux, joueur de flûte, loup blanc, ange, sectaire et pyromane ont leur propre victoire.",
   ], tips: [
     "« [[livre]] Tous les rôles » explique les 33 personnages.",
     "Le meneur appelle aussi les personnages morts, en silence, pour ne rien trahir.",
@@ -550,7 +585,11 @@ MPG.lg = {
       v.ask = lgAsk(H, p);
       v.res = H.res && H.res[cid] || null;
     }
-    if (H.step === 'end') v.reveal = H.players.map(x => ({ name: x.name, role: x.role, alive: x.alive, wolf: lgWolf(x), mayor: H.mayor === x.cid }));
+    if (H.step === 'end') {
+      const wins = H.wins || [];
+      v.reveal = H.players.map(x => ({ name: x.name, role: x.role, alive: x.alive, wolf: lgWolf(x), mayor: H.mayor === x.cid, won: wins.includes(x.cid) }));
+      v.won = p ? wins.includes(cid) : null; v.endNews = H.endNews || null;
+    }
     return v;
   },
   notify(prev, v) {
@@ -576,7 +615,7 @@ function lgSpinAnim() {
 /* --- Petits morceaux d'affichage --- */
 const sash = big => `<span class="sash ${big ? 'big' : ''}" aria-label="Maire"><b>MAIRE</b></span>`;
 const lgTags = (x, mj) => [x.mayor ? sash() : '', x.pure ? '<span class="tag-i" title="Villageois-Villageois">[[villvill]]</span>' : '', x.crow ? '<span class="tag-i" title="Désigné par le corbeau">[[plume]]</span>' : '', x.idiot ? '<span class="tag-i" title="Idiot gracié">[[idiot]]</span>' : '', x.group ? `<span class="tag-i">${x.group === 'lune' ? '[[lune]]' : '[[soleil]]'}</span>` : ''].join('');
-const lgRevealList = list => `<div class="roles">${list.map(x => `<div class="${x.wolf ? 'imp' : ''}"><span>${x.alive ? '' : '[[crane]] '}${esc(x.name)}${x.mayor ? ' [[maire]]' : ''}</span><span>${lgRole(x.role).icon} ${lgRole(x.role).name}${x.wolf && !LG_WOLF_CARDS.includes(x.role) ? ' (loup)' : ''}</span></div>`).join('')}</div>`;
+const lgRevealList = list => `<div class="roles">${list.map(x => `<div class="${x.wolf ? 'imp' : ''} ${x.won ? 'won' : ''}"><span>${x.alive ? '' : '[[crane]] '}${esc(x.name)}${x.mayor ? ' [[maire]]' : ''}</span><span>${lgRole(x.role).icon} ${lgRole(x.role).name}${x.wolf && !LG_WOLF_CARDS.includes(x.role) ? ' (loup)' : ''}</span></div>`).join('')}</div>`;
 function lgNewsCard(news) {
   if (!news) return '';
   const lines = news.lines.length ? news.lines.map(d => `<p class="text">${esc(d.name)}${d.how === 'love' ? ' meurt de chagrin' : ' est mort·e'}${d.mayor ? ' (c\'était le maire !)' : ''}.<br><em>${lgRole(d.role).icon} ${lgRole(d.role).name}</em></p>${d.fun ? `<p class="sub">${esc(d.fun)}</p>` : ''}`).join('')
@@ -645,6 +684,8 @@ function lgHost() {
     <button class="btn ghost" data-a="lg-respin">Relancer la roue</button>`;
   }
   if (H.step === 'end') return `<div class="turn"><small>Fin de partie</small><strong>${LG_WIN[H.winner || '']}</strong></div>
+    ${(H.wins || []).length ? `<div class="banner gold">Gagnants : ${esc(H.wins.map(c => (mpP(c) || {}).name).join(', '))}</div>` : ''}
+    ${H.endNews ? lgNewsCard(H.endNews) : ''}
     <div class="card">${cardIdx('[[lune]]')}<p class="kind">Toutes les cartes</p>${lgRevealList(MPG.lg.view(MP_CID).reveal)}</div>
     <div class="row"><button class="btn" data-a="lg-again">Nouvelle partie</button><button class="btn ghost" data-a="mp-quit">Fermer</button></div>`;
   // Partie en cours
@@ -722,7 +763,12 @@ function lgGuest(v) {
     <section class="panel"><h3><span>Dans la partie</span><span>${v.players.length}</span></h3><div class="chips">${others}</div></section>
     <p class="howto">Le meneur prépare les cartes. Garde ton téléphone près de toi : ta carte va arriver.</p>`;
   if (v.step === 'spin') return `<div class="turn"><small>Loup-Garou</small><strong>La roue tourne…</strong></div><div class="card verso shuffle"><p class="text">Ta carte arrive</p></div>`;
-  if (v.step === 'end') return `<div class="turn"><small>Fin de partie</small><strong>${LG_WIN[v.winner || '']}</strong></div>
+  if (v.step === 'end') return `${v.me ? `<div class="lg-end ${v.won ? 'win' : 'lose'}">
+      <span class="medal" aria-hidden="true">${lgRole(v.me.role).icon}</span>
+      <small>Fin de partie</small><strong>${v.won ? 'Victoire !' : 'Défaite…'}</strong>
+      <p>${LG_WIN[v.winner || '']}</p><p class="sub">${v.won ? (v.me.alive ? 'Ton camp a gagné, et tu es encore debout !' : 'Ton camp a gagné, même si tu es tombé·e en route.') : 'Ton camp a perdu. La revanche ?'}</p></div>`
+      : `<div class="turn"><small>Fin de partie</small><strong>${LG_WIN[v.winner || '']}</strong></div>`}
+    ${v.endNews ? lgNewsCard(v.endNews) : ''}
     <div class="card">${cardIdx('[[lune]]')}<p class="kind">Toutes les cartes</p>${lgRevealList(v.reveal)}</div>
     <p class="howto">Le meneur peut relancer une partie : reste connecté·e.</p>`;
   const me = v.me || { role: 'villageois', alive: true }, R = lgRole(me.role);
@@ -788,7 +834,7 @@ Object.assign(actions, {
     if (H.infectOn) { H.infectOn = null; H.infectUsed = false; } else { H.infectOn = vic[0]; H.infectUsed = true; H.log.infect = `${mpP(vic[0]).name} sera infecté·e au lieu de mourir.`; }
     mpPush();
   },
-  'lg-dawn'() { lgDawn(); mpPush(); },
+  'lg-dawn'() { lgDawn(); lgAutoEnd(MP.H.news ? MP.H.news.lines : []); mpPush(); },
   // Jour
   'lg-night'() { const H = MP.H; Object.assign(H, { phase: 'night', n: H.n + 1, cur: null, allDone: false, done: {}, res: {}, log: {}, pending: [], news: null, vote: null, crow: null, comNight: null, mjNotes: [] }); mpPush(); },
   'lg-kill'(cid) {
@@ -797,6 +843,8 @@ Object.assign(actions, {
     if (H.phase === 'day' && p.role === 'idiot' && !p.idiotOut) { p.idiotOut = true; H.news = { title: 'Le village a tranché', lines: [], empty: `${p.name} est l'idiot du village ! Gracié·e, mais ne vote plus.` }; H.vote = null; mpPush(); return; }
     const out = lgKill([[cid, H.phase === 'day' ? 'vote' : 'mj']], H.phase === 'day' ? 'vote' : 'nuit');
     if (H.phase === 'day') { H.news = lgNewsOf('Le village a tranché', out, 'vote'); H.vote = null; }
+    else if (out.length) H.news = lgNewsOf('Dernière nouvelle', out, 'night');
+    lgAutoEnd(out);
     mpPush();
   },
   'lg-bouc'() { const b = MP.H.players.find(p => p.alive && p.role === 'bouc'); if (b) actions['lg-kill'](b.cid); },
@@ -814,7 +862,7 @@ Object.assign(actions, {
   'lg-vote-reveal'() { MP.H.vote.revealed = true; mpPush(); },
   'lg-vote-close'() { MP.H.vote = null; mpPush(); },
   'lg-alert'(i) { MP.H.alerts.splice(+i, 1); mpPush(); },
-  'lg-end'(w) { Object.assign(MP.H, { step: 'end', winner: w || '' }); mpPush(); },
+  'lg-end'(w) { const H = MP.H; Object.assign(H, { step: 'end', winner: w || '', wins: lgWinners(H, w || ''), endNews: null }); mpPush(); },
   'lg-again'() { const H = MP.H; H.players.forEach(p => Object.keys(p).forEach(k => { if (!['cid', 'name', 'on'].includes(k)) delete p[k]; })); Object.assign(H, { step: 'lobby', lovers: [], pending: [], news: null, winner: null, mayor: null, vote: null }); mpPush(); },
   // Joueurs
   'lg-peek'() {
@@ -1425,7 +1473,7 @@ MPG.lg.sound = (prev, v) => {
   if (v.step === 'game' && (prev.step !== 'game' || prev.phase !== v.phase || prev.n !== v.n)) sfx(v.phase === 'night' ? 'owl' : 'bell');
   const alive = l => l.filter(p => p.alive).length;
   if (v.step === 'game' && alive(v.players) < alive(prev.players)) setTimeout(() => sfx('death'), v.phase === 'day' && prev.phase === 'night' ? 1900 : 0);
-  if (v.step === 'end' && prev.step !== 'end') sfx('tada');
+  if (v.step === 'end' && prev.step !== 'end') { if (v.game === 'lg' && v.me) { sfx(v.won ? 'tada' : 'lose'); if (v.won) setTimeout(() => sfx('fanfare'), 700); buzz(v.won ? [80, 60, 80, 60, 200] : 300); } else sfx('tada'); }
   if (v.lover && !prev.lover) sfx('reveal');
   const mayor = l => (l.find(p => p.mayor) || {}).name;
   if (mayor(v.players) && mayor(v.players) !== mayor(prev.players)) sfx('fanfare');
@@ -1436,7 +1484,7 @@ MPG.lg.sound = (prev, v) => {
 MPG.gp.sound = (prev, v) => {
   if (v.task && (!prev.task || prev.task.id !== v.task.id)) sfx('pop');
   if (v.step === 'album' && v.album && (prev.step !== 'album' || !prev.album || v.album.items.length !== prev.album.items.length || v.album.c !== prev.album.c)) sfx('flip');
-  if (v.step === 'end' && prev.step !== 'end') sfx('tada');
+  if (v.step === 'end' && prev.step !== 'end') { if (v.game === 'lg' && v.me) { sfx(v.won ? 'tada' : 'lose'); if (v.won) setTimeout(() => sfx('fanfare'), 700); buzz(v.won ? [80, 60, 80, 60, 200] : 300); } else sfx('tada'); }
 };
 
 start();
