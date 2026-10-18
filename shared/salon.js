@@ -270,6 +270,8 @@ function mpHost(game, opts = {}) {
   mpClose();
   const resume = opts.resume;
   MP = { role: 'host', game, code: resume ? resume.code : mpCode(), status: 'connecting', conns: new Map(), photos: store.get('photo', '') ? { [MP_CID]: store.get('photo', '') } : {}, H: resume ? resume.H : MPG[game].init(opts.name), resumed: !!resume, tries: 0 };
+  // La soirée à thème (enchaînement de jeux) est gardée avec la partie
+  MP.so = resume && resume.so || null;
   if (resume) { MP.H.players.forEach(p => { p.on = p.cid === MP_CID; }); MPG[game].resume && MPG[game].resume(); }
   S.screen = 'mp'; S.confirm = null; render();
   const m = MP;
@@ -337,15 +339,21 @@ function mpHostRecv(conn, d) {
   if (d.t === 'ping') { try { conn.send({ t: 'pong' }); } catch (e) {} return; }
   MPG[MP.game].act(conn.cid, d);
 }
+// Pendant une soirée à thème, chaque écran sait où on en est (jeu et manche)
+function mpView(g, cid) {
+  const v = g.view(cid), so = MP.so;
+  if (so && MP.game !== 'so' && so.plan[so.i]) v.so = { i: so.i + 1, of: so.plan.length, r: Math.min(so.done + 1, so.plan[so.i].rounds), rounds: so.plan[so.i].rounds };
+  return v;
+}
 function mpPush() {
   if (!MP || MP.role !== 'host') return;
   const g = MPG[MP.game];
-  MP.conns.forEach((conn, cid) => { if (conn.open) try { conn.send({ t: 'state', v: g.view(cid) }); } catch (e) {} });
+  MP.conns.forEach((conn, cid) => { if (conn.open) try { conn.send({ t: 'state', v: mpView(g, cid) }); } catch (e) {} });
   mpSave(); mpRefresh();
 }
 const mpBroadcast = msg => MP.conns.forEach(c => { if (c.open) try { c.send(msg); } catch (e) {} });
 // La partie est gardée sur le téléphone de l'hôte : s'il recharge ou ferme l'appli, il peut la reprendre
-function mpSave() { if (MP && MP.role === 'host') store.set('mpHost', { game: MP.game, code: MP.code, H: MP.H, at: Date.now() }); }
+function mpSave() { if (MP && MP.role === 'host') store.set('mpHost', { game: MP.game, code: MP.code, H: MP.H, so: MP.so || null, at: Date.now() }); }
 function mpSaved() { const s = store.get('mpHost', null); return s && MPG[s.game] && Date.now() - s.at < 6 * 3600e3 ? s : null; }
 
 /* --- Invité --- */
@@ -599,7 +607,9 @@ function mp() {
     <button class="btn big" data-a="mp-quit-ok">Retour au menu</button>`;
   if (m.role === 'guest' && !m.view) return `${mpTop('Partie en ligne')}${roomBox(false)}<p class="howto">Connexion à la partie ${esc(m.code)}…</p>${mpQuitBox()}`;
   const lost = m.role === 'guest' && m.status === 'lost' ? `<div class="banner">Connexion perdue, reconnexion en cours…</div>` : '';
-  return mpTop(title, rules) + lost + mpQuitBox() + MPG[m.game].screen();
+  const sv = m.role === 'host' ? mpView(MPG[m.game], MP_CID) : m.view, so = sv && sv.so;
+  const band = so ? `<div class="so-band">Soirée à thème · jeu ${so.i} / ${so.of} · manche ${so.r} / ${so.rounds}</div>` : '';
+  return mpTop(title, rules) + lost + band + mpQuitBox() + MPG[m.game].screen();
 }
 // Les téléphones virtuels retrouvent tout seuls le code de la dernière partie créée à côté
 function localCode() { try { return localStorage.getItem('virtuel.' + APP.id + '.code') || ''; } catch (e) { return ''; } }

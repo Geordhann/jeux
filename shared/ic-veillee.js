@@ -591,3 +591,60 @@ Object.assign(ICONS, {
   <circle cx="21" cy="25" r="10" fill="#f2d3a8"/>
 </g>`,
 });
+/* La Veillée : jeux supplémentaires (enluminure, pleine page, sans médaillon) */
+Object.assign(ICONS, {
+  // Le Procès : maillet de juge frappant son socle, verdict scellé derrière
+  'jeu-pr': `<g stroke="${INK}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M33 5h22a4 4 0 0 1 0 8H33z" fill="#d9c393"/>
+  <path d="M35 9h20v27H35z" fill="#f6f0e0"/>
+  <path d="M33 34h22a4 4 0 0 1 0 8H33a4 4 0 0 1 0-8z" fill="#d9c393"/>
+  <path d="M39 15h12M39 20h12M39 25h8" fill="none" stroke-width="1.5"/>
+  <circle cx="50" cy="31" r="3.6" fill="#b23a2b"/>
+  <path d="M5 49c0-2.5 6-4.5 13-4.5s13 2 13 4.5v6c0 2.5-6 4.5-13 4.5s-13-2-13-4.5z" fill="#6b4426"/>
+  <ellipse cx="18" cy="49" rx="13" ry="4.5" fill="#a8743f"/>
+  <path d="M5 53c2 2.4 7 3.6 13 3.6s11-1.2 13-3.6" fill="none" stroke="#d4a23a" stroke-width="1.6"/>
+  <g transform="translate(25 30) rotate(-38)">
+    <rect x="-2.6" y="5" width="5.2" height="31" rx="2.6" fill="#a8743f"/>
+    <rect x="-15" y="-7.5" width="30" height="15" rx="3" fill="#6b4426"/>
+    <rect x="-9.5" y="-8.5" width="3.6" height="17" rx="1" fill="#d4a23a"/>
+    <rect x="5.9" y="-8.5" width="3.6" height="17" rx="1" fill="#d4a23a"/>
+    <path d="M-5 -3.5h9" fill="none" stroke="#c9a06a" stroke-width="1.6"/>
+  </g>
+  <path d="M4 38l3 3M9 34l1.5 4M2 45h4" fill="none" stroke="#b23a2b" stroke-width="2"/>
+</g>`,
+
+  // Qui a écrit ça ? : billet de parchemin au grand point d'interrogation, plume d'oie
+  'jeu-qe': `<g stroke="${INK}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M7 12l30-5 7 44-30 5z" fill="#efe1bd"/>
+  <path d="M33 7.7l4-.7 1 6.4-5.8 1z" fill="#d9c393"/>
+  <path d="M16.5 26c-.6-6 3-10 8-10.8 5-.8 8.8 2 9.3 6.4.6 5-3.8 7-6.6 9-1.8 1.3-2 3-1.7 5" fill="none" stroke="${INK}" stroke-width="8.5"/>
+  <path d="M16.5 26c-.6-6 3-10 8-10.8 5-.8 8.8 2 9.3 6.4.6 5-3.8 7-6.6 9-1.8 1.3-2 3-1.7 5" fill="none" stroke="#b23a2b" stroke-width="4.5"/>
+  <circle cx="26.6" cy="44" r="3.6" fill="#b23a2b"/>
+  <path d="M31 50C36 33 46 17 61 9c-2 15-13 32-27 44z" fill="#f6f0e0"/>
+  <path d="M28 57L59 12" fill="none"/>
+  <path d="M38 40l-3.5-2.5M42.5 33l-3.5-3.5M47 26.5l-3-4M51.5 20l-2.5-4.5M40 43l4 .5M44.6 36.5l4.5-.2M49 30l4.5-1" fill="none" stroke-width="1.2"/>
+  <path d="M25.5 61l2.5-6.5 3 2z" fill="${INK}"/>
+</g>`,
+
+  // Soirée à thème : couronne d'or sur coussin de velours rouge
+  'jeu-so': `<g stroke="${INK}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M5 46c0-6 8-9 27-9s27 3 27 9-2 9-3 11c-6 2-15 3-24 3s-18-1-24-3c-1-2-3-5-3-11z" fill="#b23a2b"/>
+  <path d="M10 46c4-3 12-4 22-4s18 1 22 4" fill="none" stroke="#e0705e" stroke-width="1.6"/>
+  <path d="M7.5 57.5l-2.5 5.5h6zM56.5 57.5l2.5 5.5h-6z" fill="#d4a23a" stroke-width="1.5"/><circle cx="8" cy="57" r="2.3" fill="#f2c443" stroke-width="1.5"/><circle cx="56" cy="57" r="2.3" fill="#f2c443" stroke-width="1.5"/><circle cx="5.5" cy="45" r="2.3" fill="#f2c443" stroke-width="1.5"/><circle cx="58.5" cy="45" r="2.3" fill="#f2c443" stroke-width="1.5"/>
+  <path d="M15 42L12 14l10 10 10-15 10 15 10-10-3 28z" fill="#d4a23a"/>
+  <path d="M14 36h36l-.6 7H14.6z" fill="#f2c443"/>
+  <path d="M19 17l2.3 8M45 17l-2.3 8" fill="none" stroke="#f2c443" stroke-width="1.6"/>
+  <circle cx="12" cy="13" r="2.8" fill="#f2c443"/><circle cx="32" cy="8" r="3.2" fill="#f2c443"/><circle cx="52" cy="13" r="2.8" fill="#f2c443"/>
+  <path d="M32 24l3.5 4.5L32 33l-3.5-4.5z" fill="#b23a2b"/>
+  <circle cx="21.5" cy="39.5" r="2.2" fill="#2f4f8f" stroke-width="1.5"/><circle cx="32" cy="39.5" r="2.2" fill="#3f6b3a" stroke-width="1.5"/><circle cx="42.5" cy="39.5" r="2.2" fill="#2f4f8f" stroke-width="1.5"/>
+</g>`,
+
+  // Petite couronne d'or, à côté du nom du vainqueur
+  couronne: `<g stroke="${INK}" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M10 46L6 17l13 13 13-19 13 19 13-13-4 29z" fill="#d4a23a"/>
+  <path d="M9.5 44h45l-1 11h-43z" fill="#f2c443"/>
+  <circle cx="6" cy="15" r="4" fill="#f2c443"/><circle cx="32" cy="9" r="4.5" fill="#f2c443"/><circle cx="58" cy="15" r="4" fill="#f2c443"/>
+  <path d="M32 26l4.5 6-4.5 6-4.5-6z" fill="#b23a2b" stroke-width="2.2"/>
+  <circle cx="21" cy="49.5" r="2.6" fill="#2f4f8f" stroke-width="1.8"/><circle cx="43" cy="49.5" r="2.6" fill="#2f4f8f" stroke-width="1.8"/>
+</g>`,
+});

@@ -250,6 +250,73 @@ async function run() {
     t.check(await t.eval(host, () => QP_CARDS.wtf.length) >= 50, 'pas assez de questions WTF');
   });
 
+  await scenario('pr', 'Le Procès : rôles, plaidoiries chronométrées, verdict du jury', 'veillee', async t => {
+    const [host, code] = await t.host('pr');
+    const ps = [host];
+    for (const [i, n] of ['Léa', 'Hugo', 'Inès', 'Tom'].entries()) ps.push((await t.join(i + 2, code, n))[0]);
+    await host.click('[data-a=pr-start]');
+    await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'charge');
+    const roles = await t.eval(host, () => [MP.H.acc, MP.H.avo, MP.H.pro]);
+    t.check(new Set(roles).size === 3, 'accusé, avocat et procureur doivent être différents');
+    await host.click('[data-a=pr-open]');
+    await t.until(ps, () => (MP.role === 'host' ? MP.H.phase : MP.view.phase) === 'pro');
+    for (let i = 0; i < 3; i++) await host.click('[data-a=pr-skip]');
+    await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'vote');
+    const jurors = [];
+    for (const p of ps) if (await t.eval(p, () => (MP.role === 'host' ? MPG.pr.view(MP_CID) : MP.view).juror)) jurors.push(p);
+    t.check(jurors.length === 2, 'il devrait y avoir 2 jurés, il y en a ' + jurors.length);
+    for (const p of jurors) await p.click('[data-a=pr-vote][data-v="1"]');
+    await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'verdict');
+    t.check(await t.eval(host, () => MP.H.verdict === 'coupable' && !!MP.H.peine), 'verdict ou peine manquant');
+  });
+
+  await scenario('qe', 'Qui a écrit ça ? : réponses secrètes, devinettes et points', 'veillee', async t => {
+    const [host, code] = await t.host('qe');
+    const ps = [host];
+    for (const [i, n] of ['Léa', 'Hugo'].entries()) ps.push((await t.join(i + 2, code, n))[0]);
+    await host.click('[data-a=qe-start]');
+    await t.until(ps, () => !!document.getElementById('qeText'));
+    for (const [i, p] of ps.entries()) { await p.fill('#qeText', 'Réponse secrète ' + i); await p.click('[data-a=qe-send]'); }
+    await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'guess');
+    for (let k = 0; k < 3; k++) {
+      // Tout le monde devine juste, sauf l'auteur qui vote pour quelqu'un d'autre
+      const author = await t.eval(host, () => mpP(MP.H.order[MP.H.k]).name);
+      for (const p of ps) { const me = await t.eval(p, () => (MP.role === 'host' ? MPG.qe.view(MP_CID) : MP.view).players.find(x => x.me).name); const to = me === author ? ['Hôte', 'Léa', 'Hugo'].find(n => n !== me) : author; await p.click(`[data-a=qe-vote][data-v="${to}"]`); }
+      await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'reveal');
+      if (k < 2) await host.click('[data-a=qe-more]');
+    }
+    const pts = await t.eval(host, () => MP.H.pts);
+    t.check(Object.values(pts).every(x => x === 2), 'points inattendus : ' + JSON.stringify(pts));
+  });
+
+  await scenario('so', 'Soirée à thème : jeux enchaînés, classement et roi de la soirée', 'veillee', async t => {
+    const [host, code] = await t.host('so');
+    const ps = [host];
+    for (const [i, n] of ['Léa', 'Hugo'].entries()) ps.push((await t.join(i + 2, code, n))[0]);
+    for (const g of ['qe', 'pr', 'av']) await host.click(`[data-a=so-rounds][data-v="${g}:0"]`);
+    await host.click('[data-a=so-rounds][data-v="tp:2"]'); await host.click('[data-a=so-rounds][data-v="qp:2"]');
+    await host.click('[data-a=so-start]');
+    const step = () => MP.role === 'host' ? MP.game + ':' + MP.H.step : MP.view.game + ':' + MP.view.step;
+    for (let r = 0; r < 2; r++) {
+      await t.until(ps, s => (MP.role === 'host' ? MP.game + ':' + MP.H.step : MP.view.game + ':' + MP.view.step) === s, 'tp:vote');
+      for (const [i, p] of ps.entries()) await p.click(`[data-a=tp-vote][data-v="${i ? 1 : 0}"]`);
+      await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'reveal');
+      await host.click('[data-a=tp-next]');
+    }
+    await t.until(ps, () => (MP.role === 'host' ? MP.game : MP.view.game) === 'so' && !!document.querySelector('.sl-rank'));
+    t.check(await ps[1].$('.so-band') === null, 'bandeau de soirée sur le classement');
+    await host.click('[data-a=so-go]');
+    for (let r = 0; r < 2; r++) {
+      await t.until(ps, () => !!document.querySelector('.qp-pick') && !!document.querySelector('.so-band'));
+      for (const p of ps) await p.locator('[data-a=qp-vote]:not([disabled])').first().click();
+      await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'reveal');
+      await host.click('[data-a=qp-next]');
+    }
+    await t.until(ps, () => !!document.querySelector('.so-king'));
+    const sc = await t.eval(host, () => MP.so.scores);
+    t.check(sc['Léa'] >= 2 && sc['Hugo'] >= 2, 'points de Tu préfères non comptés : ' + JSON.stringify(sc));
+  });
+
   await scenario('av', 'Action ou Vérité : 6 tours, réactions et jokers', 'veillee', async t => {
     const [host, code] = await t.host('av');
     const ps = { 'Hôte': host };

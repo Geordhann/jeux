@@ -103,6 +103,47 @@ body:not([data-scene="day"]) #scene .flies circle { animation: firefly 7s ease-i
 .card.has-sash > .sash { position: absolute; top: 18px; right: -10px; transform: rotate(32deg); padding: 4px 28px; z-index: 2; margin: 0; }
 .mayor-band { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 12px; background: rgba(255,255,255,.08); font-weight: 800; }
 .tag-i { margin-left: 4px; }
+/* Le Procès */
+.pr-case .text { margin: 2px 0; }
+.pr-case .text img.av { width: 1.3em; height: 1.3em; }
+.pr-crime { font-style: italic; color: var(--red); }
+.pr-roles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.pr-roles span { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px; border-radius: 12px; background: rgba(0,0,0,.06); font-weight: 700; }
+.pr-roles small { text-transform: uppercase; letter-spacing: .1em; font-size: .68rem; color: var(--ink-soft); }
+.pr-speak { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 18px 16px; border-radius: var(--r); border: 1px solid rgba(255,255,255,.18); background: rgba(9,12,30,.55); }
+.pr-speak.me { border-color: var(--gold); box-shadow: 0 0 22px rgba(241,185,92,.35); }
+.pr-speak small { text-transform: uppercase; letter-spacing: .12em; font-size: .72rem; font-weight: 800; color: var(--gold); }
+.pr-speak strong { font-family: var(--font-display); font-weight: 400; font-size: 1.8rem; }
+.pr-speak img.av.big { width: 80px; height: 80px; margin: 0; }
+.pr-sec { font-family: var(--font-display); font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.pr-bar { width: 100%; height: 8px; border-radius: 4px; background: rgba(255,255,255,.12); overflow: hidden; }
+.pr-bar i { display: block; height: 100%; background: var(--gold); transform-origin: left; animation: prbar linear forwards; }
+@keyframes prbar { from { transform: scaleX(var(--from)); } to { transform: scaleX(0); } }
+.pr-vote { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pr-vote .btn[aria-pressed="true"] { outline: 4px solid #fff; }
+.pr-verdict { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center; font-weight: 800; }
+.pr-verdict span { padding: 12px; border-radius: 14px; background: rgba(0,0,0,.3); }
+.pr-verdict.g span:first-child, .pr-verdict.f span:last-child { background: var(--gold); color: var(--ink); }
+/* Qui a écrit ça ? */
+.qe-card .text { font-size: clamp(1.25rem, 5.6vw, 1.6rem); }
+/* Soirée à thème */
+.so-plan li { flex-wrap: wrap; }
+.so-plan .nm small { display: block; }
+.so-r { display: flex; gap: 4px; margin-left: auto; }
+.so-r button { min-width: 40px; padding: 7px 8px; border-radius: 9px; font-weight: 700; font-size: .8rem; color: var(--muted); background: rgba(0,0,0,.2); }
+.so-r button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+.sl-rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.sl-rank li { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 10px; }
+.sl-rank li.me { background: rgba(241,185,92,.14); }
+.sl-rank .pos { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .8rem; background: rgba(255,255,255,.1); }
+.sl-rank li:first-child .pos { background: var(--gold); color: var(--ink); }
+.sl-rank .chipline { color: var(--gold); font-weight: 800; font-variant-numeric: tabular-nums; }
+.so-king { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 24px 16px; border-radius: var(--r); background: var(--paper); color: var(--ink); box-shadow: 0 0 0 4px var(--gold), 0 0 40px rgba(241,185,92,.55); }
+.so-king .crown svg.icn { width: 96px; height: 96px; animation: winpop .9s cubic-bezier(.2,1.6,.4,1); }
+.so-king small { text-transform: uppercase; letter-spacing: .14em; font-size: .75rem; font-weight: 800; color: var(--ink-soft); }
+.so-king strong { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.2rem, 12vw, 3.2rem); line-height: 1.05; color: #b07a10; }
+.so-king img.av.big { width: 88px; height: 88px; margin: 6px 0 0; }
+.so-king p { margin: 0; font-weight: 800; }
 /* Fin du Loup-Garou : victoire ou défaite, selon ton camp */
 .lg-end { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 22px 16px; border-radius: var(--r); background: var(--paper); color: var(--ink); box-shadow: 0 3px 0 var(--paper-edge), 0 14px 30px rgba(0,0,0,.35); }
 .lg-end .medal svg.icn { width: 112px; height: 112px; }
@@ -189,10 +230,13 @@ window.APP = {
   hooks: ['La nuit tombe sur la forêt…', 'Qui est le loup ? Personne ne le sait.', 'Ton dessin va finir en catastrophe. Et c\'est le but.', 'Ce soir, on ne fait confiance à personne.', 'Au loin, un loup hurle. Ou alors c\'est Kevin.', 'Allumez le feu, la veillée commence.'],
   deal: ['[[lune]]', '[[loup]]', '[[sapin]]'],
   games: [
+    { id: 'so', name: 'Soirée à thème', icon: 'jeu-so', color: '#f2c45a', players: '2 à 20 joueurs', when: 'Toute la soirée', desc: "Plusieurs jeux à la suite, des points à chaque manche, et à la fin le roi ou la reine de la soirée est couronné·e." },
     { id: 'tp', name: 'Tu préfères', icon: 'jeu-tp', color: '#7fe0b0', players: '2 à 20 joueurs', when: 'Début de soirée', desc: "Une question, deux choix : chacun vote en secret, la minorité prend un gage." },
     { id: 'lg', name: 'Loup-Garou', icon: 'jeu-lg', color: '#8fb6ff', players: '4 à 47 joueurs + le meneur', when: 'Le grand jeu', desc: "Tu es le maître du jeu : la roue distribue une carte secrète sur le téléphone de chacun." },
     { id: 'gp', name: 'Téléphone dessiné', icon: 'jeu-gp', color: '#ffb36b', players: '3 à 20 joueurs', when: 'Pour rire', desc: "Écris, dessine, devine : la phrase passe de téléphone en téléphone et se déforme." },
     { id: 'qp', name: 'Qui pourrait…', icon: 'groupe', color: '#ff9fb2', players: '3 à 20 joueurs', when: 'Pour rire', desc: "Chacun désigne en secret qui colle le mieux à la question, le plus désigné prend un gage. Les couples ne votent pas l'un pour l'autre." },
+    { id: 'qe', name: 'Qui a écrit ça ?', icon: 'jeu-qe', color: '#9fd8ff', players: '3 à 20 joueurs', when: 'Pour rire', desc: "Chacun répond en secret, puis on devine qui a écrit chaque réponse. Points pour les fins limiers et les bons bluffeurs." },
+    { id: 'pr', name: 'Le Procès', icon: 'jeu-pr', color: '#ffb36b', players: '3 à 20 joueurs', when: 'Pour rire', desc: "Un accusé, un crime absurde, un avocat, un procureur : 30 secondes de plaidoirie chacun, puis le jury vote." },
     { id: 'av', name: 'Action ou Vérité', icon: 'jeu-av', color: '#d39cff', players: '2 à 20 joueurs', when: 'Fin de soirée', desc: "Chacun son tour, la carte s'affiche sur tous les téléphones et tout le monde réagit." },
   ],
   legal: {
@@ -1215,6 +1259,7 @@ function vgLobby(v, start, extra) {
   <button class="btn big" data-a="${start}" ${n < 2 || MP.status !== 'open' ? 'disabled' : ''}>${n < 2 ? 'Il faut au moins 2 joueurs' : `C'est parti (${n} joueurs)`}</button>`;
 }
 const vgMe = v => v.players.find(p => p.me) || {};
+const soLbl = l => MP.so && MP.role === 'host' && MP.game !== 'so' && MP.so.done + 1 >= MP.so.plan[MP.so.i].rounds ? 'Classement de la soirée' : l;
 
 /* --- Tu préfères : chacun vote en secret, la minorité prend un gage --- */
 MPG.tp = {
@@ -1251,7 +1296,7 @@ function tpNext() { const H = MP.H; Object.assign(H, { step: 'vote', q: vgDraw(H
 function tpReveal() {
   const H = MP.H, a = H.players.filter(p => H.votes[p.cid] === 0), b = H.players.filter(p => H.votes[p.cid] === 1);
   H.step = 'reveal'; H.gage = null;
-  if (a.length && b.length && a.length !== b.length) { (a.length < b.length ? a : b).forEach(p => { p.gages = (p.gages || 0) + 1; }); H.gage = vgDraw(H, 'gage', VG_GAGES); }
+  if (a.length && b.length && a.length !== b.length) { (a.length < b.length ? a : b).forEach(p => { p.gages = (p.gages || 0) + 1; }); (a.length < b.length ? b : a).forEach(p => soPts(p.name, 1)); H.gage = vgDraw(H, 'gage', VG_GAGES); }
   mpPush();
 }
 function tpScreen(v) {
@@ -1272,7 +1317,7 @@ function tpScreen(v) {
   return `<div class="turn"><small>Question ${v.n}</small><strong>Verdict !</strong></div>
     ${[0, 1].map(i => `<div class="tp-res ${i ? 'b' : 'a'} ${minor === i ? 'minor' : ''}"><div class="tp-bar" style="width:${pct(i)}%"></div><b>${pct(i)} %</b><span>${esc(v.q[i])}</span><small>${v.sides[i].length ? esc(v.sides[i].join(', ')) : 'Personne !'}</small></div>`).join('')}
     ${minor === null ? `<div class="banner gold">Égalité parfaite ! Chaque camp défend son choix en une phrase.</div>` : v.gage ? `<div class="card compact"><p class="kind">Gage pour la minorité</p><p class="text">${esc(v.gage)}</p><p class="sub">${esc(v.sides[minor].join(', '))}</p></div>` : ''}
-    ${host ? `<div class="row"><button class="btn big" data-a="tp-next">Question suivante</button></div><div class="row">${vgLevelBox(v.level, 'tp-level')}</div>` : `<p class="howto">L'hôte passe à la question suivante.</p>`}`;
+    ${host ? `<div class="row"><button class="btn big" data-a="tp-next">${soLbl('Question suivante')}</button></div><div class="row">${vgLevelBox(v.level, 'tp-level')}</div>` : `<p class="howto">L'hôte passe à la question suivante.</p>`}`;
 }
 
 /* --- Action ou Vérité : chacun son tour, la carte s'affiche chez tout le monde --- */
@@ -1319,7 +1364,7 @@ function avDeal(k) {
 }
 function avEnd(how) {
   const H = MP.H, cur = avCur(H);
-  if (how === 'joker') { cur.jokers = (cur.jokers || 0) + 1; H.gage = vgDraw(H, 'gage', VG_GAGES); } else cur.done = (cur.done || 0) + 1;
+  if (how === 'joker') { cur.jokers = (cur.jokers || 0) + 1; H.gage = vgDraw(H, 'gage', VG_GAGES); } else { cur.done = (cur.done || 0) + 1; soPts(cur.name, 2); }
   H.step = 'after'; mpPush();
 }
 function avScreen(v) {
@@ -1338,7 +1383,7 @@ function avScreen(v) {
     ${host && !v.myTurn ? `<button class="btn ghost" data-a="av-force">Valider pour ${esc(v.turn)}</button>` : ''}${scores}`;
   return `${head}${card}
     ${v.gage ? `<div class="card compact"><p class="kind">Joker ! Gage pour ${esc(v.turn)}</p><p class="text">${esc(v.gage)}</p></div>` : `<div class="banner gold">Bravo ${esc(v.turn)} ! [[bravo]]</div>`}
-    ${host ? `<button class="btn big" data-a="av-next">Joueur suivant</button>${vgLevelBox(v.level, 'av-level')}` : `<p class="howto">L'hôte passe au joueur suivant.</p>`}${scores}`;
+    ${host ? `<button class="btn big" data-a="av-next">${soLbl('Joueur suivant')}</button>${vgLevelBox(v.level, 'av-level')}` : `<p class="howto">L'hôte passe au joueur suivant.</p>`}${scores}`;
 }
 
 /* --- Qui pourrait… : chacun désigne quelqu'un en secret, le plus désigné prend un gage --- */
@@ -1388,6 +1433,7 @@ function qpReveal() {
   H.rows = Object.entries(by).map(([name, l]) => ({ name, votes: l.length, by: l })).sort((a, b) => b.votes - a.votes);
   const max = H.rows.length ? H.rows[0].votes : 0;
   H.top = H.rows.filter(r => r.votes === max).map(r => r.name);
+  Object.entries(H.votes).forEach(([c, to]) => { if (H.top.includes(to)) soPts((mpP(c) || {}).name, 1); });
   H.gage = null;
   if (H.top.length === 1) { const p = H.players.find(x => x.name === H.top[0]); if (p) p.gages = (p.gages || 0) + 1; H.gage = vgDraw(H, 'gage', VG_GAGES); }
   H.step = 'reveal'; mpPush();
@@ -1408,15 +1454,317 @@ function qpScreen(v) {
   return `<div class="turn"><small>Question ${v.n}</small><strong>${v.top.length === 1 ? esc(v.top[0]) + ' !' : v.top.length ? 'Égalité !' : 'Personne ?'}</strong></div>${card}
     ${v.rows.map(r => `<div class="tp-res a ${v.top.includes(r.name) ? 'minor' : ''}"><div class="tp-bar" style="width:${Math.round(100 * r.votes / max)}%"></div><b>${r.votes}</b><span>${avatar(r.name)}${esc(r.name)}</span><small>${esc(r.by.join(', '))}</small></div>`).join('')}
     ${v.gage ? `<div class="card compact"><p class="kind">Gage pour ${esc(v.top[0])}</p><p class="text">${esc(v.gage)}</p></div>` : v.top.length > 1 ? `<div class="banner gold">${esc(v.top.join(' et '))} : pierre-feuille-ciseaux, le perdant prend un gage !</div>` : ''}
-    ${host ? `<div class="row"><button class="btn big" data-a="qp-next">Question suivante</button></div><div class="row">${vgLevelBox(v.level, 'qp-level', QP_LEVELS)}</div>` : `<p class="howto">L'hôte passe à la question suivante.</p>`}`;
+    ${host ? `<div class="row"><button class="btn big" data-a="qp-next">${soLbl('Question suivante')}</button></div><div class="row">${vgLevelBox(v.level, 'qp-level', QP_LEVELS)}</div>` : `<p class="howto">L'hôte passe à la question suivante.</p>`}`;
+}
+
+/* --- Le Procès : un accusé, un avocat, un procureur, et le jury vote sur les téléphones --- */
+const PR_CRIMES = {
+  soft: ["A mangé le dernier Kinder en cachette", "Met l'ananas sur la pizza sans prévenir personne", "A spoilé la fin d'une série au groupe", "Répond « ok » aux longs messages", "Remet la bouteille de lait vide au frigo", "A volé une frite dans chaque assiette ce soir", "Chante faux sous la douche à 7 h du matin", "Laisse ses chaussettes sous la table basse", "A dit « on se capte » et n'a jamais rappelé", "Envoie des vocaux de 4 minutes", "Met le papier toilette à l'envers", "A oublié l'anniversaire de quelqu'un ici", "Tousse sans mettre la main devant la bouche", "Arrive toujours en retard avec une excuse en carton", "A liké sa propre photo", "Rit à ses propres blagues avant la chute", "Fait semblant d'avoir lu le livre", "A mangé dans le Tupperware de quelqu'un au bureau", "Garde 247 onglets ouverts", "Prend toujours le meilleur coin du canapé", "A dit « c'est bon, je connais la route » et s'est perdu", "Parle au chat avec une voix de bébé", "Dit « j'arrive » alors qu'il est encore sous la douche", "Ne rend jamais les Tupperware", "A triché au Monopoly en 2009 et n'a jamais avoué", "Commande une salade puis mange les frites des autres", "Applaudit quand l'avion atterrit", "Met des vidéos sans écouteurs dans le train", "Écrit « mdr » sans jamais rire", "Prend des photos de son assiette pendant que ça refroidit", "A laissé une seule chips dans le paquet", "Dit « je goûte juste » et finit le plat", "S'endort pendant les films qu'il a choisis", "A fait une sieste de 4 heures en plein après-midi", "A appelé son prof « maman »", "Lance « on fait un resto ? » puis ne vient pas", "Utilise trois emojis par phrase", "Réveille tout le monde avec son réveil qui sonne 12 fois", "A mangé la part de gâteau de quelqu'un d'autre", "Fait des blagues de papa sans être papa"],
+  piquant: ["A liké une photo de son ex à 3 h du matin", "A envoyé « tu dors ? » à quelqu'un d'ici", "A dragué le ou la serveuse devant tout le monde", "A un compte Insta secret pour stalker", "A menti sur son âge sur une appli de rencontre", "A ghosté quelqu'un après un super date", "A fait une story « pour personne » mais en fait pour quelqu'un", "A embrassé quelqu'un pour rendre une autre personne jalouse", "Regarde les stories de son crush en premier", "A dit « je t'aime » trop tôt", "A envoyé un vocal bourré à la mauvaise personne", "A fait semblant d'être célibataire en soirée", "A recouché avec son ex « juste une fois »", "A swipé quelqu'un de la famille d'un pote", "A dit « c'est juste un pote » alors que pas du tout", "A capturé l'écran d'une conversation privée", "Tient un classement secret de ses dates", "A écrit un message à son crush et l'a effacé 12 fois"],
+};
+const PR_PEINES = ["Condamné·e à parler comme un pirate jusqu'au prochain procès.", "Doit faire un compliment sincère à chaque juré.", "Doit chanter le refrain de son choix, debout sur une chaise.", "Doit appeler l'avocat « Maître » jusqu'à la fin de la soirée.", "Doit faire 10 pompes ou 20 squats, sous les yeux du jury.", "Doit raconter sa plus grosse honte, sans rien cacher.", "Doit imiter un animal choisi par le procureur pendant 30 secondes.", "Doit envoyer un message choisi par le jury à un·e pote.", "Doit faire une déclaration d'amour dramatique à un objet de la pièce.", "Doit danser 20 secondes sans musique.", "Doit garder un accent choisi par le jury jusqu'à son prochain procès.", "Doit servir à boire (sans alcool, ou pas) à tout le jury.", "Doit faire un discours d'excuses en larmes, façon télé-réalité.", "Doit laisser le jury choisir sa photo de profil pour 24 h.", "Doit mimer son crime. Le jury note sur 10.", "Doit parler à la troisième personne jusqu'au prochain procès."];
+const PR_TIMES = { pro: 30, avo: 30, last: 10 };
+const PR_PHASE = { pro: 'Réquisitoire du procureur', avo: "Plaidoirie de l'avocat", last: "Dernier mot de l'accusé" };
+const prName = (H, cid) => (mpP(cid) || {}).name || '?';
+// Le jury : tout le monde sauf l'accusé et les deux robes (sauf s'il ne reste personne pour voter)
+const prJury = H => { const j = H.players.filter(p => p.on && ![H.acc, H.avo, H.pro].includes(p.cid)); return j.length ? j : H.players.filter(p => p.on && p.cid !== H.acc); };
+MPG.pr = {
+  lateJoin: true,
+  rules: () => ({ title: 'Le Procès', steps: [
+    "L'hôte crée la partie et donne le code, les autres le rejoignent. L'hôte joue aussi. Il faut au moins 3 joueurs.",
+    "L'appli tire au sort un accusé, son crime (absurde), un avocat et un procureur. Tout s'affiche sur les téléphones.",
+    "Le procureur a 30 secondes pour réclamer une peine, l'avocat 30 secondes pour défendre, et l'accusé 10 secondes pour son dernier mot.",
+    "Le jury (tous les autres) vote en secret : coupable ou innocent. En cas d'égalité, l'accusé est acquitté au bénéfice du doute.",
+    "Coupable : l'accusé purge sa peine. Innocent : le procureur paie les frais de justice (un gage).",
+  ], tips: ["Plus la plaidoirie est mauvaise de foi, mieux c'est.", "Soft pour tout le monde, Piquant pour les grands."] }),
+  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('prLevel', 'soft'), n: 0, votes: {}, couples: store.get('vgCouples', []), coupleMode: store.get('vgCoupleMode', true) }),
+  act(cid, d) {
+    const H = MP.H;
+    if (d.t === 'pr-vote' && H.step === 'vote' && [0, 1].includes(d.c) && prJury(H).some(p => p.cid === cid)) {
+      H.votes[cid] = d.c;
+      if (prJury(H).every(p => H.votes[p.cid] !== undefined)) prVerdict(); else mpPush();
+    }
+  },
+  view(cid) {
+    const H = MP.H, jury = H.step === 'lobby' ? [] : prJury(H);
+    const role = cid === H.acc ? 'acc' : cid === H.avo ? 'avo' : cid === H.pro ? 'pro' : 'jury';
+    return { game: 'pr', step: H.step, level: H.level, n: H.n, crime: H.crime, acc: prName(H, H.acc), avo: prName(H, H.avo), pro: prName(H, H.pro), role,
+      phase: H.phase, left: H.until ? Math.max(0, H.until - Date.now()) : 0, total: H.phase ? PR_TIMES[H.phase] * 1000 : 1,
+      juror: jury.some(p => p.cid === cid), mine: H.votes[cid], voted: Object.keys(H.votes).length, of: jury.length,
+      verdict: H.verdict, tally: H.step === 'verdict' ? H.tally : null, peine: H.peine || null,
+      players: H.players.map(p => ({ name: p.name, on: !!p.on, me: p.cid === cid })) };
+  },
+  sound(prev, v) {
+    if (v.step === 'charge' && prev.step !== 'charge') sfx('bell');
+    if (v.step === 'plaid' && v.phase !== prev.phase) sfx('ping');
+    if (v.step === 'vote' && v.voted > prev.voted) sfx('tick');
+    if (v.step === 'verdict' && prev.step !== 'verdict') { sfx('death'); setTimeout(() => sfx(v.verdict === 'coupable' ? 'lose' : 'tada'), 900); }
+  },
+  after: () => prTick(),
+  screen() { return prScreen(MP.role === 'host' ? MPG.pr.view(MP_CID) : MP.view); },
+};
+function prNext() {
+  const H = MP.H, on = H.players.filter(p => p.on);
+  if (on.length < 3) { toast('Il faut au moins 3 joueurs.'); return; }
+  // Chacun son tour sur le banc des accusés
+  const min = Math.min(...on.map(p => p.accused || 0)), acc = shuffle(on.filter(p => (p.accused || 0) === min))[0];
+  acc.accused = (acc.accused || 0) + 1;
+  const [avo, pro] = shuffle(on.filter(p => p !== acc));
+  Object.assign(H, { step: 'charge', n: H.n + 1, acc: acc.cid, avo: avo.cid, pro: pro.cid, crime: vgDraw(H, 'pr' + H.level, PR_CRIMES[H.level]), votes: {}, phase: null, until: 0, verdict: null, peine: null, tally: null });
+  mpPush();
+}
+function prPhase(ph) {
+  const H = MP.H;
+  if (!ph) { Object.assign(H, { step: 'vote', phase: null, until: 0 }); mpTimer('prT'); mpPush(); return; }
+  Object.assign(H, { step: 'plaid', phase: ph, until: Date.now() + PR_TIMES[ph] * 1000 });
+  mpTimer('prT', () => prPhase({ pro: 'avo', avo: 'last', last: null }[ph]), PR_TIMES[ph] * 1000);
+  mpPush();
+}
+function prVerdict() {
+  const H = MP.H, v = Object.values(H.votes), guilty = v.filter(x => x === 1).length, free = v.length - guilty;
+  H.verdict = guilty > free ? 'coupable' : 'innocent';
+  H.tally = { guilty, free };
+  H.peine = H.verdict === 'coupable' ? vgDraw(H, 'peine', PR_PEINES) : vgDraw(H, 'gage', VG_GAGES);
+  // Points de la soirée : les jurés du bon côté, la robe qui gagne, l'accusé acquitté
+  Object.entries(H.votes).forEach(([c, x]) => { if ((x === 1) === (H.verdict === 'coupable')) soPts(prName(H, c), 1); });
+  soPts(prName(H, H.verdict === 'coupable' ? H.pro : H.avo), 3);
+  if (H.verdict === 'innocent') soPts(prName(H, H.acc), 2);
+  H.step = 'verdict'; mpTimer('prT'); mpPush();
+}
+// Compte à rebours affiché (les secondes défilent sans redessiner l'écran)
+let prInt = 0;
+function prTick() {
+  clearInterval(prInt);
+  const el = document.getElementById('prSec');
+  if (!el) return;
+  const end = Date.now() + +el.dataset.left;
+  const up = () => { const s = Math.ceil(Math.max(0, end - Date.now()) / 1000); const e = document.getElementById('prSec'); if (!e) { clearInterval(prInt); return; } e.textContent = s + ' s'; };
+  up(); prInt = setInterval(up, 250);
+}
+function prScreen(v) {
+  const host = MP.role === 'host';
+  if (v.step === 'lobby') return vgLobby(v, 'pr-start', `<section class="panel"><h3><span>Niveau</span></h3>${vgLevelBox(v.level, 'pr-level')}<p class="hint">Soft pour tout le monde, Piquant pour les grands. Il faut au moins 3 joueurs.</p></section>`);
+  const me = { acc: `Tu es <b>l'accusé·e</b>. Défends ton honneur !`, avo: `Tu es <b>l'avocat·e</b> de ${esc(v.acc)}. Sauve-le·la !`, pro: `Tu es <b>le procureur</b>. Fais-le·la condamner !`, jury: 'Tu es <b>juré·e</b>. Écoute, puis tranche.' }[v.role];
+  const dossier = `<div class="card compact pr-case"><p class="kind">Affaire n° ${v.n}</p><p class="text">${avatar(v.acc)}${esc(v.acc)}</p><p class="sub">accusé·e de :</p><p class="text pr-crime">« ${esc(v.crime)} »</p>
+    <div class="pr-roles"><span><small>Procureur</small>${avatar(v.pro)}${esc(v.pro)}</span><span><small>Avocat·e</small>${avatar(v.avo)}${esc(v.avo)}</span></div></div>`;
+  const head = `<div class="turn"><small>Le Procès</small><strong>${{ charge: 'La cour !', plaid: 'Silence dans la salle', vote: 'Le jury délibère', verdict: v.verdict === 'coupable' ? 'Coupable !' : 'Innocent·e !' }[v.step]}</strong></div>`;
+  if (v.step === 'charge') return `${head}${dossier}<p class="howto">${me}</p>
+    ${host ? `<button class="btn big" data-a="pr-open">Ouvrir l'audience</button>` : `<p class="howto">L'hôte ouvre l'audience.</p>`}`;
+  if (v.step === 'plaid') {
+    const who = { pro: v.pro, avo: v.avo, last: v.acc }[v.phase], mine = (v.phase === 'pro' && v.role === 'pro') || (v.phase === 'avo' && v.role === 'avo') || (v.phase === 'last' && v.role === 'acc');
+    return `${head}<div class="pr-speak ${mine ? 'me' : ''}"><small>${PR_PHASE[v.phase]}</small>${avatar(who, 'big')}<strong>${mine ? 'À toi de parler !' : esc(who)}</strong>
+      <span class="pr-sec" id="prSec" data-left="${v.left}">${Math.ceil(v.left / 1000)} s</span>
+      <div class="pr-bar"><i style="--from:${(v.left / v.total).toFixed(3)};animation-duration:${v.left}ms"></i></div></div>${dossier}
+      ${host ? `<button class="btn" data-a="pr-skip">Passer la parole</button>` : ''}`;
+  }
+  if (v.step === 'vote') return `${head}${dossier}
+    ${v.juror ? `<div class="pr-vote"><button class="btn big red" data-a="pr-vote" data-v="1" aria-pressed="${v.mine === 1}">Coupable</button><button class="btn big" data-a="pr-vote" data-v="0" aria-pressed="${v.mine === 0}">Innocent</button></div>
+      <p class="howto">${v.mine === undefined ? 'Vote en secret.' : 'Vote enregistré, tu peux encore changer d\'avis.'} ${v.voted} / ${v.of} jurés ont voté.</p>`
+      : `<p class="howto">Le jury délibère… ${v.voted} / ${v.of} jurés ont voté.</p>`}
+    ${host ? `<button class="btn ghost" data-a="pr-reveal" ${v.voted ? '' : 'disabled'}>Rendre le verdict sans attendre</button>` : ''}`;
+  const guilty = v.verdict === 'coupable';
+  return `${head}<div class="pr-verdict ${guilty ? 'g' : 'f'}"><span>${v.tally.guilty} coupable${v.tally.guilty > 1 ? 's' : ''}</span><span>${v.tally.free} innocent${v.tally.free > 1 ? 's' : ''}</span></div>
+    <div class="card compact"><p class="kind">${guilty ? `La peine de ${esc(v.acc)}` : `${esc(v.pro)} paie les frais de justice`}</p><p class="text">${esc(v.peine)}</p></div>
+    ${dossier}
+    ${host ? `<div class="row"><button class="btn big" data-a="pr-next">${soLbl('Affaire suivante')}</button></div><div class="row">${vgLevelBox(v.level, 'pr-level')}</div>` : `<p class="howto">L'hôte appelle l'affaire suivante.</p>`}`;
+}
+
+/* --- Qui a écrit ça ? : chacun répond en secret, puis on devine l'auteur de chaque réponse --- */
+const QE_Q = {
+  soft: ["Ton pire souvenir de cantine", "Le surnom qu'on te donnait petit·e", "Ce que tu ferais demain avec un million", "Le pire cadeau que tu aies reçu", "Ta phrase fétiche que tu dis trop souvent", "Le métier que tu voulais faire à 8 ans", "Ton talent le plus inutile", "Le plat que tu ne peux pas voir en peinture", "La chanson que tu chantes faux mais à fond", "Ta pire coupe de cheveux", "Le film que tu as vu le plus de fois", "Ta pire honte à l'école", "Ce que tu emporterais sur une île déserte (un seul objet)", "Ta peur la plus bête", "La dernière chose qui t'a fait pleurer de rire", "Le truc que tu fais quand tu es seul·e chez toi", "Ton péché mignon à 2 h du matin", "Le pire job que tu aies fait", "Ce que tu dirais au président si tu le croisais", "Ton personnage de dessin animé préféré, et pourquoi", "La dernière recherche bizarre sur ton téléphone", "Ce que tu ferais si tu étais invisible une journée", "Ton excuse préférée pour annuler un plan", "L'objet le plus inutile chez toi", "Le pire plat que tu aies cuisiné", "Ce que tu cries quand tu te cognes le petit orteil", "Ta superstition secrète", "Le nom que tu donnerais à ton bateau", "Ta pire chute en public", "Le premier truc que tu fais en te réveillant"],
+  piquant: ["Ton pire date, en une phrase", "La phrase de drague la plus nulle qu'on t'ait sortie", "Ce qui te fait craquer direct chez quelqu'un", "Ton red flag à toi", "Le message le plus gênant que tu aies envoyé", "Ton crush de célébrité inavouable", "L'endroit le plus bizarre où tu as embrassé quelqu'un", "Ta technique de drague, honnêtement", "Ce que tu as fait de plus fou par amour", "La pire excuse pour quitter un date", "Ton plus gros râteau", "Le truc que tu stalkes en secret", "La chose que ton ex dirait de toi", "Ta pire gueule de bois, racontée en une phrase", "Le texto que tu regrettes le plus"],
+};
+MPG.qe = {
+  lateJoin: true,
+  rules: () => ({ title: 'Qui a écrit ça ?', steps: [
+    "L'hôte crée la partie et donne le code, les autres le rejoignent. L'hôte joue aussi. Il faut au moins 3 joueurs.",
+    "Une question s'affiche (« Ton pire souvenir de cantine »). Chacun écrit sa réponse en secret sur son téléphone.",
+    "Les réponses s'affichent une par une, sans nom. Chacun touche le prénom de celui ou celle qui l'a écrite, auteur compris (pour ne pas se trahir).",
+    "On révèle l'auteur : 1 point par bonne réponse, et 1 point pour l'auteur par personne qu'il a bluffée.",
+  ], tips: ["Écris comme quelqu'un d'autre pour brouiller les pistes !", 'Soft pour tout le monde, Piquant pour les grands.'] }),
+  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('qeLevel', 'soft'), n: 0, answers: {}, order: [], k: 0, votes: {}, pts: {}, couples: store.get('vgCouples', []), coupleMode: store.get('vgCoupleMode', true) }),
+  act(cid, d) {
+    const H = MP.H;
+    if (d.t === 'qe-write' && H.step === 'write') {
+      const t = String(d.text || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+      if (!t) return;
+      H.answers[cid] = t;
+      if (H.players.filter(p => p.on).every(p => H.answers[p.cid])) qeGuess(); else mpPush();
+    } else if (d.t === 'qe-vote' && H.step === 'guess' && H.players.some(p => p.name === d.to && p.cid !== cid)) {
+      H.votes[cid] = d.to;
+      if (H.players.filter(p => p.on).every(p => H.votes[p.cid])) qeReveal(); else mpPush();
+    }
+  },
+  view(cid) {
+    const H = MP.H, me = mpP(cid) || {}, a = H.order[H.k];
+    const v = { game: 'qe', step: H.step, level: H.level, n: H.n, q: H.q, wrote: !!H.answers[cid], myText: H.answers[cid] || '',
+      written: Object.keys(H.answers).length, of: H.players.filter(p => p.on).length, k: H.k, total: H.order.length,
+      text: a ? H.answers[a] : null, mine: H.votes[cid] || null, voted: Object.keys(H.votes).length, isAuthor: a === cid,
+      pts: H.pts[me.name] || 0,
+      players: H.players.map(p => ({ name: p.name, on: !!p.on, me: p.cid === cid, wrote: !!H.answers[p.cid], voted: !!H.votes[p.cid], pts: H.pts[p.name] || 0 })) };
+    if (H.step === 'reveal') v.res = H.res;
+    return v;
+  },
+  sound(prev, v) {
+    if (v.step === 'write' && (prev.step !== 'write' || prev.n !== v.n)) sfx('deal');
+    if (v.step === 'write' && v.written > prev.written) sfx('send');
+    if (v.step === 'guess' && (prev.step !== 'guess' || prev.k !== v.k)) sfx('flip');
+    if (v.step === 'guess' && v.voted > prev.voted) sfx('tick');
+    if (v.step === 'reveal' && prev.step !== 'reveal') sfx('reveal');
+  },
+  // Pendant qu'on écrit, l'écran n'est pas redessiné : la réponse en cours n'est jamais effacée
+  patch() {
+    const v = MP.role === 'host' ? MPG.qe.view(MP_CID) : MP.view, box = document.getElementById('qeText');
+    if (!v || v.step !== 'write' || v.wrote || !box || box.dataset.n !== String(v.n)) return false;
+    document.getElementById('qeStatus').innerHTML = qeStatus(v);
+    return true;
+  },
+  screen() { return qeScreen(MP.role === 'host' ? MPG.qe.view(MP_CID) : MP.view); },
+};
+function qeNext() { const H = MP.H; Object.assign(H, { step: 'write', q: vgDraw(H, 'qe' + H.level, QE_Q[H.level]), answers: {}, order: [], k: 0, votes: {}, n: H.n + 1, res: null }); mpPush(); }
+function qeGuess() {
+  const H = MP.H;
+  H.order = shuffle(Object.keys(H.answers).filter(c => mpP(c)));
+  if (!H.order.length) return;
+  Object.assign(H, { step: 'guess', k: 0, votes: {} }); mpPush();
+}
+function qeReveal() {
+  const H = MP.H, author = mpP(H.order[H.k]), an = author ? author.name : '?', right = [], wrong = [];
+  Object.entries(H.votes).forEach(([c, to]) => { if (c === H.order[H.k]) return; const n = prName(H, c); (to === an ? right : wrong).push(n); });
+  const add = (n, x) => { H.pts[n] = (H.pts[n] || 0) + x; soPts(n, x); };
+  right.forEach(n => add(n, 1));
+  if (wrong.length) add(an, wrong.length);
+  H.res = { author: an, right, wrong, guesses: Object.entries(H.votes).filter(([c]) => c !== H.order[H.k]).map(([c, to]) => ({ by: prName(H, c), to })) };
+  H.step = 'reveal'; mpPush();
+}
+const qeStatus = v => `${v.written} / ${v.of} ont répondu.<div class="chips qs">${v.players.map(p => `<span class="chip tap ${p.wrote ? 'on' : ''}">${p.wrote ? '✓ ' : ''}${avatar(p.name)}${esc(p.name)}</span>`).join('')}</div>`;
+function qeScreen(v) {
+  const host = MP.role === 'host';
+  if (v.step === 'lobby') return vgLobby(v, 'qe-start', `<section class="panel"><h3><span>Niveau</span></h3>${vgLevelBox(v.level, 'qe-level')}<p class="hint">Soft pour tout le monde, Piquant pour les grands. Il faut au moins 3 joueurs.</p></section>`);
+  const q = `<div class="card compact"><p class="kind">Question ${v.n}</p><p class="text">${esc(v.q)}</p></div>`;
+  if (v.step === 'write') return `<div class="turn"><small>Qui a écrit ça ?</small><strong>${v.wrote ? 'Réponse envoyée' : 'À toi d\'écrire'}</strong></div>${q}
+    ${v.wrote ? `<div class="bub">${esc(v.myText)}</div><p class="howto">Les autres écrivent encore… Garde un air innocent.</p>`
+      : `<textarea id="qeText" class="gp-in" data-n="${v.n}" maxlength="140" rows="3" placeholder="Ta réponse, en secret…"></textarea><button class="btn big" data-a="qe-send">Envoyer</button>`}
+    <div class="howto" id="qeStatus">${qeStatus(v)}</div>
+    ${host ? `<button class="btn ghost" data-a="qe-force" ${v.written >= 2 ? '' : 'disabled'}>Passer aux devinettes sans attendre</button>` : ''}`;
+  const card = `<div class="card qe-card"><p class="kind">Réponse ${v.k + 1} / ${v.total}</p><p class="sub">${esc(v.q)}</p><p class="text">« ${esc(v.text)} »</p></div>`;
+  if (v.step === 'guess') return `<div class="turn"><small>Qui a écrit ça ?</small><strong>Devine !</strong></div>${card}
+    <div class="qp-pick">${v.players.filter(p => !p.me && p.on).map(p => `<button class="qp-p" data-a="qe-vote" data-v="${esc(p.name)}" aria-pressed="${v.mine === p.name}">${avatar(p.name)}<b>${esc(p.name)}</b></button>`).join('')}</div>
+    <p class="howto">${v.isAuthor ? 'C\'est ta réponse : vote pour quelqu\'un d\'autre, l\'air de rien. ' : ''}${v.voted} / ${v.of} ont voté.</p>
+    ${host ? `<button class="btn ghost" data-a="qe-reveal" ${v.voted ? '' : 'disabled'}>Révéler sans attendre</button>` : ''}`;
+  if (v.step === 'reveal') return `<div class="turn">${avatar(v.res.author, 'big')}<small>C'était…</small><strong>${esc(v.res.author)} !</strong></div>${card}
+    <p class="howto">${v.res.right.length ? `Bien vu : <b>${esc(v.res.right.join(', '))}</b> (+1).` : 'Personne n\'a trouvé !'} ${v.res.wrong.length ? `${esc(v.res.author)} a bluffé ${v.res.wrong.length} personne${v.res.wrong.length > 1 ? 's' : ''} (+${v.res.wrong.length}).` : ''}</p>
+    <div class="chips">${v.res.guesses.map(g => `<span class="chip tap ${g.to === v.res.author ? 'on' : ''}">${esc(g.by)} → ${esc(g.to)}</span>`).join('')}</div>
+    <section class="panel"><h3><span>Points</span><span>cette partie</span></h3><div class="chips">${v.players.slice().sort((a, b) => b.pts - a.pts).map(p => `<span class="chip tap">${avatar(p.name)}${esc(p.name)}<span class="n">${p.pts}</span></span>`).join('')}</div></section>
+    ${host ? (v.k + 1 < v.total ? `<button class="btn big" data-a="qe-more">Réponse suivante</button>` : `<div class="row"><button class="btn big" data-a="qe-next">${soLbl('Question suivante')}</button></div><div class="row">${vgLevelBox(v.level, 'qe-level')}</div>`) : `<p class="howto">L'hôte continue.</p>`}`;
+  return '';
+}
+
+/* --- Soirée à thème : plusieurs jeux à la suite, des points partout, et le roi ou la reine de la soirée --- */
+const SO_GAMES = [['tp', 'Tu préfères', 3], ['qp', 'Qui pourrait…', 3], ['qe', 'Qui a écrit ça ?', 2], ['pr', 'Le Procès', 2], ['av', 'Action ou Vérité', 3]];
+const SO_HOW = { tp: 'majorité : +1', qp: 'avoir désigné le plus voté : +1', qe: 'bonne réponse : +1, chaque bluff : +1', pr: 'bon verdict : +1, robe gagnante : +3, acquitté·e : +2', av: 'défi relevé : +2' };
+function soPts(name, n) { const so = MP && MP.so; if (!so || !name) return; so.scores[name] = (so.scores[name] || 0) + n; }
+// Appelé quand l'hôte passe à la manche suivante : la soirée reprend la main quand un jeu est fini
+function soRound() {
+  const so = MP.so;
+  if (!so) return false;
+  so.done++;
+  if (so.done < so.plan[so.i].rounds) return false;
+  const H = MP.H, players = H.players.map(({ cid, name, on }) => ({ cid, name, on }));
+  MP.game = 'so';
+  MP.H = { step: so.i + 1 >= so.plan.length ? 'final' : 'board', players, level: H.level, couples: H.couples, coupleMode: H.coupleMode };
+  mpPush();
+  return true;
+}
+function soLaunch() {
+  const so = MP.so, H = MP.H, g = so.plan[so.i].game, players = H.players.filter(p => p.on).map(({ cid, name, on }) => ({ cid, name, on }));
+  so.done = 0;
+  MP.game = g;
+  MP.H = MPG[g].init(so.host);
+  Object.assign(MP.H, { players, couples: H.couples, coupleMode: H.coupleMode, level: g === 'qp' ? (H.level === 'piquant' ? 'piquant' : 'wtf') : H.level || 'soft' });
+  actions[g + '-start']();
+}
+const soRank = so => Object.entries(so.scores).sort((a, b) => b[1] - a[1]);
+MPG.so = {
+  lateJoin: true,
+  rules: () => ({ title: 'Soirée à thème', steps: [
+    "L'hôte crée la soirée, choisit les jeux et le nombre de manches de chacun. Les autres rejoignent avec le code.",
+    "Les jeux s'enchaînent tout seuls : Tu préfères, Qui pourrait…, Qui a écrit ça ?, Le Procès, puis Action ou Vérité pour finir.",
+    "Chaque jeu rapporte des points. Entre deux jeux, le classement de la soirée s'affiche sur tous les téléphones.",
+    "À la fin, le meilleur score est sacré roi ou reine de la soirée !",
+  ], tips: Object.entries(SO_HOW).map(([g, t]) => `${SO_GAMES.find(x => x[0] === g)[1]} : ${t}.`) }),
+  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('soLevel', 'soft'), plan: store.get('soPlan', Object.fromEntries(SO_GAMES.map(([g, , r]) => [g, r]))), couples: store.get('vgCouples', []), coupleMode: store.get('vgCoupleMode', true) }),
+  act() {},
+  view(cid) {
+    const H = MP.H, so = MP.so;
+    const v = { game: 'so', step: H.step, level: H.level, plan: H.plan, players: H.players.map(p => ({ name: p.name, on: !!p.on, me: p.cid === cid })) };
+    if (so) { v.rank = soRank(so).filter(([n]) => H.players.some(p => p.name === n)); v.next = so.plan[so.i + 1] ? { name: mpGameName(so.plan[so.i + 1].game), rounds: so.plan[so.i + 1].rounds } : null; v.gone = so.i + 1; v.of = so.plan.length; }
+    return v;
+  },
+  sound(prev, v) {
+    if (v.step === 'board' && prev.step !== 'board') sfx('fanfare');
+    if (v.step === 'final' && prev.step !== 'final') { sfx('tada'); setTimeout(() => sfx('fanfare'), 900); }
+  },
+  screen() { return soScreen(MP.role === 'host' ? MPG.so.view(MP_CID) : MP.view); },
+};
+function soScreen(v) {
+  const host = MP.role === 'host';
+  if (v.step === 'lobby') {
+    const rows = SO_GAMES.map(([g, name]) => { const r = (v.plan || {})[g] || 0; return `<li><span class="nm"><b>${name}</b><small>${SO_HOW[g]}</small></span>
+      <span class="so-r">${[0, 2, 3, 5].map(k => `<button data-a="so-rounds" data-v="${g}:${k}" aria-pressed="${r === k}">${k ? k : 'non'}</button>`).join('')}</span></li>`; }).join('');
+    const n = SO_GAMES.reduce((s, [g]) => s + ((v.plan || {})[g] || 0), 0);
+    return vgLobby(v, 'so-start', `<section class="panel"><h3><span>Programme de la soirée</span><span>${n} manches</span></h3><ul class="plist so-plan">${rows}</ul>
+      <p class="hint">Nombre de manches par jeu (« non » pour le sauter). Les jeux s'enchaînent dans cet ordre.</p></section>
+      <section class="panel"><h3><span>Niveau</span></h3>${vgLevelBox(v.level, 'so-level')}<p class="hint">Soft pour tout le monde, Piquant pour les grands (WTF pour Qui pourrait en Soft).</p></section>`);
+  }
+  const rank = v.rank || [], top = rank.length ? rank[0][1] : 0;
+  const list = `<ol class="sl-rank">${rank.map(([n, s], i) => `<li class="${v.players.find(p => p.name === n && p.me) ? 'me' : ''}"><span class="pos">${i + 1}</span><b>${s === top && top ? ic('couronne') || '♛' : ''} ${avatar(n)}${esc(n)}</b><span class="chipline">${s} pt${s > 1 ? 's' : ''}</span></li>`).join('')}</ol>`;
+  if (v.step === 'board') return `<div class="turn"><small>Soirée · jeu ${v.gone} / ${v.of} terminé</small><strong>Le classement</strong></div>
+    <section class="panel">${list || '<p class="hint">Personne n\'a encore marqué.</p>'}</section>
+    ${v.next ? `<div class="card compact"><p class="kind">Jeu suivant</p><p class="text">${esc(v.next.name)}</p><p class="sub">${v.next.rounds} manche${v.next.rounds > 1 ? 's' : ''}</p></div>` : ''}
+    ${host ? `<button class="btn big" data-a="so-go">C'est parti pour ${esc(v.next ? v.next.name : 'la suite')}</button>` : `<p class="howto">L'hôte lance le jeu suivant.</p>`}`;
+  const kings = rank.filter(([, s]) => s === top && top).map(([n]) => n);
+  return `<div class="so-king"><span class="crown" aria-hidden="true">${ic('couronne') || '♛'}</span><small>${kings.length > 1 ? 'Les rois et reines de la soirée' : 'Roi ou reine de la soirée'}</small>
+      ${kings.map(n => `${avatar(n, 'big')}<strong>${esc(n)}</strong>`).join('') || '<strong>Personne !</strong>'}<p>${top} points</p></div>
+    <section class="panel"><h3><span>Classement final</span></h3>${list}</section>
+    ${host ? `<div class="row"><button class="btn big" data-a="so-again">Nouvelle soirée</button><button class="btn ghost" data-a="mp-quit">Fermer</button></div>` : `<p class="howto">Merci d'avoir joué !</p>`}`;
 }
 
 Object.assign(actions, {
+  // Le Procès
+  'pr-level'(k) { MP.H.level = k; store.set('prLevel', k); mpPush(); },
+  'pr-start'() { MP.H.players = MP.H.players.filter(p => p.on); MP.cpSel = null; prNext(); },
+  'pr-open'() { prPhase('pro'); },
+  'pr-skip'() { const ph = MP.H.phase; prPhase({ pro: 'avo', avo: 'last', last: null }[ph]); },
+  'pr-vote'(c) { sfx('tick'); mpSend({ t: 'pr-vote', c: +c }); },
+  'pr-reveal'() { prVerdict(); },
+  'pr-next'() { if (!soRound()) prNext(); },
+  // Qui a écrit ça ?
+  'qe-level'(k) { MP.H.level = k; store.set('qeLevel', k); mpPush(); },
+  'qe-start'() { MP.H.players = MP.H.players.filter(p => p.on); MP.cpSel = null; Object.assign(MP.H, { pts: {} }); qeNext(); },
+  'qe-send'() { const t = (document.getElementById('qeText') || {}).value || ''; if (!t.trim()) { toast('Écris ta réponse.'); return; } sfx('send'); mpSend({ t: 'qe-write', text: t }); },
+  'qe-force'() { qeGuess(); },
+  'qe-vote'(n) { sfx('tick'); mpSend({ t: 'qe-vote', to: n }); },
+  'qe-reveal'() { qeReveal(); },
+  'qe-more'() { const H = MP.H; Object.assign(H, { k: H.k + 1, votes: {}, res: null, step: 'guess' }); mpPush(); },
+  'qe-next'() { if (!soRound()) qeNext(); },
+  // Soirée à thème
+  'so-level'(k) { MP.H.level = k; store.set('soLevel', k); mpPush(); },
+  'so-rounds'(v) { const [g, k] = v.split(':'), H = MP.H; H.plan = { ...H.plan, [g]: +k }; store.set('soPlan', H.plan); mpPush(); },
+  'so-start'() {
+    const H = MP.H, plan = SO_GAMES.filter(([g]) => (H.plan || {})[g] > 0).map(([g]) => ({ game: g, rounds: H.plan[g] }));
+    if (!plan.length) { toast('Choisis au moins un jeu.'); return; }
+    if (plan.some(x => ['pr', 'qe'].includes(x.game)) && H.players.filter(p => p.on).length < 3) { toast('Le Procès et Qui a écrit ça ? demandent au moins 3 joueurs.'); return; }
+    MP.so = { plan, i: 0, done: 0, scores: {}, host: (mpP(MP_CID) || {}).name || 'Hôte' };
+    MP.cpSel = null; soLaunch();
+  },
+  'so-go'() { const so = MP.so; if (!so || !so.plan[so.i + 1]) return; so.i++; soLaunch(); },
+  'so-again'() { const H = MP.H; MP.so = null; MP.H = Object.assign(MPG.so.init(''), { players: H.players.filter(p => p.on), couples: H.couples, coupleMode: H.coupleMode }); mpPush(); },
   'qp-level'(k) { MP.H.level = k; store.set('qpLevel', k); mpPush(); },
   'qp-start'() { MP.H.players = MP.H.players.filter(p => p.on); MP.cpSel = null; qpNext(); },
   'qp-vote'(n) { sfx('tick'); mpSend({ t: 'qp-vote', to: n }); },
   'qp-reveal'() { qpReveal(); },
-  'qp-next'() { qpNext(); },
+  'qp-next'() { if (!soRound()) qpNext(); },
   // Couples, réglés par l'hôte dans le salon
   'vg-cp'(n) {
     const H = MP.H, a = MP.cpSel;
@@ -1430,7 +1778,7 @@ Object.assign(actions, {
   'tp-start'() { MP.H.players = MP.H.players.filter(p => p.on); tpNext(); },
   'tp-vote'(c) { sfx('tick'); mpSend({ t: 'tp-vote', c: +c }); },
   'tp-reveal'() { tpReveal(); },
-  'tp-next'() { tpNext(); },
+  'tp-next'() { if (!soRound()) tpNext(); },
   'av-level'(k) { MP.H.level = k; store.set('avLevel', k); mpPush(); },
   'av-start'() { const H = MP.H; H.players = H.players.filter(p => p.on); Object.assign(H, { order: shuffle(H.players.map(p => p.cid)), turn: 0, step: 'choose' }); mpPush(); },
   'av-pick'(k) { mpSend({ t: 'av-pick', k }); },
@@ -1440,6 +1788,7 @@ Object.assign(actions, {
   'av-force'() { avEnd('done'); },
   'av-skip'() { const H = MP.H; H.turn++; mpPush(); },
   'av-next'() {
+    if (soRound()) return;
     const H = MP.H;
     H.players.filter(p => p.on && !H.order.includes(p.cid)).forEach(p => H.order.push(p.cid)); // les nouveaux venus prennent la file
     Object.assign(H, { turn: H.turn + 1, n: H.n + 1, step: 'choose', card: null, gage: null, react: {} }); mpPush();

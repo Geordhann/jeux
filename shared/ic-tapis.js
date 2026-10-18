@@ -160,3 +160,68 @@ Object.assign(ICONS, {
 ICONS.groupe = `<g stroke="#1a1024" stroke-width="2.5" stroke-linejoin="round">
   <circle cx="23" cy="20" r="9" fill="#3fd0c9"/><path d="M6 52c0-12 7-19 17-19s17 7 17 19z" fill="#3fd0c9"/>
   <circle cx="43" cy="22" r="8" fill="#ff5fa2"/><path d="M30 52c1-10 6-16 13-16s14 6 15 16z" fill="#ff5fa2"/></g>`;
+/* Le Tapis : course de chevaux (néon 1980). Contour #1a1024, aplats saturés. */
+Object.assign(ICONS, {
+  // Cheval au galop vers la droite ; le tapis de selle prend la couleur du couloir (currentColor)
+  cheval: `<g stroke-linejoin="round" stroke-linecap="round">
+  <path d="M13 29C8 27 4 30 2 35" fill="none" stroke="#1a1024" stroke-width="7"/>
+  <path d="M13 29C8 27 4 30 2 35" fill="none" stroke="#4a2614" stroke-width="3.6"/>
+  <path d="M19 37l-8 5-7-2M22 39l-6 7-6 4M42 36l7 3 7-3M39 38l5 7 7 2" fill="none" stroke="#1a1024" stroke-width="7"/>
+  <path d="M19 37l-8 5-7-2M22 39l-6 7-6 4M42 36l7 3 7-3M39 38l5 7 7 2" fill="none" stroke="#8a4a24" stroke-width="3.6"/>
+  <path d="M14 27C20 23 30 25 37 24C40 18 43 13 46 9.5L47.5 4.5L51 9C54 11 58 14 61 17.5C63 20 62 24 59 24.5C56 25 53 24.5 51 25C49 25.5 47.5 28 46 31C45 34 45 36 44 37C40 41 30 41 22 40C16 40 12 36 12 31C12 29 13 28 14 27Z" fill="#8a4a24" stroke="#1a1024" stroke-width="2.5"/>
+  <path d="M37 24C40 18 43 13 46 9.5L46 17.5C44 21 41 23.5 37 24Z" fill="#4a2614" stroke="#1a1024" stroke-width="1.6"/>
+  <path d="M24 25.2c4-.6 9-.8 13.5-1.4l1 9.2c-4 .8-9 1.4-13.6 1.4z" fill="currentColor" stroke="#1a1024" stroke-width="2.2"/>
+  <path d="M15 31c1-2 3-3.5 5-4" fill="none" stroke="#c07a46" stroke-width="1.6"/>
+  <path d="M49 22c-1-3 0-6 2.5-8" fill="none" stroke="#c07a46" stroke-width="1.5"/>
+  <circle cx="52.5" cy="13.5" r="1.7" fill="#f4ecdb"/><circle cx="59.6" cy="20.6" r="1" fill="#1a1024"/>
+</g>`,
+
+  // Course de chevaux : jockey au galop vers le drapeau d'arrivée
+  'jeu-ch': `<g stroke-linejoin="round" stroke-linecap="round">
+  <path d="M3 60h58" stroke="#ff5fa2" stroke-width="6" opacity=".35"/>
+  <path d="M3 60h58" stroke="#ff5fa2" stroke-width="2.4"/>
+  <path d="M61 60V4" stroke="#1a1024" stroke-width="5.5"/>
+  <path d="M61 60V4" stroke="#eab94e" stroke-width="2.6"/>
+  <g transform="translate(61 3) scale(.8) translate(-61 -3)">
+  <path d="M44 5L48.3 6.5L52.5 5L56.8 3.5L61 5L61 17L56.8 15.5L52.5 17L48.3 18.5L44 17Z" fill="none" stroke="#3fd0c9" stroke-width="5" opacity=".35"/>
+  <path d="M44 5L48.3 6.5L52.5 5L56.8 3.5L61 5L61 17L56.8 15.5L52.5 17L48.3 18.5L44 17Z" fill="#f4ecdb"/>
+  <path d="M44 9L48.3 10.5L48.3 14.5L44 13ZM48.3 6.5L52.5 5L52.5 9L48.3 10.5ZM48.3 14.5L52.5 13L52.5 17L48.3 18.5ZM52.5 9L56.8 7.5L56.8 11.5L52.5 13ZM56.8 3.5L61 5L61 9L56.8 7.5ZM56.8 11.5L61 13L61 17L56.8 15.5Z" fill="#1a1024"/>
+  <path d="M44 5L48.3 6.5L52.5 5L56.8 3.5L61 5L61 17L56.8 15.5L52.5 17L48.3 18.5L44 17Z" fill="none" stroke="#1a1024" stroke-width="2"/>
+  </g>
+  <circle cx="61" cy="4" r="2.6" fill="#ff5fa2" stroke="#1a1024" stroke-width="1.6"/>
+  <g transform="translate(-1 6) scale(.9)">
+    <path d="M13 29C8 27 4 30 2 35" fill="none" stroke="#1a1024" stroke-width="7.5"/>
+    <path d="M13 29C8 27 4 30 2 35" fill="none" stroke="#4a2614" stroke-width="4"/>
+    <path d="M19 37l-8 5-7-2M22 39l-6 7-6 4M42 36l7 3 7-3M39 38l5 7 7 2" fill="none" stroke="#1a1024" stroke-width="7.5"/>
+    <path d="M19 37l-8 5-7-2M22 39l-6 7-6 4M42 36l7 3 7-3M39 38l5 7 7 2" fill="none" stroke="#8a4a24" stroke-width="4"/>
+    <path d="M14 27C20 23 30 25 37 24C40 18 43 13 46 9.5L47.5 4.5L51 9C54 11 58 14 61 17.5C63 20 62 24 59 24.5C56 25 53 24.5 51 25C49 25.5 47.5 28 46 31C45 34 45 36 44 37C40 41 30 41 22 40C16 40 12 36 12 31C12 29 13 28 14 27Z" fill="#8a4a24" stroke="#1a1024" stroke-width="3"/>
+    <path d="M37 24C40 18 43 13 46 9.5L46 17.5C44 21 41 23.5 37 24Z" fill="#4a2614" stroke="#1a1024" stroke-width="1.6"/>
+    <path d="M24 25.2c4-.6 9-.8 13.5-1.4l1 9.2c-4 .8-9 1.4-13.6 1.4z" fill="#3fd0c9" stroke="#1a1024" stroke-width="2.4"/>
+    <circle cx="52.5" cy="13.5" r="1.8" fill="#f4ecdb"/><circle cx="59.6" cy="20.6" r="1.1" fill="#1a1024"/>
+    <path d="M27 21l8 2.5-3.5 5.5" fill="none" stroke="#1a1024" stroke-width="7"/>
+    <path d="M27 21l8 2.5-3.5 5.5" fill="none" stroke="#f4ecdb" stroke-width="3.6"/>
+    <circle cx="31" cy="29.5" r="2.6" fill="#1a1024"/>
+    <path d="M23 22C23 15 29 10.5 36 10l3 4.5C34 16 30 19.5 28.5 24z" fill="#ff5fa2" stroke="#1a1024" stroke-width="2.6"/>
+    <path d="M27 16.5l7-3.5" stroke="#f4ecdb" stroke-width="2.2"/>
+    <path d="M37 12.5l7 5.5" fill="none" stroke="#1a1024" stroke-width="6"/>
+    <path d="M37 12.5l7 5.5" fill="none" stroke="#ff5fa2" stroke-width="2.8"/>
+    <path d="M45 18.5l7.5 3" fill="none" stroke="#f4ecdb" stroke-width="1.5"/>
+    <circle cx="39.5" cy="7" r="4.2" fill="#e8b48a" stroke="#1a1024" stroke-width="2.4"/>
+    <path d="M35.3 6.6a4.2 4.2 0 0 1 8.4 0h3.2" fill="#3fd0c9" stroke="#1a1024" stroke-width="2.4"/>
+  </g>
+</g>`,
+
+  // Drapeau d'arrivée à damier
+  drapeau: `<g stroke-linejoin="round" stroke-linecap="round">
+  <path d="M15 9L23.4 11.9L31.8 10.8L40.2 7.2L48.6 6.1L57 9L57 37L48.6 34.1L40.2 35.2L31.8 38.8L23.4 39.9L15 37Z" fill="none" stroke="#3fd0c9" stroke-width="7" opacity=".35"/>
+  <path d="M15 9L23.4 11.9L31.8 10.8L40.2 7.2L48.6 6.1L57 9L57 37L48.6 34.1L40.2 35.2L31.8 38.8L23.4 39.9L15 37Z" fill="#f4ecdb"/>
+  <path d="M15 16L23.4 18.9L23.4 25.9L15 23ZM15 30L23.4 32.9L23.4 39.9L15 37ZM23.4 11.9L31.8 10.8L31.8 17.8L23.4 18.9ZM23.4 25.9L31.8 24.8L31.8 31.8L23.4 32.9ZM31.8 17.8L40.2 14.2L40.2 21.2L31.8 24.8ZM31.8 31.8L40.2 28.2L40.2 35.2L31.8 38.8ZM40.2 7.2L48.6 6.1L48.6 13.1L40.2 14.2ZM40.2 21.2L48.6 20.1L48.6 27.1L40.2 28.2ZM48.6 13.1L57 16L57 23L48.6 20.1ZM48.6 27.1L57 30L57 37L48.6 34.1Z" fill="#1a1024"/>
+  <path d="M15 9L23.4 11.9L31.8 10.8L40.2 7.2L48.6 6.1L57 9L57 37L48.6 34.1L40.2 35.2L31.8 38.8L23.4 39.9L15 37Z" fill="none" stroke="#1a1024" stroke-width="2.5"/>
+  <path d="M13 60V7" stroke="#1a1024" stroke-width="6"/>
+  <path d="M13 60V7" stroke="#eab94e" stroke-width="3"/>
+  <path d="M12 57V10" stroke="#fff3cf" stroke-width="1" opacity=".8"/>
+  <circle cx="13" cy="6" r="4.2" fill="#ff5fa2" stroke="#1a1024" stroke-width="2.5"/>
+  <circle cx="11.7" cy="4.8" r="1.3" fill="#fff" opacity=".8"/>
+  <path d="M6 60h14" stroke="#1a1024" stroke-width="2.5"/>
+</g>`,
+});
