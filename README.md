@@ -2,8 +2,11 @@
 
 Jeux de soirée sur un seul téléphone qui fait le tour de la table. Ouvre `index.html` dans un navigateur, rien à installer.
 
+## Design « Tapis de minuit »
+Feutre de table texturé, cartes en papier, accents or et rouge. Chaque jeu a son icône et sa famille de couleur (or : pour lancer, rouge : pour pimenter, menthe : pour bluffer). Chaque niveau a sa couleur, de sauge (Soft) à bordeaux sur velours (Sans limite). Planches de référence : https://claude.ai/artifact/DZ36w3PFAcpUzpDTYt8jfL
+
 ## Navigation
-Intro animée au lancement, puis 4 onglets en bas de l'écran : **Jeux** (la liste des jeux et un résumé de la soirée), **Joueurs** (la bande et les affinités), **Soirée** (lieu, alcool, conducteur, packs, musique) et **Plus** (récap, classement, cartes perso, règle d'or, mentions légales).
+Intro animée au lancement, puis 4 onglets en bas de l'écran : **Jeux** (carte « Ce soir » avec reprise du dernier jeu, puis les jeux rangés par famille), **Joueurs** (la bande et les affinités), **Soirée** (lieu, alcool, conducteur, packs, musique) et **Plus** (récap, classement, cartes perso, règle d'or, mentions légales).
 
 ## Les jeux
 - **Action ou Vérité** : 5 niveaux (Soft, Piquant, Hot, Intense, Sans limite), joker à 2 gorgées.

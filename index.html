@@ -16,17 +16,31 @@
 /* Layout: une colonne de 480px max, comme un tapis de jeu ; les cartes sont des cartes à jouer en papier posées sur le feutre. */
 :root {
   color-scheme: dark;
-  --felt: #10261e;
-  --felt-2: #183a2d;
-  --felt-line: #2b5544;
-  --paper: #f4ecdb;
+  --felt: #0e2a21;
+  --felt-2: #163a2d;
+  --felt-deep: #091c16;
+  --felt-line: #23493b;
+  --paper: #f5eedd;
   --paper-edge: #d9ccb0;
-  --ink: #221c17;
+  --ink: #1e1a16;
   --ink-soft: #6d6255;
-  --red: #c93a3f;
-  --gold: #e7b552;
+  --red: #c8373e;
+  --gold: #e2b451;
+  --mint: #3e8e8a;
+  --bordeaux: #7a1f3d;
   --fg: #eef3ee;
-  --muted: #a3bcb0;
+  --muted: #9fb8ac;
+  /* Échelle de chaleur des niveaux */
+  --lv-soft: #7fb59a;
+  --lv-piquant: #e2b451;
+  --lv-hot: #e3803f;
+  --lv-intense: #c8373e;
+  --lv-sanslimite: #7a1f3d;
+  /* Textures */
+  --tex-felt: radial-gradient(rgba(255,255,255,.045) 1px, transparent 1.2px), radial-gradient(rgba(0,0,0,.18) 1px, transparent 1.2px);
+  --tex-paper: radial-gradient(rgba(120,90,40,.07) 1px, transparent 1.3px);
+  --foil: linear-gradient(135deg, #f6d98c 0%, #e2b451 40%, #b88a33 70%, #f1cf7a 100%);
+  --velvet: radial-gradient(120% 90% at 30% 20%, #2a1430 0%, #160a1a 70%);
   --font-display: "Bagel Fat One", "Arial Rounded MT Bold", system-ui, sans-serif;
   --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-card: "Fraunces", Georgia, "Times New Roman", serif;
@@ -36,7 +50,9 @@ html, body { height: 100%; }
 body {
   margin: 0;
   background: var(--felt);
-  background-image: radial-gradient(120% 80% at 50% 0%, var(--felt-2), var(--felt) 70%);
+  background-image: var(--tex-felt), radial-gradient(120% 80% at 50% 0%, var(--felt-2), var(--felt) 70%);
+  background-size: 4px 4px, 5px 5px, auto;
+  background-position: 0 0, 2px 3px, 0 0;
   background-attachment: fixed;
   color: var(--fg);
   font: 16px/1.5 var(--font-body);
@@ -288,6 +304,71 @@ body.on-intro .music-fab { display: none; }
 .intro-hook { font-family: var(--font-card); font-style: italic; font-size: 1.15rem; color: var(--gold); max-width: 28ch; opacity: 0; animation: rise .6s ease-out 1.4s forwards; }
 @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .deal .c, .intro-logo, .intro-tag, .intro-btn, .intro-hook { animation: none; opacity: 1; } .deal .c { transform: translate(var(--x), 0) rotate(var(--r)); } }
+/* ===== Direction « Tapis de minuit » ===== */
+.card, .game, .gcard, .chip, .btn.paper, .recap, .titles div { background-image: var(--tex-paper); background-size: 6px 6px; }
+.card.verso { background-size: auto; }
+.btn:not(.red):not(.paper):not(.ghost) { background: var(--foil); }
+/* Niveaux : une couleur par cran de chaleur */
+.levels button[data-v="soft"] .pips { color: var(--lv-soft); }
+.levels button[data-v="piquant"] .pips { color: var(--lv-piquant); }
+.levels button[data-v="hot"] .pips { color: var(--lv-hot); }
+.levels button[data-v="intense"] .pips { color: var(--lv-intense); }
+.levels button[data-v="sanslimite"] .pips { color: #d65a86; }
+.levels button[data-v="soft"][aria-pressed="true"] { background: var(--lv-soft); color: var(--ink); }
+.levels button[data-v="piquant"][aria-pressed="true"] { background: var(--lv-piquant); color: var(--ink); }
+.levels button[data-v="hot"][aria-pressed="true"] { background: var(--lv-hot); color: var(--ink); }
+.levels button[data-v="intense"][aria-pressed="true"] { background: var(--lv-intense); color: var(--paper); }
+.levels button[data-v="sanslimite"][aria-pressed="true"] { background: var(--velvet); color: var(--gold); box-shadow: inset 0 0 0 1px #4a2450; }
+.levels button[aria-pressed="true"] .pips { color: currentColor; }
+/* Coins des cartes teintés selon le niveau, velours pour Sans limite */
+.card .idx[data-l="soft"] i { color: var(--lv-soft); }
+.card .idx[data-l="piquant"] i { color: #b88a33; }
+.card .idx[data-l="hot"] i { color: var(--lv-hot); }
+.card .idx[data-l="intense"] i { color: var(--lv-intense); }
+.card:has(.idx[data-l="sanslimite"]) { background: var(--velvet); color: var(--paper); box-shadow: 0 0 0 1px #4a2450, 0 18px 40px rgba(0,0,0,.45); }
+.card:has(.idx[data-l="sanslimite"]) .idx, .card:has(.idx[data-l="sanslimite"]) .kind { color: var(--gold); }
+.card:has(.idx[data-l="sanslimite"]) .text em, .card:has(.idx[data-l="sanslimite"]) .or { color: var(--gold); }
+.card:has(.idx[data-l="sanslimite"]) .sub { color: #c9a9cf; }
+/* Icônes de jeux */
+.gico { display: grid; place-items: center; border-radius: 14px; flex: none; }
+.gico svg { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.fam-lancer { background: var(--gold); color: var(--ink); }
+.fam-pimenter { background: var(--red); color: var(--paper); }
+.fam-bluffer { background: var(--mint); color: var(--paper); }
+.topbar .gico { width: 36px; height: 36px; border-radius: 11px; }
+.topbar .gico svg { width: 24px; height: 24px; stroke-width: 3; }
+.topbar .mbtn { margin-left: auto; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--felt-line); color: var(--muted); display: grid; place-items: center; flex: none; }
+.topbar .mbtn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.topbar .mbtn.on { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+body:not(.on-tabs) .music-fab { display: none; }
+.notice { background: rgba(226,180,81,.08) !important; color: var(--fg) !important; border: 1px dashed var(--gold); }
+.notice b { color: var(--gold); }
+.topbar h2 { min-width: 0; flex: 1; font-size: 1.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Accueil par parties */
+.home-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 6px; }
+.home-head .logo.small { font-size: 2.3rem; }
+.tonight { background: var(--foil); color: var(--ink); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 14px 30px rgba(0,0,0,.35); }
+.tonight .eyebrow { font-size: .75rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.tonight .lead { font-family: var(--font-card); font-style: italic; font-size: 1.35rem; line-height: 1.25; margin: 0; }
+.tonight .tchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tonight .tchips button { padding: 6px 11px; border-radius: 999px; background: rgba(30,26,22,.13); font-size: .8rem; font-weight: 700; }
+.tonight .go-btn { padding: 15px; border-radius: 14px; background: var(--ink); color: var(--paper); font-family: var(--font-display); font-size: 1.2rem; }
+.fam { display: flex; flex-direction: column; gap: 12px; }
+.fam h3 { display: flex; align-items: center; gap: 10px; font-size: 1.15rem; font-weight: 800; }
+.fam h3::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--dot); }
+.rail { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: -16px; padding: 2px 16px 8px; scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+.gcard { flex: none; width: 196px; scroll-snap-align: start; text-align: left; border-radius: 22px; overflow: hidden; background-color: var(--paper); color: var(--ink); box-shadow: 0 3px 0 var(--paper-edge); display: flex; flex-direction: column; transition: transform .15s; }
+.gcard:active { transform: translateY(2px); }
+.gcard[disabled] { opacity: .5; cursor: not-allowed; }
+.gcard .gico { height: 100px; border-radius: 0; }
+.gcard .gico svg { width: 40px; height: 40px; }
+.gcard .gtxt { padding: 13px 14px 15px; display: flex; flex-direction: column; gap: 5px; }
+.gcard b { font-size: 1.05rem; line-height: 1.2; }
+.gcard small { font-size: .82rem; color: var(--ink-soft); line-height: 1.35; }
+.gcard .gmin { font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.shortcuts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (prefers-reduced-motion: reduce) { .gcard { transition: none; } }
 </style>
 </head>
 <body>
@@ -2806,16 +2887,36 @@ const PARA = {
   ],
 };
 
+// Familles de jeux et icônes (trait, sans emoji)
+const FAMILIES = [
+  { id: 'lancer', label: 'Pour lancer la soirée', dot: 'var(--gold)' },
+  { id: 'pimenter', label: 'Pour pimenter', dot: 'var(--red)' },
+  { id: 'bluffer', label: 'Pour bluffer', dot: 'var(--mint)' },
+];
+const GAME_FAMILY = { aov: 'lancer', nhie: 'lancer', tp: 'lancer', bottle: 'pimenter', sd: 'pimenter', wheel: 'pimenter', uc: 'bluffer', para: 'bluffer', qui: 'bluffer' };
+const GAME_ICONS = {
+  aov: '<rect x="7" y="9" width="20" height="28" rx="3" transform="rotate(-8 17 23)"/><rect x="21" y="11" width="20" height="28" rx="3" transform="rotate(8 31 25)"/><path d="M28 20a3 3 0 1 1 4 2.8c-1 .5-1.5 1.2-1.5 2.2"/><path d="M30.6 30h.1"/>',
+  nhie: '<path d="M17 24V12a2.5 2.5 0 0 1 5 0v10M22 22V9a2.5 2.5 0 0 1 5 0v13M27 22V11a2.5 2.5 0 0 1 5 0v14M32 25v-7a2.5 2.5 0 0 1 5 0v10c0 8-5 13-12 13-5 0-8-3-11-8l-4-7a2.5 2.5 0 0 1 4-3l3 4"/>',
+  tp: '<path d="M24 42V27M24 27 12 13M24 27l12-14"/><path d="M11 21v-9h9"/><path d="M37 21v-9h-9"/>',
+  bottle: '<path d="M20 5h8v9l4 5v21a3 3 0 0 1-3 3H19a3 3 0 0 1-3-3V19l4-5z"/><path d="M16 26h16M16 34h16"/>',
+  sd: '<circle cx="24" cy="27" r="14"/><path d="M24 13V8M20 7h8M35 16l3-3"/><path d="M24 34s-6-3.6-6-7.5a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 3.9-6 7.5-6 7.5z"/>',
+  wheel: '<circle cx="24" cy="25" r="16"/><circle cx="24" cy="25" r="3"/><path d="M24 9v13M24 28v13M8 25h13M27 25h13M12.7 13.7l9.2 9.2M26.1 27.1l9.2 9.2M35.3 13.7l-9.2 9.2M21.9 27.1l-9.2 9.2"/><path d="M20 3h8l-4 5z"/>',
+  uc: '<path d="M5 19c6-4 13-4 19 0 6-4 13-4 19 0-1 9-5 13-10 13-4 0-6.5-3-9-5.5-2.5 2.5-5 5.5-9 5.5-5 0-9-4-10-13z"/><circle cx="15.5" cy="22.5" r="2.5"/><circle cx="32.5" cy="22.5" r="2.5"/>',
+  para: '<path d="M4 26s7-12 20-12 20 12 20 12-7 12-20 12S4 26 4 26z"/><circle cx="24" cy="26" r="5"/><path d="M24 9V4M13 12l-3-3M35 12l3-3"/>',
+  qui: '<circle cx="11" cy="22" r="4"/><circle cx="24" cy="19" r="4"/><circle cx="37" cy="22" r="4"/><path d="M4 38c1-5 4-8 7-8s6 3 7 8M17 35c1-5 4-8 7-8s6 3 7 8M30 38c1-5 4-8 7-8s6 3 7 8"/><path d="M24 4v7M21 8l3 3 3-3"/>',
+};
+const gameIcon = id => GAME_ICONS[id] ? `<span class="gico fam-${GAME_FAMILY[id]}" aria-hidden="true"><svg viewBox="0 0 48 48">${GAME_ICONS[id]}</svg></span>` : '';
+
 const GAMES = [
-  { id: 'aov', name: 'Action ou Vérité', suit: '♥', desc: "Le classique. Chacun son tour, du Soft au Sans limite.", min: 2 },
-  { id: 'bottle', name: 'La Bouteille', suit: '♣', desc: "Fais tourner : elle choisit ton duo et votre défi.", min: 2 },
-  { id: 'sd', name: 'Speed Dating', suit: '♥', desc: "Tête-à-tête chronométrés, vote secret, matchs révélés à la fin.", min: 2, mixed: true },
-  { id: 'uc', name: 'Undercover', suit: '♠', desc: "Un mot secret, des imposteurs, un vote. Démasquez-les.", min: 3 },
-  { id: 'nhie', name: "Je n'ai jamais", suit: '♦', desc: "Ceux qui l'ont déjà fait boivent ou baissent un doigt.", min: 2 },
-  { id: 'qui', name: 'Qui pourrait…', suit: '♣', desc: "À 3, tout le monde pointe quelqu'un.", min: 3 },
-  { id: 'para', name: 'Paranoïa', suit: '♠', desc: "Une question chuchotée, un prénom à voix haute, pile ou face pour tout révéler.", min: 3 },
-  { id: 'tp', name: 'Tu préfères', suit: '♦', desc: "Deux choix, le groupe vote, la minorité prend.", min: 2 },
-  { id: 'wheel', name: 'La Roue', suit: '♠', desc: "Roue des gages, « qui paie la tournée ? » ou ta propre roue.", min: 2 },
+  { id: 'aov', name: 'Action ou Vérité', suit: '♥', desc: "Le classique. Chacun son tour, du Soft au Sans limite.", short: "Le classique, du Soft au Sans limite.", min: 2 },
+  { id: 'bottle', name: 'La Bouteille', suit: '♣', desc: "Fais tourner : elle choisit ton duo et votre défi.", short: "Elle choisit ton duo et votre défi.", min: 2 },
+  { id: 'sd', name: 'Speed Dating', suit: '♥', desc: "Tête-à-tête chronométrés, vote secret, matchs révélés à la fin.", short: "Tête-à-tête, vote secret, matchs.", min: 2, mixed: true },
+  { id: 'uc', name: 'Undercover', suit: '♠', desc: "Un mot secret, des imposteurs, un vote. Démasquez-les.", short: "Un mot secret, des imposteurs.", min: 3 },
+  { id: 'nhie', name: "Je n'ai jamais", suit: '♦', desc: "Ceux qui l'ont déjà fait boivent ou baissent un doigt.", short: "Ceux qui l'ont fait se dénoncent.", min: 2 },
+  { id: 'qui', name: 'Qui pourrait…', suit: '♣', desc: "À 3, tout le monde pointe quelqu'un.", short: "À 3, tout le monde pointe.", min: 3 },
+  { id: 'para', name: 'Paranoïa', suit: '♠', desc: "Une question chuchotée, un prénom à voix haute, pile ou face pour tout révéler.", short: "Une question, un prénom, pile ou face.", min: 3 },
+  { id: 'tp', name: 'Tu préfères', suit: '♦', desc: "Deux choix, le groupe vote, la minorité prend.", short: "Deux choix, la minorité prend.", min: 2 },
+  { id: 'wheel', name: 'La Roue', suit: '♠', desc: "Roue des gages, « qui paie la tournée ? » ou ta propre roue.", short: "Gages, tournée ou ta propre roue.", min: 2 },
 ];
 
 const CUSTOM_GAMES = [
@@ -2849,6 +2950,7 @@ const S = {
   gate: null,
   screen: 'home',
   tab: store.get('tab', 'jeux'),
+  lastGame: store.get('lastGame', null),
   intro: true,
   aov: { turn: 0, card: null },
   deck: { card: null },
@@ -3141,14 +3243,14 @@ const musicPanel = () => `<div class="music"><span class="hint">Musique d'ambian
     <p class="hint">${M.style === 'auto' ? 'Auto : rythmée en Soft et Piquant, sensuelle à partir de Hot. ' : ''}Composée en direct par l'appli : libre de droits, sans connexion.</p></div>`;
 
 /* ---------- Écrans communs ---------- */
-const topbar = (title, rules) => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button><h2>${title}</h2>${rules ? `<button class="info" data-a="info" data-v="${rules}" aria-label="Règles du jeu">i</button>` : ''}</div>`;
+const topbar = (title, rules) => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button>${rules ? gameIcon(rules) : ''}<h2>${title}</h2><button class="mbtn ${M.on ? 'on' : ''}" data-a="music-toggle" aria-pressed="${M.on}" aria-label="${M.on ? "Couper la musique" : "Lancer la musique"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></button>${rules ? `<button class="info" data-a="info" data-v="${rules}" aria-label="Règles du jeu">i</button>` : ''}</div>`;
 const levelPicker = () => `<div class="levels" role="group" aria-label="Niveau">${LEVELS.map(l =>
   `<button data-a="level" data-v="${l.id}" aria-pressed="${S.level === l.id}"><span>${l.label}</span><span class="pips" aria-hidden="true">${l.pips}</span></button>`).join('')}</div>`;
 const targetPicker = () => `<div class="levels two" role="group" aria-label="Défis avec">
   <button data-a="target" data-v="oppose" aria-pressed="${S.target === 'oppose'}">Défis avec le sexe opposé</button>
   <button data-a="target" data-v="tous" aria-pressed="${S.target === 'tous'}">Défis avec tout le monde</button></div>`;
 const pipsOf = id => LEVELS.find(l => l.id === id).pips;
-const cardIdx = (letter, lvl) => `<span class="idx tl"><b>${letter}</b><i>${lvl ? pipsOf(lvl) : ''}</i></span><span class="idx br"><b>${letter}</b><i>${lvl ? pipsOf(lvl) : ''}</i></span>`;
+const cardIdx = (letter, lvl) => `<span class="idx tl" data-l="${lvl || ''}"><b>${letter}</b><i>${lvl ? pipsOf(lvl) : ''}</i></span><span class="idx br" data-l="${lvl || ''}"><b>${letter}</b><i>${lvl ? pipsOf(lvl) : ''}</i></span>`;
 const sipRow = () => `<section class="sips"><h3>${W().who} <span class="hint">Touche un nom pour ${W().plus}</span></h3>
   <div class="chips">${S.players.map(p => `<button class="chip tap" data-a="sip" data-v="${esc(p.name)}">${esc(p.name)} <span class="n">${stat(p.name).sips}</span></button>`).join('')}</div></section>`;
 
@@ -3164,16 +3266,31 @@ const tabbar = () => `<nav class="tabbar" aria-label="Onglets">${TABS.map(t => `
 function tabJeux() {
   const n = S.players.length;
   const hasH = S.players.some(p => p.g === 'h'), hasF = S.players.some(p => p.g === 'f');
-  const why = g => n < g.min ? `Il faut au moins ${g.min} joueurs.` : g.mixed && !(hasH && hasF) ? 'Il faut au moins un H et une F.' : '';
+  const why = g => n < g.min ? `Il faut ${g.min} joueurs` : g.mixed && !(hasH && hasF) ? 'Il faut un H et une F' : '';
   const place = PLACES.find(pl => pl.id === S.place).label;
-  return `<header class="mini-head"><h1 class="logo small">La <span>Tournée</span></h1></header>
-  <button class="summary" data-a="tab" data-v="soiree">${plural(n, 'joueur')} · ${place} · ${S.alcohol ? 'Avec alcool' : 'Sans alcool'}${S.packs.length ? ` · ${plural(S.packs.length, 'pack')}` : ''}${isDriver(S.driver) ? ` · ${esc(S.driver)} au volant` : ''}<span aria-hidden="true">›</span></button>
+  const last = GAMES.find(g => g.id === S.lastGame && !why(g));
+  const lvl = LEVELS.find(l => l.id === S.level);
+  const card = g => { const w = why(g); return `<button class="gcard" data-a="open" data-v="${g.id}" ${w ? 'disabled' : ''}>
+      ${gameIcon(g.id)}<span class="gtxt"><b>${g.name}</b><small>${g.short}</small><span class="gmin">${w || (g.mixed ? '1 H + 1 F minimum' : `${g.min}+ joueurs`)}</span></span></button>`; };
+  return `<header class="home-head"><h1 class="logo small">La <span>Tournée</span></h1></header>
+  <section class="tonight">
+    <span class="eyebrow">Ce soir</span>
+    <p class="lead">${last ? `${last.name} vous attend, niveau ${lvl.label}.` : 'Choisissez un jeu et que la tournée commence.'}</p>
+    <div class="tchips">
+      <button data-a="tab" data-v="joueurs">${plural(n, 'joueur')}</button>
+      <button data-a="tab" data-v="soiree">${place}</button>
+      <button data-a="tab" data-v="soiree">${S.alcohol ? 'Avec alcool' : 'Sans alcool'}</button>
+      ${isDriver(S.driver) ? `<button data-a="tab" data-v="soiree">${esc(S.driver)} au volant</button>` : ''}
+      ${S.packs.length ? `<button data-a="tab" data-v="soiree">${plural(S.packs.length, 'pack')}</button>` : ''}
+    </div>
+    ${last ? `<button class="go-btn" data-a="open" data-v="${last.id}">Reprendre ${last.name}</button>` : ''}
+  </section>
   ${S.examples ? `<button class="notice" data-a="tab" data-v="joueurs"><b>Ajoute ta bande</b><span>Les joueurs affichés sont des exemples. Touche ici pour mettre vos prénoms.</span></button>` : ''}
-  <section class="games">
-    ${GAMES.map(g => { const w = why(g); return `<button class="game" data-a="open" data-v="${g.id}" ${w ? 'disabled' : ''}>
-      <span class="suit ${g.suit === '♠' || g.suit === '♣' ? 'b' : ''}" aria-hidden="true">${g.suit}</span>
-      <span><b>${g.name}</b><small>${w || g.desc}</small></span>
-      <span class="go" aria-hidden="true">›</span></button>`; }).join('')}
+  ${FAMILIES.map(f => `<section class="fam" style="--dot:${f.dot}"><h3>${f.label}</h3>
+    <div class="rail">${GAMES.filter(g => GAME_FAMILY[g.id] === f.id).map(card).join('')}</div></section>`).join('')}
+  <section class="shortcuts">
+    <button class="tool" data-a="open" data-v="recap"><b>Récap</b><small>${plural(S.night.cards, 'carte')} ce soir</small></button>
+    <button class="tool" data-a="open" data-v="score"><b>Classement</b><small>Gorgées, jokers, défis</small></button>
   </section>`;
 }
 function tabJoueurs() {
@@ -3961,6 +4078,7 @@ const actions = {
     location.reload();
   },
   open(v) {
+    if (GAMES.some(g => g.id === v)) { S.lastGame = v; store.set('lastGame', v); }
     if (GAMES.some(g => g.id === v) && !S.night.games.includes(v)) { S.night.games.push(v); saveNight(); }
     if (v === 'uc') { S.ucCfg = S.ucCfg || { under: 1, white: false }; S.screen = 'ucsetup'; }
     else if (v === 'sd') S.screen = 'sdsetup';
