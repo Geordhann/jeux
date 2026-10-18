@@ -441,6 +441,62 @@ body.medieval .intro-hook { font-family: var(--font-card); }
 body.medieval .rule, body.medieval .howto { font-family: var(--font-body); }
 body.medieval .coin { box-shadow: 0 0 0 6px #6b4f1f, 0 14px 30px rgba(0,0,0,.55); font-family: var(--font-display); }
 body.medieval .table-ring { border-color: var(--felt-line); }
+/* ===== Médiéval plus coloré : héraldique, torches, parchemins déroulés ===== */
+body.medieval {
+  --felt: #1a1224; --felt-2: #33203a; --felt-deep: #110b18; --felt-line: #5a3f5e;
+  --red: #c0262f; --gold: #e3b23c; --mint: #2f5fb3; --fg: #f4e9d4; --muted: #c9b6c8;
+  --azur: #2f5fb3; --sinople: #2e8b57; --pourpre: #6d2a8f;
+  --lv-soft: #4caf7a; --lv-piquant: #e3b23c; --lv-hot: #e8742a; --lv-intense: #c0262f; --lv-sanslimite: #6d2a8f;
+  --foil: linear-gradient(135deg, #f6dc8e 0%, #e3b23c 40%, #a7761c 70%, #f0cd6a 100%);
+  --velvet: radial-gradient(120% 90% at 30% 20%, #4b1866 0%, #1d0828 75%);
+}
+/* Lueur de torches qui vacille */
+body.medieval::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(70% 38% at 12% 0%, rgba(255,140,40,.28), transparent 70%), radial-gradient(70% 38% at 88% 0%, rgba(255,120,30,.22), transparent 70%), radial-gradient(120% 60% at 50% 110%, rgba(109,42,143,.35), transparent 70%); animation: torch 3.2s ease-in-out infinite alternate; }
+@keyframes torch { 0% { opacity: .75; } 35% { opacity: 1; } 55% { opacity: .82; } 100% { opacity: .95; } }
+body.medieval #app { position: relative; z-index: 1; }
+body.medieval .logo { color: var(--gold); text-shadow: 0 0 18px rgba(227,178,60,.45), 0 2px 0 #5a3a10; }
+body.medieval .turn strong { text-shadow: 0 0 14px rgba(227,178,60,.4); }
+/* Familles en couleurs de blason : or, gueules, azur */
+body.medieval .fam-lancer { background: var(--gold); color: #2b1d12; }
+body.medieval .fam-pimenter { background: var(--red); color: #fbeedd; }
+body.medieval .fam-bluffer { background: var(--azur); color: #fbeedd; }
+body.medieval .gcard .gico { background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.12) 0 2px, transparent 2px 12px), repeating-linear-gradient(-45deg, rgba(0,0,0,.10) 0 2px, transparent 2px 12px); }
+/* Titres de familles en bannières à queue d'aronde */
+body.medieval .fam h3 { align-self: flex-start; padding: 8px 34px 8px 16px; background: var(--dot); color: #fbeedd; clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 50%, 100% 100%, 0 100%); font-size: 1rem; letter-spacing: .04em; text-shadow: 0 1px 0 rgba(0,0,0,.35); }
+body.medieval .fam:first-of-type h3, body.medieval .fam h3 { box-shadow: none; }
+body.medieval .fam[style*="--gold"] h3 { color: #2b1d12; text-shadow: none; }
+body.medieval .fam h3::before { display: none; }
+/* Onglets et panneaux */
+body.medieval .tabbar { background: linear-gradient(#1d1328, #120b19); border-top: 2px solid var(--gold); }
+body.medieval .tabbar button[aria-current="page"] { background: rgba(227,178,60,.16); }
+body.medieval .panel, body.medieval .tool, body.medieval .summary { background: rgba(20,10,28,.5); border-color: var(--felt-line); }
+body.medieval .levels { background: rgba(20,10,28,.55); }
+body.medieval .tonight { box-shadow: 0 0 0 2px #a7761c, 0 0 30px rgba(227,178,60,.25), 0 14px 30px rgba(0,0,0,.45); }
+/* Parchemin déroulé : rouleaux de bois et de papier en haut et en bas */
+body.medieval .card:not(.verso) { margin-block: 14px; padding-top: 52px; padding-bottom: 52px; border-radius: 4px; }
+body.medieval .card:not(.verso)::before { inset: 22px 10px; }
+body.medieval .card:not(.verso)::after { content: ""; position: absolute; left: -10px; right: -10px; top: -13px; bottom: -13px; pointer-events: none; border-radius: 4px;
+  background:
+    radial-gradient(circle at 50% 50%, #8a5a2b 0 45%, #4a2e17 47% 60%, transparent 62%) left top / 22px 28px no-repeat,
+    radial-gradient(circle at 50% 50%, #8a5a2b 0 45%, #4a2e17 47% 60%, transparent 62%) right top / 22px 28px no-repeat,
+    radial-gradient(circle at 50% 50%, #8a5a2b 0 45%, #4a2e17 47% 60%, transparent 62%) left bottom / 22px 28px no-repeat,
+    radial-gradient(circle at 50% 50%, #8a5a2b 0 45%, #4a2e17 47% 60%, transparent 62%) right bottom / 22px 28px no-repeat,
+    linear-gradient(to bottom, #7b5a2e 0%, #c9ab73 22%, #f6ead0 48%, #e2cc9b 64%, #8a6a3c 100%) center top / calc(100% - 14px) 28px no-repeat,
+    linear-gradient(to bottom, #7b5a2e 0%, #c9ab73 22%, #f6ead0 48%, #e2cc9b 64%, #8a6a3c 100%) center bottom / calc(100% - 14px) 28px no-repeat;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,.45)); }
+body.medieval .card .idx.tl { top: 30px; }
+body.medieval .card .idx.br { bottom: 30px; }
+/* Sans limite : parchemin pourpre royal, rouleaux dorés */
+body.medieval .card:has(.idx[data-l="sanslimite"])::after {
+  background:
+    radial-gradient(circle at 50% 50%, #f0cd6a 0 45%, #7a5410 47% 60%, transparent 62%) left top / 22px 28px no-repeat,
+    radial-gradient(circle at 50% 50%, #f0cd6a 0 45%, #7a5410 47% 60%, transparent 62%) right top / 22px 28px no-repeat,
+    radial-gradient(circle at 50% 50%, #f0cd6a 0 45%, #7a5410 47% 60%, transparent 62%) left bottom / 22px 28px no-repeat,
+    radial-gradient(circle at 50% 50%, #f0cd6a 0 45%, #7a5410 47% 60%, transparent 62%) right bottom / 22px 28px no-repeat,
+    linear-gradient(to bottom, #2a0a38 0%, #6d2a8f 30%, #a45cc4 48%, #6d2a8f 66%, #1d0828 100%) center top / calc(100% - 14px) 28px no-repeat,
+    linear-gradient(to bottom, #2a0a38 0%, #6d2a8f 30%, #a45cc4 48%, #6d2a8f 66%, #1d0828 100%) center bottom / calc(100% - 14px) 28px no-repeat; }
+body.medieval .card:has(.idx[data-l="sanslimite"]) { box-shadow: inset 0 0 40px rgba(0,0,0,.5), 0 0 0 1px #6d2a8f, 0 0 34px rgba(164,92,196,.35), 0 18px 40px rgba(0,0,0,.6); }
+@media (prefers-reduced-motion: reduce) { body.medieval::before { animation: none; } }
 </style>
 </head>
 <body>
@@ -3190,9 +3246,14 @@ const MUSIC_STYLES = {
   chill:   { label: 'Chill',   bpm: 84,  chords: [[57, [0, 3, 7, 10]], [53, [0, 4, 7, 11]], [48, [0, 4, 7, 11]], [55, [0, 4, 7, 10]]] },
   soiree:  { label: 'Soirée',  bpm: 120, chords: [[57, [0, 3, 7]], [53, [0, 4, 7]], [48, [0, 4, 7]], [55, [0, 4, 7]]] },
   sensuel: { label: 'Sensuel', bpm: 90,  chords: [[50, [0, 3, 7, 10, 14]], [46, [0, 4, 7, 11]], [43, [0, 3, 7, 10]], [45, [0, 4, 7, 10]]] },
+  // Gigue de taverne en 6/8 (12 doubles-croches par mesure), mode de ré dorien
+  taverne: { label: 'Taverne', bpm: 132, spb: 12, chords: [[50, [0, 7]], [48, [0, 7]], [50, [0, 7]], [45, [0, 7]]] },
 };
+const DORIAN = [62, 64, 65, 67, 69, 71, 72, 74, 76];
 const M = { on: false, style: store.get('music', 'auto'), vol: store.get('musicVol', .6), step: 0, next: 0, cur: 'chill', timer: null, out: null, fx: null, noise: null };
-const musicStyle = () => M.style === 'auto' ? (LEVEL_IDX(S.level) >= 2 ? 'sensuel' : 'soiree') : M.style;
+const musicStyle = () => M.style !== 'auto' ? M.style
+  : S.theme === 'medieval' ? (S.level === 'sanslimite' ? 'sensuel' : 'taverne')
+  : (LEVEL_IDX(S.level) >= 2 ? 'sensuel' : 'soiree');
 const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
 
 function musicInit() {
@@ -3244,12 +3305,43 @@ const stab = (t, notes, v) => notes.forEach(m => synth(t, m, .12, v, { cut: 2400
 const pluck = (t, m, v) => synth(t, m, .18, v, { type: 'triangle', cut: 3000, fx: .8 });
 const keys = (t, notes, dur, v) => notes.forEach(m => synth(t, m, dur, v, { type: 'sine', cut: 4000, a: .02, fx: .5 }));
 
-function playStep(step, t, sd) {
-  const s = step % 16, bar = Math.floor(step / 16) % 4;
+// Luth : corde pincée (filtre qui se referme vite)
+function lute(t, m, v) {
+  const c = audioCtx, f = c.createBiquadFilter(), g = c.createGain();
+  f.type = 'lowpass'; f.Q.value = 2; f.frequency.setValueAtTime(3200, t); f.frequency.exponentialRampToValueAtTime(500, t + .35);
+  env(g, t, v, .004, .7); f.connect(g); g.connect(M.out);
+  const sd = c.createGain(); sd.gain.value = .35; g.connect(sd); sd.connect(M.fx);
+  [0, 6].forEach(dt => { const o = c.createOscillator(); o.type = dt ? 'triangle' : 'sawtooth'; o.frequency.value = mtof(m); o.detune.value = dt; o.connect(f); o.start(t); o.stop(t + .8); });
+}
+// Tambour sur cadre (bodhrán) et tambourin
+function frameDrum(t, v) {
+  const c = audioCtx, o = c.createOscillator(), g = c.createGain();
+  o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(58, t + .18);
+  env(g, t, v, .004, .28); o.connect(g); g.connect(M.out); o.start(t); o.stop(t + .32);
+  noiseHit(t, v * .35, 'lowpass', 900, .08);
+}
+const tambourine = (t, v) => { noiseHit(t, v, 'bandpass', 6500, .09, 3); noiseHit(t + .02, v * .6, 'highpass', 8000, .06); };
+// Flûte : sinus avec vibrato
+function flute(t, m, dur, v) {
+  const c = audioCtx, o = c.createOscillator(), g = c.createGain(), lfo = c.createOscillator(), lg = c.createGain();
+  o.type = 'sine'; o.frequency.value = mtof(m); lfo.frequency.value = 5.2; lg.gain.value = 6;
+  lfo.connect(lg); lg.connect(o.detune);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .06); g.gain.setValueAtTime(v, t + dur * .7); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(M.out); const sd = c.createGain(); sd.gain.value = .5; g.connect(sd); sd.connect(M.fx);
+  o.start(t); lfo.start(t); o.stop(t + dur + .05); lfo.stop(t + dur + .05);
+}
+function playStep(s, bar, t, sd) {
   if (s === 0) M.cur = musicStyle();
-  const st = MUSIC_STYLES[M.cur], [root, iv] = st.chords[bar], notes = iv.map(i => root + i), barLen = sd * 16;
+  const st = MUSIC_STYLES[M.cur], [root, iv] = st.chords[bar], notes = iv.map(i => root + i), barLen = sd * (st.spb || 16);
   const pick = () => root + 12 + iv[rand(iv.length)];
-  if (M.cur === 'chill') {
+  if (M.cur === 'taverne') {
+    // Bourdon (vielle à roue) : fondamentale + quinte
+    if (s === 0) { synth(t, root - 12, barLen, .03, { cut: 520, a: .2, detune: 5 }); synth(t, root - 5, barLen, .02, { cut: 520, a: .2 }); }
+    if (s === 0) frameDrum(t, .7); else if (s === 6) frameDrum(t, .45); else if (s === 9 && Math.random() < .6) frameDrum(t, .25);
+    if (s % 2 === 0) tambourine(t, s === 0 || s === 6 ? .07 : .035);
+    if (s % 2 === 0) { const arp = [0, 7, 12, 7, 14, 7][s / 2]; lute(t, root + 12 + arp, .09); }
+    if (s % 3 === 0 && Math.random() < .55) { M.mel = Math.max(0, Math.min(DORIAN.length - 1, (M.mel ?? 4) + [-2, -1, 1, 2][rand(4)])); flute(t, DORIAN[M.mel] + 12, sd * 2.6, .035); }
+  } else if (M.cur === 'chill') {
     if (s === 0 || s === 10) kick(t, .55);
     if (s === 4 || s === 12) snare(t, .12);
     if (s % 2 === 0) hat(t, s % 4 === 2 ? .07 : .04);
@@ -3277,15 +3369,16 @@ function playStep(step, t, sd) {
 function musicTick() {
   const c = audioCtx;
   while (M.next < c.currentTime + .15) {
-    const sd = 60 / MUSIC_STYLES[M.cur].bpm / 4;
-    playStep(M.step, M.next, sd);
-    M.next += sd; M.step = (M.step + 1) % 64;
+    const st = MUSIC_STYLES[M.cur], sd = 60 / st.bpm / 4;
+    playStep(M.s, M.bar, M.next, sd);
+    M.next += sd;
+    if (++M.s >= (MUSIC_STYLES[M.cur].spb || 16)) { M.s = 0; M.bar = (M.bar + 1) % 4; }
   }
 }
 function musicPlay() {
   try {
     musicInit(); audioCtx.resume();
-    M.on = true; M.step = 0; M.cur = musicStyle(); M.next = audioCtx.currentTime + .08;
+    M.on = true; M.s = 0; M.bar = 0; M.cur = musicStyle(); M.next = audioCtx.currentTime + .08;
     clearInterval(M.timer); M.timer = setInterval(musicTick, 25);
   } catch (e) { M.on = false; toast("La musique n'est pas disponible sur cet appareil."); }
   musicFab();
@@ -3310,11 +3403,11 @@ document.addEventListener('visibilitychange', () => {
   else if (M.on) { audioCtx.resume(); M.next = audioCtx.currentTime + .08; }
 });
 const musicPanel = () => `<div class="music"><span class="hint">Musique d'ambiance</span>
-    <div class="levels four" role="group" aria-label="Style de musique">${[['auto', 'Auto'], ...Object.entries(MUSIC_STYLES).map(([k, v]) => [k, v.label])].map(([k, l]) =>
+    <div class="levels" role="group" aria-label="Style de musique">${[['auto', 'Auto'], ...Object.entries(MUSIC_STYLES).map(([k, v]) => [k, v.label])].map(([k, l]) =>
       `<button data-a="music-style" data-v="${k}" aria-pressed="${M.style === k}">${l}</button>`).join('')}</div>
     <div class="music-row"><button class="btn ${M.on ? 'ghost' : 'paper'}" data-a="music-toggle">${M.on ? 'Couper' : 'Lancer la musique'}</button>
       <input type="range" id="musicVol" min="0" max="1" step="0.05" value="${M.vol}" aria-label="Volume de la musique"></div>
-    <p class="hint">${M.style === 'auto' ? 'Auto : rythmée en Soft et Piquant, sensuelle à partir de Hot. ' : ''}Composée en direct par l'appli : libre de droits, sans connexion.</p></div>`;
+    <p class="hint">${M.style === 'auto' ? (S.theme === 'medieval' ? 'Auto : musique de taverne, sensuelle en Sans limite. ' : 'Auto : rythmée en Soft et Piquant, sensuelle à partir de Hot. ') : ''}Composée en direct par l'appli : libre de droits, sans connexion.</p></div>`;
 
 /* ---------- Écrans communs ---------- */
 const topbar = (title, rules) => `<div class="topbar"><button class="back" data-a="home" aria-label="Retour au menu">←</button>${rules ? gameIcon(rules) : ''}<h2>${title}</h2><button class="mbtn ${M.on ? 'on' : ''}" data-a="music-toggle" aria-pressed="${M.on}" aria-label="${M.on ? "Couper la musique" : "Lancer la musique"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></button>${rules ? `<button class="info" data-a="info" data-v="${rules}" aria-label="Règles du jeu">i</button>` : ''}</div>`;

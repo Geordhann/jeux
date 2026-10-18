@@ -3,7 +3,7 @@
 Jeux de soirée sur un seul téléphone qui fait le tour de la table. Ouvre `index.html` dans un navigateur, rien à installer.
 
 ## Thèmes
-**Médiéval** (par défaut) : cartes en parchemin encadrées de filets, lettrines gothiques, dos de carte en cuir avec sceau de cire, titres en capitales gravées (Cinzel), texte des cartes en caractères d'imprimerie ancienne (IM Fell English), cuir pourpre et or pour Sans limite. Le thème se change dans l'onglet Soirée.
+**Médiéval** (par défaut) : cartes en parchemin encadrées de filets, lettrines gothiques, dos de carte en cuir avec sceau de cire, titres en capitales gravées (Cinzel), texte des cartes en caractères d'imprimerie ancienne (IM Fell English), cartes en parchemin déroulé avec rouleaux de bois (pourpre et or pour Sans limite), couleurs de blason (or, gueules, azur), bannières à queue d'aronde, lueur de torches. Musique « Taverne » (luth, tambour sur cadre, tambourin, bourdon, flûte) en Auto. Le thème se change dans l'onglet Soirée.
 
 **Tapis de minuit** :
 Feutre de table texturé, cartes en papier, accents or et rouge. Chaque jeu a son icône et sa famille de couleur (or : pour lancer, rouge : pour pimenter, menthe : pour bluffer). Chaque niveau a sa couleur, de sauge (Soft) à bordeaux sur velours (Sans limite). Planches de référence : https://claude.ai/artifact/DZ36w3PFAcpUzpDTYt8jfL
