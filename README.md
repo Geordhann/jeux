@@ -2,7 +2,10 @@
 
 Jeux de soirée sur un seul téléphone qui fait le tour de la table. Ouvre `index.html` dans un navigateur, rien à installer.
 
-## Design « Tapis de minuit »
+## Thèmes
+**Médiéval** (par défaut) : cartes en parchemin encadrées de filets, lettrines gothiques, dos de carte en cuir avec sceau de cire, titres en capitales gravées (Cinzel), texte des cartes en caractères d'imprimerie ancienne (IM Fell English), cuir pourpre et or pour Sans limite. Le thème se change dans l'onglet Soirée.
+
+**Tapis de minuit** :
 Feutre de table texturé, cartes en papier, accents or et rouge. Chaque jeu a son icône et sa famille de couleur (or : pour lancer, rouge : pour pimenter, menthe : pour bluffer). Chaque niveau a sa couleur, de sauge (Soft) à bordeaux sur velours (Sans limite). Planches de référence : https://claude.ai/artifact/DZ36w3PFAcpUzpDTYt8jfL
 
 ## Navigation

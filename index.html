@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Cinzel:wght@400..800&family=Cinzel+Decorative:wght@700&family=IM+Fell+English:ital@0;1&family=Alegreya:ital,wght@0,400..800;1,400..800&family=UnifrakturMaguntia&display=swap">
 <style>
 /* Layout: une colonne de 480px max, comme un tapis de jeu ; les cartes sont des cartes à jouer en papier posées sur le feutre. */
 :root {
@@ -369,6 +369,78 @@ body:not(.on-tabs) .music-fab { display: none; }
 .gcard .gmin { font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
 .shortcuts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 @media (prefers-reduced-motion: reduce) { .gcard { transition: none; } }
+/* ===== Thème médiéval (par défaut) : parchemin, enluminures, sceaux de cire ===== */
+body.medieval {
+  --felt: #17110d; --felt-2: #2b1e15; --felt-deep: #100b08; --felt-line: #4a3826;
+  --paper: #ead9b5; --paper-edge: #a98a58; --ink: #2b1d12; --ink-soft: #6b5338;
+  --red: #8e1b1b; --gold: #c9a24a; --mint: #4f6b4a; --fg: #efe3c8; --muted: #b8a585;
+  --lv-soft: #8aa37b; --lv-piquant: #c9a24a; --lv-hot: #c46a2c; --lv-intense: #8e1b1b; --lv-sanslimite: #4a0f16;
+  --font-display: "Cinzel Decorative", "Cinzel", Georgia, serif;
+  --font-body: "Alegreya", Georgia, "Times New Roman", serif;
+  --font-card: "IM Fell English", "Alegreya", Georgia, serif;
+  --foil: linear-gradient(135deg, #ead08a 0%, #c9a24a 42%, #8f6a26 72%, #dcbc6c 100%);
+  --velvet: radial-gradient(120% 90% at 30% 20%, #4a0f16 0%, #1c0508 75%);
+  --parch: radial-gradient(ellipse at 15% 8%, rgba(255,250,235,.55), transparent 45%), radial-gradient(ellipse at 88% 95%, rgba(140,95,40,.30), transparent 55%), radial-gradient(ellipse at 92% 12%, rgba(140,95,40,.18), transparent 40%), radial-gradient(rgba(90,60,25,.10) 1px, transparent 1.4px);
+  font-size: 17px;
+}
+body.medieval .cinzel, body.medieval .btn, body.medieval .fam h3, body.medieval .panel h3, body.medieval .tabbar button, body.medieval .turn small, body.medieval .card .kind, body.medieval .tonight .eyebrow, body.medieval .gcard .gmin { font-family: "Cinzel", Georgia, serif; }
+body.medieval .logo, body.medieval .turn strong, body.medieval .topbar h2, body.medieval .tab-title, body.medieval .btn.big, body.medieval .tonight .go-btn, body.medieval .rules-title, body.medieval .recap h3 { font-family: var(--font-display); font-weight: 700; letter-spacing: .01em; }
+body.medieval .logo span { color: var(--paper); }
+body.medieval .topbar h2 { font-family: "Cinzel", Georgia, serif; font-size: 1.08rem; letter-spacing: 0; }
+body.medieval .btn:not(.big) { font-size: .9rem; padding-inline: 12px; }
+/* Parchemin */
+body.medieval .card, body.medieval .gcard, body.medieval .chip, body.medieval .btn.paper, body.medieval .recap, body.medieval .titles div, body.medieval .deal .c, body.medieval .toast { background-color: var(--paper); background-image: var(--parch); background-size: auto, auto, auto, 5px 5px; }
+body.medieval .card { border-radius: 10px; box-shadow: inset 0 0 38px rgba(110,70,20,.38), 0 3px 0 #6e522d, 0 18px 40px rgba(0,0,0,.55); }
+body.medieval .card::before { content: ""; position: absolute; inset: 9px; border: 1.5px solid rgba(120,80,30,.55); outline: 1px solid rgba(120,80,30,.32); outline-offset: 3px; border-radius: 5px; pointer-events: none; }
+body.medieval .card .idx b { font-family: "UnifrakturMaguntia", var(--font-display); font-size: 2.1rem; color: var(--red); }
+body.medieval .card.black .idx b { color: var(--ink); }
+body.medieval .card .idx.tl { top: 16px; left: 20px; }
+body.medieval .card .idx.br { bottom: 16px; right: 20px; }
+body.medieval .card .kind { color: var(--red); font-weight: 700; letter-spacing: .22em; }
+body.medieval .card .kind::before { content: "✦ "; color: #a8812f; }
+body.medieval .card .kind::after { content: " ✦"; color: #a8812f; }
+body.medieval .card .text { color: var(--ink); font-size: clamp(1.4rem, 6.2vw, 1.8rem); line-height: 1.32; }
+body.medieval .card .text::first-letter { font-family: "UnifrakturMaguntia", var(--font-display); color: var(--red); font-size: 1.35em; }
+body.medieval .card .text em { color: var(--red); }
+body.medieval .card .or { font-family: "UnifrakturMaguntia", serif; color: var(--red); font-size: 1.6rem; }
+/* Dos de carte : cuir, filet d'or et sceau de cire */
+body.medieval .card.verso { background: radial-gradient(ellipse at 30% 20%, #5a3a20 0%, #3a2414 55%, #24160c 100%); border: 6px double var(--gold); color: var(--gold); padding-bottom: 90px; }
+body.medieval .card.verso::before { inset: 10px; border-color: rgba(201,162,74,.45); outline-color: rgba(201,162,74,.25); }
+body.medieval .card.verso .text { color: var(--gold); font-family: var(--font-display); font-weight: 700; }
+body.medieval .card.verso .text::first-letter { font-family: var(--font-display); color: var(--gold); font-size: 1em; }
+body.medieval .card.verso::after { content: "LT"; position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #c0392b, #7a1414 70%); color: #f3d9b0; display: grid; place-items: center; font-family: "Cinzel Decorative", serif; font-weight: 700; font-size: 1rem; box-shadow: 0 3px 8px rgba(0,0,0,.55), inset 0 0 0 4px rgba(0,0,0,.18); }
+/* Sans limite : cuir pourpre et or */
+body.medieval .card:has(.idx[data-l="sanslimite"]) { background: var(--velvet); color: #f1e2c4; box-shadow: inset 0 0 40px rgba(0,0,0,.5), 0 0 0 1px #6b1a24, 0 18px 40px rgba(0,0,0,.6); }
+body.medieval .card:has(.idx[data-l="sanslimite"])::before { border-color: rgba(201,162,74,.55); outline-color: rgba(201,162,74,.3); }
+body.medieval .card:has(.idx[data-l="sanslimite"]) .text, body.medieval .card:has(.idx[data-l="sanslimite"]) .idx b, body.medieval .card:has(.idx[data-l="sanslimite"]) .text::first-letter { color: #f1e2c4; }
+body.medieval .card:has(.idx[data-l="sanslimite"]) .idx b, body.medieval .card:has(.idx[data-l="sanslimite"]) .text::first-letter, body.medieval .card:has(.idx[data-l="sanslimite"]) .kind { color: var(--gold); }
+/* Boutons */
+body.medieval .btn { border-radius: 8px; font-weight: 700; letter-spacing: .03em; }
+body.medieval .btn.red { background: radial-gradient(circle at 35% 30%, #b0282a, #7a1414 75%); color: #f3d9b0; box-shadow: 0 3px 0 #4f0c0c; }
+body.medieval .btn:not(.red):not(.paper):not(.ghost) { color: var(--ink); box-shadow: 0 3px 0 #6b4f1f; }
+body.medieval .btn.ghost { border-color: var(--felt-line); color: var(--fg); }
+/* Panneaux façon cuir, accueil, onglets */
+body.medieval .panel, body.medieval .tool, body.medieval .summary { border-radius: 10px; background: rgba(0,0,0,.28); border-color: var(--felt-line); }
+body.medieval .gcard { border-radius: 12px; box-shadow: inset 0 0 26px rgba(110,70,20,.32), 0 3px 0 #6e522d; }
+body.medieval .gcard .gico { border-bottom: 2px solid rgba(0,0,0,.25); }
+body.medieval .gcard b { font-family: "Cinzel", Georgia, serif; font-weight: 700; }
+body.medieval .tonight { border-radius: 12px; }
+body.medieval .tonight .lead { font-family: var(--font-card); }
+body.medieval .tonight .go-btn { border-radius: 8px; background: #2b1d12; color: var(--gold); }
+body.medieval .tabbar { background: #100b08; border-top-color: var(--felt-line); }
+body.medieval .topbar .gico, body.medieval .gico { border-radius: 8px; }
+body.medieval .gcard .gico { border-radius: 0; }
+body.medieval .levels { border-radius: 10px; }
+body.medieval .levels button { border-radius: 7px; font-family: "Cinzel", Georgia, serif; font-weight: 700; font-size: .72rem; }
+body.medieval .levels button[data-v="sanslimite"][aria-pressed="true"] { box-shadow: inset 0 0 0 1px #6b1a24; }
+body.medieval .chip { border-radius: 8px; }
+body.medieval .chip button.sex { border-radius: 6px; }
+body.medieval .deal .c { border-radius: 10px; font-family: "UnifrakturMaguntia", serif; box-shadow: inset 0 0 26px rgba(110,70,20,.35), 0 3px 0 #6e522d, 0 14px 30px rgba(0,0,0,.55); }
+body.medieval .intro-tag { font-family: var(--font-card); font-style: italic; font-size: 1.1rem; }
+body.medieval .intro-hook { font-family: var(--font-card); }
+body.medieval .rule, body.medieval .howto { font-family: var(--font-body); }
+body.medieval .coin { box-shadow: 0 0 0 6px #6b4f1f, 0 14px 30px rgba(0,0,0,.55); font-family: var(--font-display); }
+body.medieval .table-ring { border-color: var(--felt-line); }
 </style>
 </head>
 <body>
@@ -2951,6 +3023,7 @@ const S = {
   screen: 'home',
   tab: store.get('tab', 'jeux'),
   lastGame: store.get('lastGame', null),
+  theme: store.get('theme', 'medieval'),
   intro: true,
   aov: { turn: 0, card: null },
   deck: { card: null },
@@ -2969,7 +3042,8 @@ const isDriver = n => !!n && S.driver === n && !!byName(n);
 function dry(fn) { const a = S.alcohol; S.alcohol = false; try { return fn(); } finally { S.alcohol = a; } }
 
 const app = document.getElementById('app');
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+  .replace(/ ([?!:;»])/g, '\u00a0$1').replace(/« /g, '«\u00a0');
 const rand = n => Math.floor(Math.random() * n);
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -3307,6 +3381,11 @@ function tabJoueurs() {
 }
 function tabSoiree() {
   return `<h2 class="tab-title">La soirée</h2>
+  <section class="panel">
+    <h3><span>Style du jeu</span></h3>
+    <div class="levels two" role="group" aria-label="Style du jeu"><button data-a="theme" data-v="medieval" aria-pressed="${S.theme === 'medieval'}">Médiéval</button><button data-a="theme" data-v="minuit" aria-pressed="${S.theme !== 'medieval'}">Tapis de minuit</button></div>
+    <p class="hint">${S.theme === 'medieval' ? 'Parchemin, enluminures et sceaux de cire.' : 'Feutre de casino, cartes en papier et feuille d\'or.'}</p>
+  </section>
   <section class="panel">
     <h3><span>Où êtes-vous ?</span></h3>
     <div class="levels three" role="group" aria-label="Où jouez-vous ?">${PLACES.map(pl => `<button data-a="place" data-v="${pl.id}" aria-pressed="${S.place === pl.id}">${pl.label}</button>`).join('')}</div>
@@ -3998,6 +4077,7 @@ let lastScreen = null;
 function render(scroll = true) {
   const s = S.screen;
   app.innerHTML = S.intro ? intro() : S.gate ? gate() : S.info ? rules() : SCREENS[s] ? SCREENS[s]() : deck(s);
+  document.body.classList.toggle('medieval', S.theme === 'medieval');
   document.body.classList.toggle('on-tabs', !S.intro && !S.gate && !S.info && s === 'home');
   document.body.classList.toggle('on-intro', S.intro);
   const key = (S.intro && 'intro') || S.gate || (S.info && 'info') || (s === 'home' ? 'home-' + S.tab : s);
@@ -4177,6 +4257,7 @@ const actions = {
   sip(v) { bump(v, 'sips'); const u = S.alcohol && !isDriver(v) ? 'gorgée' : 'point'; if (S.screen !== 'score') toast(`${v} : ${stat(v).sips} ${u}${stat(v).sips > 1 ? 's' : ''}`); render(false); },
   'music-toggle'() { M.on ? musicStop() : musicPlay(); render(false); },
   'music-style'(v) { M.style = v; store.set('music', v); if (!M.on) musicPlay(); render(false); },
+  theme(v) { S.theme = v; store.set('theme', v); render(false); },
   pack(v) { S.packs = S.packs.includes(v) ? S.packs.filter(k => k !== v) : S.packs.concat(v); store.set('packs', S.packs); render(false); },
   place(v) { S.place = v; store.set('place', v); render(false); },
   alcohol(v) { S.alcohol = v === '1'; store.set('alcohol', S.alcohol); render(false); },
