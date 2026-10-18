@@ -495,9 +495,10 @@ function mpPhotoOf(name) {
   return MP.photos && MP.photos[name] || '';
 }
 const avatar = (name, cls = '') => { const ph = mpPhotoOf(name); return ph ? `<img class="av ${cls}" src="${ph}" alt="">` : ''; };
-function photoPick() {
+// cam : appareil photo (selfie) ; sinon la galerie du téléphone
+function photoPick(cam) {
   const inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = 'image/*'; inp.setAttribute('capture', 'user'); inp.hidden = true;
+  inp.type = 'file'; inp.accept = 'image/*'; if (cam) inp.setAttribute('capture', 'user'); inp.hidden = true;
   inp.onchange = () => {
     const f = inp.files && inp.files[0]; inp.remove();
     if (!f) return;
@@ -509,7 +510,7 @@ function photoPick() {
       URL.revokeObjectURL(url);
       store.set('photo', c.toDataURL('image/jpeg', .72)); sfx('pop'); render(false);
     };
-    img.onerror = () => { URL.revokeObjectURL(url); toast('Photo illisible, réessaie.'); };
+    img.onerror = () => { URL.revokeObjectURL(url); toast('Image illisible, essaie une autre (JPEG ou PNG).'); };
     img.src = url;
   };
   document.body.append(inp); inp.click();
@@ -517,7 +518,8 @@ function photoPick() {
 function photoRow() {
   const ph = store.get('photo', '');
   return `<div class="ph-row"><button type="button" class="ph-btn" data-a="ph-take" aria-label="${ph ? 'Changer ma photo' : 'Prendre ma photo'}">${ph ? `<img src="${ph}" alt="">` : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>'}</button>
-    <span><b>Ta photo</b><small>${ph ? 'Elle apparaît à côté de ton prénom chez les autres.' : 'Facultatif : ta tête à côté de ton prénom.'}</small></span>${ph ? '<button type="button" class="mini" data-a="ph-del" aria-label="Retirer ma photo">✕</button>' : ''}</div>`;
+    <span><b>Ta photo</b><small>${ph ? 'Elle apparaît à côté de ton prénom chez les autres.' : 'Facultatif : ta tête (ou n\'importe quelle image) à côté de ton prénom.'}</small>
+      <span class="ph-acts"><button type="button" class="chip tap" data-a="ph-take">Appareil photo</button><button type="button" class="chip tap" data-a="ph-gal">Galerie</button></span></span>${ph ? '<button type="button" class="mini" data-a="ph-del" aria-label="Retirer ma photo">✕</button>' : ''}</div>`;
 }
 /* --- QR code pour rejoindre --- */
 // Le lien ouvre la version web (iPhone compris) directement sur « Rejoindre », avec le code déjà rempli
@@ -639,7 +641,8 @@ Object.assign(actions, {
     S.mpForm = v; S.screen = 'mpjoin'; render();
   },
   'mp-scan'() { scanStart(); },
-  'ph-take'() { photoPick(); },
+  'ph-take'() { photoPick(true); },
+  'ph-gal'() { photoPick(false); },
   'ph-del'() { store.set('photo', ''); render(false); },
   'mp-joinform'() { S.mpForm = 'join'; S.screen = 'mpjoin'; render(); },
   'mp-resume'() { const s = mpSaved(); if (s) mpHost(s.game, { resume: s }); else { toast('Partie introuvable.'); render(); } },
