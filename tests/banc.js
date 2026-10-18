@@ -433,6 +433,32 @@ async function run() {
     t.metric('tirages joués', st.n);
   });
 
+  await scenario('ch', 'Course de chevaux : paris, course identique partout, gains vérifiés', 'tapis', async t => {
+    const [host, code] = await t.host('ch');
+    const ps = [host];
+    for (let i = 2; i <= 6; i++) ps.push((await t.join(i, code, 'Joueur ' + i))[0]);
+    // Le favori gagne plus souvent que l'outsider (10 000 courses simulées)
+    const wins = await t.eval(host, () => { const w = [0, 0, 0, 0, 0, 0], h = chHorses(); for (let i = 0; i < 1e4; i++) w[chRace(h).order[0]]++; return w; });
+    t.check(wins[0] > wins[5] * 3, 'cotes mal respectées : ' + wins);
+    await host.click('[data-a=ch-open]');
+    for (let r = 0; r < 2; r++) {
+      await t.until(ps, () => !!document.querySelector('[data-a=ch-put]'));
+      const before = await t.eval(host, () => MP.H.players.reduce((s, p) => s + p.chips, 0));
+      for (const [i, p] of ps.entries()) { await p.click(`[data-a=ch-put][data-v="${i % 6}"]`); await p.click('[data-a=ch-bet]'); }
+      await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'race');
+      // À mi-course, tous les téléphones montrent les chevaux au même endroit (à quelques pixels près)
+      await ps[0].waitForTimeout(5000);
+      const pos = await Promise.all(ps.map(p => t.eval(p, () => [...document.querySelectorAll('.ch-horse')].map(e => new DOMMatrix(getComputedStyle(e).transform).m41))));
+      const spread = Math.max(...pos[0].map((_, k) => Math.max(...pos.map(x => x[k])) - Math.min(...pos.map(x => x[k]))));
+      if (!r) t.metric('écart entre téléphones à mi-course', Math.round(spread) + ' px');
+      t.check(pos[0].some(x => x > 20) && spread < 30, 'course désynchronisée : écart ' + spread);
+      await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'result', null, 15000);
+      const res = await t.eval(host, () => { const w = MP.H.race.order[0]; return [MP.H.players.reduce((s, p) => s + p.chips, 0), MP.H.players.reduce((s, p) => s + Math.floor((p.bets[w] || 0) * MP.H.horses[w].pay) - chSum(p.bets), 0)]; });
+      t.check(res[0] - before === res[1], 'gains de la course incohérents');
+      await host.click('[data-a=ch-next]');
+    }
+  });
+
   await scenario('reco', 'Reconnexion : un joueur redémarre son téléphone et retrouve sa carte', 'veillee', async t => {
     const [mj, code] = await t.host('lg', true);
     const ps = [];

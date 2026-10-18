@@ -42,7 +42,7 @@ jobs:
             assets: apps/veillee/android-assets
             bg: '#121A33'
             latest: false
-            about: Tu préfères, Qui pourrait, Loup-Garou version ultime (jusqu'à 47 joueurs), Téléphone dessiné et Action ou Vérité, chacun sur son téléphone (connexion internet nécessaire).
+            about: Tu préfères, Qui pourrait, Qui a écrit ça, Le Procès, Soirée à thème, Loup-Garou version ultime (jusqu'à 47 joueurs), Téléphone dessiné et Action ou Vérité, chacun sur son téléphone (connexion internet nécessaire).
           - app: tapis
             title: Le Tapis
             file: Le-Tapis
@@ -50,7 +50,7 @@ jobs:
             assets: apps/tapis/android-assets
             bg: '#1A1012'
             latest: false
-            about: Poker, Blackjack, Roulette et Machine à sous entre amis avec des jetons fictifs, chacun sur son téléphone (connexion internet nécessaire, réservé aux majeurs).
+            about: Poker, Blackjack, Roulette, Machine à sous et Course de chevaux entre amis avec des jetons fictifs, chacun sur son téléphone (connexion internet nécessaire, réservé aux majeurs).
     name: ${{ matrix.title }}
     steps:
       - uses: actions/checkout@v5

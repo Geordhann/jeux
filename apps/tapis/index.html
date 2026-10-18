@@ -110,6 +110,23 @@
 .podium .p1 { order: 2; } .podium .p1 .step { height: 92px; background: var(--gold); }
 .podium .p2 { order: 1; } .podium .p2 .step { height: 66px; }
 .podium .p3 { order: 3; } .podium .p3 .step { height: 48px; background: #e0b38a; }
+/* Course de chevaux */
+.ch-board { display: flex; flex-direction: column; gap: 6px; }
+.ch-bet { position: relative; display: grid; grid-template-columns: 26px 40px 1fr; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 14px; text-align: left; background: rgba(20,12,34,.7); border: 2px solid var(--c); color: #fff; }
+.ch-bet .ch-nm small { display: block; color: var(--muted); font-size: .78rem; }
+.ch-bet .rl-chip { top: 50%; right: 10px; transform: translateY(-50%); }
+.ch-num { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .8rem; background: rgba(255,255,255,.12); }
+.ch-ic svg.icn, .ch-horse svg.icn { width: 40px; height: 40px; }
+.ch-track { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 8px 6px; border-radius: 16px; background: linear-gradient(90deg, #2c6b3f, #23593a); box-shadow: inset 0 0 0 3px #eab94e, 0 10px 26px rgba(0,0,0,.45); overflow: hidden; }
+.ch-lane { position: relative; height: 44px; border-bottom: 1px dashed rgba(255,255,255,.25); display: flex; align-items: center; }
+.ch-lane:last-of-type { border-bottom: 0; }
+.ch-lane .ch-num { position: absolute; left: 0; z-index: 1; background: rgba(0,0,0,.35); }
+.ch-horse { position: absolute; left: 4px; will-change: transform; filter: drop-shadow(0 2px 2px rgba(0,0,0,.4)); }
+.ch-finish { position: absolute; top: 0; bottom: 0; right: 6px; width: 10px; background: repeating-linear-gradient(0deg, #fff 0 8px, #1a1024 8px 16px); opacity: .9; }
+.ch-say { text-align: center; font-family: var(--font-display); font-size: 1.3rem; color: var(--gold); text-shadow: 0 0 10px rgba(255,95,162,.45); min-height: 2.6em; margin: 0; display: grid; place-items: center; }
+.ch-hist { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.ch-hist span { font-size: .78rem; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--c); color: #fff; }
+.podium .pl .ch-ic svg.icn { width: 46px; height: 46px; }
 /* Salle de jeu : moquette bordeaux à losanges dorés, néons */
 body { background-color: var(--felt);
   background-image: linear-gradient(180deg, rgba(255,95,162,.16) 0%, rgba(234,120,80,.10) 18%, transparent 42%),
@@ -138,7 +155,7 @@ body { background-color: var(--felt);
 <script>
 window.APP = {
   id: 'tapis', name: 'Le Tapis', of: 'du Tapis', logo: ['Le', 'Tapis'],
-  tagline: 'Poker, Blackjack, Roulette et Machine à sous entre amis, chacun sur son téléphone.',
+  tagline: 'Poker, Blackjack, Roulette, Machine à sous et Course de chevaux entre amis, chacun sur son téléphone.',
   hooks: ['Faites vos jeux, rien ne va plus.', 'Ce soir, le bluff est obligatoire.', 'Tapis ! Pour la gloire, jamais pour l\'argent.', 'La banque ne perd jamais… ou presque.', 'Garde ton meilleur visage de joueur de poker.'],
   deal: ['♥', '♠', '♦'],
   adult: true,
@@ -148,17 +165,18 @@ window.APP = {
     { id: 'pk', name: 'Poker', icon: 'jeu-pk', color: '#3fd0c9', players: '2 à 20 joueurs', desc: "Texas Hold'em : tes cartes sur ton téléphone, l'appli gère pot, blindes et abattage." },
     { id: 'bj', name: 'Blackjack', icon: 'jeu-bj', color: '#ff7aa8', players: '1 à 20 joueurs', desc: "Tout le monde contre la banque, tenue par l'appli. Gages de soirée en option." },
     { id: 'rl', name: 'Roulette', icon: 'jeu-rl', color: '#f2c45a', players: '1 à 20 joueurs', desc: "Pose tes jetons sur le tapis depuis ton téléphone, la bille tourne pour tout le monde." },
+    { id: 'ch', name: 'Course de chevaux', icon: 'jeu-ch', color: '#7fe0b0', players: '1 à 20 joueurs', desc: "Pariez sur six chevaux aux cotes différentes, puis la course se joue en direct sur tous les téléphones, commentée." },
     { id: 'sl', name: 'Machine à sous', icon: 'jeu-sl', color: '#b98cff', players: '1 à 20 joueurs', desc: "Chacun sa machine sur son téléphone, un jackpot commun qui grimpe pour tout le monde. Tournoi en option." },
   ],
   legal: {
-    what: 'est un jeu de casino entre amis en ligne (Poker, Blackjack, Roulette, Machine à sous) sans argent',
+    what: 'est un jeu de casino entre amis en ligne (Poker, Blackjack, Roulette, Machine à sous, Course de chevaux) sans argent',
     dataExtra: ' (cartes, mises en jetons fictifs)',
     sections: [
       ['Public concerné', `<p>Le Tapis est réservé aux personnes majeures (18 ans et plus). Une confirmation est demandée au premier lancement.</p>`],
       ['Aucun argent réel', `<p>Le Tapis est un jeu de simulation, sans argent. Les jetons sont fictifs : ils sont distribués gratuitement, ne peuvent pas être achetés, ni gagnés, ni échangés contre de l'argent, un lot ou un avantage quelconque. Aucun paiement n'est possible dans l'application.</p>
         <p>Il est interdit d'utiliser Le Tapis comme support à des paris ou des mises en argent entre joueurs.</p>
         <p>Les jeux d'argent comportent des risques : endettement, dépendance… Si tu ressens le besoin d'en parler, Joueurs Info Service répond au 09 74 75 13 13 (appel non surtaxé).</p>`],
-      ['Alcool', `<p>L'option « gorgées » du Blackjack, de la Roulette et de la Machine à sous est facultative. L'abus d'alcool est dangereux pour la santé, à consommer avec modération. L'option « gages » ou « aucun » permet de jouer sans alcool.</p>`],
+      ['Alcool', `<p>L'option « gorgées » du Blackjack, de la Roulette, de la Machine à sous et de la Course de chevaux est facultative. L'abus d'alcool est dangereux pour la santé, à consommer avec modération. L'option « gages » ou « aucun » permet de jouer sans alcool.</p>`],
     ],
     ip: `<p>Le Poker (Texas Hold'em), le Blackjack, la Roulette et la machine à sous sont des jeux traditionnels dont les règles sont libres. Les tirages (cartes, numéro de la roulette, rouleaux de la machine) sont faits au hasard par le téléphone de l'hôte. Le Tapis n'est affilié à aucun casino, opérateur de jeux ou site de poker.</p>`,
   },
@@ -1012,6 +1030,179 @@ Object.assign(actions, {
   'sl-libre'() { const H = MP.H; H.cfg.mode = 'libre'; H.players.forEach(p => { p.last = null; }); H.step = 'play'; mpPush(); },
 });
 
+/* ---------- Course de chevaux ---------- */
+// Six chevaux, des cotes du favori à l'outsider. L'hôte tire l'arrivée au hasard (selon les cotes) et la course
+// est rejouée à l'identique sur tous les téléphones, avec les commentaires.
+const CH_PAY = [2.5, 4, 5, 7, 9, 14];
+const CH_COLORS = ['#ff5fa2', '#3fd0c9', '#eab94e', '#8fb6ff', '#7fe0b0', '#ff8a5c'];
+const CH_NAMES = ['Tonnerre de Brest', 'Petit Poney', 'Éclair de Lune', 'Brioche', 'Pégase Turbo', 'Croquette', 'Flamme du Désert', 'Gros Câlin', 'Roi du Turf', 'Paillette', 'Cacahuète', 'Tempête', 'Saucisson Sec', 'Fusée Rose', 'Galopin', 'Madame Rillettes', 'Comète', 'Biscotte', 'Grand Duc', 'Princesse Néon', 'Dernier Espoir', 'Vent du Sud', 'Patate Douce', 'Jackpot'];
+const CH_CHIPS = [10, 25, 50, 100], CH_SEG = 10;
+const chSum = b => Object.values(b || {}).reduce((s, a) => s + a, 0);
+function chHorses() { return shuffle(CH_NAMES.slice()).slice(0, 6).map((name, i) => ({ name, pay: CH_PAY[i], color: CH_COLORS[i] })); }
+// L'arrivée : tirage pondéré par les cotes (le favori gagne plus souvent), puis des trajectoires qui font des rebondissements
+function chRace(horses) {
+  const left = horses.map((h, i) => i), order = [];
+  while (left.length) {
+    const w = left.map(i => 1 / horses[i].pay), tot = w.reduce((a, b) => a + b, 0);
+    let r = Math.random() * tot, k = 0;
+    while (k < left.length - 1 && (r -= w[k]) > 0) k++;
+    order.push(left.splice(k, 1)[0]);
+  }
+  const T = [], tracks = [];
+  order.forEach((h, rank) => { T[h] = 10500 + rank * (380 + rand(260)); });
+  horses.forEach((h, i) => {
+    const sp = Array.from({ length: CH_SEG }, () => .55 + Math.random() * .9), tot = sp.reduce((a, b) => a + b, 0);
+    let x = 0; tracks[i] = [0].concat(sp.map(v => +(x += v / tot).toFixed(4)));
+    tracks[i][CH_SEG] = 1;
+  });
+  return { order, T, tracks, dur: Math.max(...T) + 900 };
+}
+// Position d'un cheval (0 au départ, 1 à l'arrivée) au temps t
+function chPos(race, i, t) {
+  const u = Math.min(1, Math.max(0, t / race.T[i])) * CH_SEG, k = Math.min(CH_SEG - 1, Math.floor(u)), tr = race.tracks[i];
+  return tr[k] + (tr[k + 1] - tr[k]) * (u - k);
+}
+MPG.ch = {
+  lateJoin: true,
+  rules: () => ({ title: 'Course de chevaux', steps: [
+    "Un joueur crée la partie et donne le code ; les autres la rejoignent. Chacun commence avec 1 000 jetons fictifs.",
+    "Six chevaux au départ, chacun avec sa cote : le favori paie 2,5 fois la mise, l'outsider 14 fois.",
+    "Choisis ta mise, touche un ou plusieurs chevaux, puis valide. Quand tout le monde est prêt, c'est le départ !",
+    "La course se joue en direct sur tous les téléphones, commentée. Si ton cheval gagne, tu touches ta mise multipliée par sa cote.",
+  ], tips: ["Le favori gagne plus souvent, mais rapporte moins. L'outsider, c'est pour les cœurs vaillants.", "Gages de soirée (au choix de l'hôte) : un pari perdu = une gorgée ou un gage, un outsider gagnant = 3 à distribuer. L'abus d'alcool est dangereux pour la santé.", "Jetons fictifs uniquement : on joue pour la gloire, jamais d'argent."] }),
+  init: name => ({ step: 'lobby', players: [MPG.ch.join({ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true })], cfg: { gages: store.get('chGages', 'sips') }, horses: chHorses(), race: null, n: 0, hist: [] }),
+  join: p => Object.assign(casinoNew(p), { bets: {}, ready: false, gain: 0 }),
+  resume() { if (MP.H.step === 'race') chFinish(); },
+  act(cid, d) {
+    const H = MP.H, p = mpP(cid);
+    if (!p) return;
+    if (d.t === 'ch-bet' && H.step === 'bet' && !p.ready) {
+      const bets = {};
+      for (const [k, v] of Object.entries(d.bets || {})) { const i = +k, a = Math.floor(+v); if (!(i >= 0 && i < 6) || !(a >= 1)) return; bets[i] = a; }
+      const sum = chSum(bets);
+      if (!sum || sum > p.chips) return;
+      Object.assign(p, { bets, ready: true }); p.chips -= sum;
+      const want = H.players.filter(x => x.on && (x.ready || x.chips >= 10));
+      if (want.every(x => x.ready)) chStart(); else mpPush();
+    } else if (d.t === 'ch-unbet' && H.step === 'bet' && p.ready) { p.chips += chSum(p.bets); Object.assign(p, { bets: {}, ready: false }); mpPush(); }
+    else if (d.t === 'ch-rebuy' && H.step !== 'race' && !p.ready) casinoRebuy(p);
+  },
+  view(cid) {
+    const H = MP.H, p = mpP(cid) || {};
+    const v = { game: 'ch', step: H.step, n: H.n, horses: H.horses, hist: H.hist, gages: H.cfg.gages !== 'off', mode: H.cfg.gages, alc: H.cfg.gages === 'sips',
+      bets: p.bets || {}, players: H.players.map(x => ({ name: x.name, on: !!x.on, chips: x.chips, ready: !!x.ready, stake: chSum(x.bets), gain: x.gain || 0, re: x.re || 0, me: x.cid === cid, bets: H.step === 'bet' ? null : x.bets })) };
+    if (H.race) v.race = { order: H.race.order, T: H.race.T, tracks: H.race.tracks, dur: H.race.dur, el: Date.now() - H.race.at };
+    return v;
+  },
+  notify(prev, v) { if (v.race && v.step === 'race' && (!prev || prev.step !== 'race')) MP.chAt = Date.now() - v.race.el; if (v.step === 'bet' && (!prev || prev.step !== 'bet')) MP.chDraft = null; },
+  after: () => chAnim(),
+  screen() { return chScreen(MP.role === 'host' ? MPG.ch.view(MP_CID) : MP.view); },
+};
+function chStart() {
+  const H = MP.H;
+  if (H.step !== 'bet' || !H.players.some(p => p.ready)) return;
+  H.race = Object.assign(chRace(H.horses), { at: Date.now() });
+  H.step = 'race';
+  mpPush();
+  mpTimer('chT', chFinish, H.race.dur);
+}
+function chFinish() {
+  const H = MP.H, win = H.race ? H.race.order[0] : 0;
+  H.players.forEach(p => {
+    if (!p.ready) { p.gain = 0; return; }
+    const won = Math.floor((p.bets[win] || 0) * H.horses[win].pay);
+    p.chips += won; p.gain = won - chSum(p.bets);
+  });
+  H.hist = [{ name: H.horses[win].name, pay: H.horses[win].pay, color: H.horses[win].color }].concat(H.hist).slice(0, 8);
+  H.step = 'result'; H.n++;
+  mpPush();
+}
+// La course, image par image : chaque téléphone la rejoue à partir de la même heure de départ
+let chRaf = 0;
+function chAnim() {
+  cancelAnimationFrame(chRaf);
+  const v = MP.role === 'host' ? MPG.ch.view(MP_CID) : MP.view;
+  if (!v || v.step !== 'race' || !v.race) return;
+  const start = MP.role === 'host' ? MP.H.race.at : MP.chAt || Date.now() - v.race.el, race = v.race;
+  let lead = -1, said = '';
+  const say = txt => { if (txt === said) return; said = txt; const c = document.getElementById('chSay'); if (c) c.textContent = txt; };
+  const frame = () => {
+    const track = document.getElementById('chTrack');
+    if (!track) return;
+    const t = Date.now() - start, w = track.clientWidth - 62;
+    let best = 0, bx = -1;
+    v.horses.forEach((h, i) => {
+      const x = chPos(race, i, t), el = document.getElementById('chH' + i);
+      if (el) el.style.transform = `translateX(${(x * w).toFixed(1)}px)`;
+      if (x > bx) { bx = x; best = i; }
+    });
+    const win = race.order[0], name = i => v.horses[i].name;
+    if (t >= race.T[win]) say(`${name(win)} l'emporte ! Quelle course !`);
+    else if (t < 1300) say('Et c\'est parti !');
+    else if (t > race.T[win] * .78) say(`Dernière ligne droite ! ${name(best)} devant…`);
+    else if (best !== lead) say(lead < 0 ? `${name(best)} prend la tête !` : `${name(best)} passe en tête !`);
+    lead = best;
+    if (t < race.dur) chRaf = requestAnimationFrame(frame);
+  };
+  frame();
+}
+function chScreen(v) {
+  const host = MP.role === 'host', me = v.players.find(p => p.me) || { chips: 0 };
+  if (v.step === 'lobby') return casinoLobby(v, { start: 'ch-open', min: 1, panel: `<section class="panel"><h3><span>Gages de soirée</span></h3>
+    <div class="levels three" role="group" aria-label="Gages de soirée">${[['off', 'Aucun'], ['sips', 'Gorgées'], ['gages', 'Gages']].map(([k, l]) => `<button data-a="ch-gages" data-v="${k}" aria-pressed="${v.mode === k}">${l}</button>`).join('')}</div>
+    <p class="hint">${v.gages ? `Pari perdu : ${v.alc ? 'une gorgée' : 'un gage'}. Outsider gagnant (cote 7 ou plus) : 3 à distribuer.` : 'On joue seulement pour les jetons.'}</p></section>` });
+  const stack = `<p class="howto"><span class="chipline">${chipsTxt(me.chips)}</span>${me.re ? ` · ${me.re} recave${me.re > 1 ? 's' : ''}` : ''}</p>`;
+  const hist = v.hist.length ? `<div class="ch-hist" aria-label="Derniers gagnants">${v.hist.map(h => `<span style="--c:${h.color}">${esc(h.name)} <b>×${String(h.pay).replace('.', ',')}</b></span>`).join('')}</div>` : '';
+  const table = `<section class="panel"><h3><span>Les parieurs</span><span>${v.players.filter(p => p.ready).length} prêt·s</span></h3>
+    <div class="chips">${v.players.map(p => `<span class="chip tap ${p.ready ? 'on' : ''} ${p.on ? '' : 'off'}">${p.ready ? '✓ ' : ''}${avatar(p.name)}${esc(p.name)}<span class="n">${v.step === 'result' && p.stake ? (p.gain > 0 ? '+' + p.gain : p.gain) : p.ready ? p.stake : p.chips}</span></span>`).join('')}</div></section>`;
+  const track = `<div class="ch-track" id="chTrack">${v.horses.map((h, i) => `<div class="ch-lane"><span class="ch-num">${i + 1}</span><span class="ch-horse" id="chH${i}" style="color:${h.color}">${ic('cheval') || '🐎'}</span></div>`).join('')}<span class="ch-finish" aria-hidden="true"></span></div>`;
+  if (v.step === 'bet') {
+    let zone;
+    if (me.ready) zone = `<div class="card compact"><p class="kind">Tes paris</p><p class="text big-result">${chSum(v.bets)}</p>
+        <p class="sub">${Object.entries(v.bets).map(([i, a]) => `${esc(v.horses[i].name)} : ${a}`).join(' · ')}</p><p class="sub">En attente des autres parieurs…</p></div>
+      <button class="btn ghost" data-a="ch-unbet">Changer mes paris</button>`;
+    else if (me.chips < 10) zone = `<div class="card compact"><p class="kind">Plus de jetons</p><p class="text">Tu es à sec !</p></div><button class="btn big" data-a="ch-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>`;
+    else {
+      const d = MP.chDraft || {}, chip = MP.chChip || 25, tot = chSum(d);
+      zone = `<div class="betbar">${CH_CHIPS.map(k => `<button class="jeton j${k === 50 ? 500 : k}" data-a="ch-chip" data-v="${k}" aria-pressed="${chip === k}" aria-label="Jeton de ${k}">${k}</button>`).join('')}</div>
+        <div class="ch-board">${v.horses.map((h, i) => `<button class="ch-bet" data-a="ch-put" data-v="${i}" style="--c:${h.color}"><span class="ch-num">${i + 1}</span><span class="ch-ic" style="color:${h.color}">${ic('cheval')}</span><span class="ch-nm"><b>${esc(h.name)}</b><small>cote ×${String(h.pay).replace('.', ',')}${i === 0 ? ' · favori' : i === 5 ? ' · outsider' : ''}</small></span>${d[i] ? `<span class="rl-chip">${d[i]}</span>` : ''}</button>`).join('')}</div>
+        <p class="hint" style="text-align:center">Jeton de ${chip} : touche un cheval pour parier. Total : <b class="chipline">${tot}</b></p>
+        <div class="row"><button class="btn ghost" data-a="ch-clear" ${tot ? '' : 'disabled'}>Effacer</button></div>
+        <button class="btn big" data-a="ch-bet" ${tot ? '' : 'disabled'}>${tot ? `Valider (${tot})` : 'Parie sur au moins un cheval'}</button>`;
+    }
+    return `<div class="turn"><small>Course ${v.n + 1}</small><strong>Faites vos paris</strong></div>${hist}${stack}${zone}${table}
+      ${host ? `<button class="btn" data-a="ch-go" ${v.players.some(p => p.ready) ? '' : 'disabled'}>Départ sans attendre</button>` : ''}`;
+  }
+  if (v.step === 'race') return `<div class="turn"><small>Course ${v.n + 1}</small><strong>Ils sont partis !</strong></div>
+    <p class="ch-say" id="chSay" aria-live="polite">Et c'est parti !</p>${track}${stack}`;
+  const order = v.race.order, mine = v.players.find(p => p.me) || {};
+  const outsider = v.horses[order[0]].pay >= 7, winners = v.players.filter(p => p.bets && p.bets[order[0]]).map(p => p.name), losers = v.players.filter(p => p.stake && p.gain < 0).map(p => p.name);
+  return `<div class="turn"><small>Course ${v.n}</small><strong>${esc(v.horses[order[0]].name)} gagne !</strong></div>
+    <div class="podium">${order.slice(0, 3).map((h, i) => `<div class="pl p${i + 1}"><span class="ch-ic" style="color:${v.horses[h].color}">${ic('cheval')}</span><b>${esc(v.horses[h].name)}</b><span class="step">${i + 1}</span></div>`).join('')}</div>
+    ${mine.stake ? `<div class="banner ${mine.gain > 0 ? 'gold' : ''}">${mine.gain > 0 ? `Gagné : +${mine.gain}` : `Perdu : ${mine.gain}`}</div>` : ''}
+    ${v.gages && (losers.length || (outsider && winners.length)) ? `<p class="howto">${losers.length ? `${esc(losers.join(', '))} : ${v.alc ? 'une gorgée' : 'un gage'} chacun·e.` : ''} ${outsider && winners.length ? `${esc(winners.join(', '))} distribue${winners.length > 1 ? 'nt' : ''} 3 ${v.alc ? 'gorgées' : 'gages'} (outsider !).` : ''}</p>` : ''}
+    ${stack}${table}
+    ${me.chips < 10 ? `<button class="btn" data-a="ch-rebuy">Recave : ${chipsTxt(CASINO_STACK)}</button>` : ''}
+    ${host ? `<button class="btn big" data-a="ch-next">Nouvelle course</button>` : `<p class="howto">L'hôte lance la course suivante.</p>`}`;
+}
+Object.assign(actions, {
+  'ch-gages'(k) { MP.H.cfg.gages = k; store.set('chGages', k); mpPush(); },
+  'ch-open'() { MP.H.step = 'bet'; mpPush(); },
+  'ch-chip'(k) { MP.chChip = +k; render(false); },
+  'ch-put'(i) {
+    const v = MP.role === 'host' ? MPG.ch.view(MP_CID) : MP.view, me = v.players.find(p => p.me), chip = MP.chChip || 25;
+    const d = MP.chDraft = MP.chDraft || {};
+    if (chSum(d) + chip > me.chips) { toast('Pas assez de jetons pour ce pari.'); return; }
+    d[i] = (d[i] || 0) + chip; sfx('chip'); render(false);
+  },
+  'ch-clear'() { MP.chDraft = null; render(false); },
+  'ch-bet'() { if (MP.chDraft) { sfx('chips'); mpSend({ t: 'ch-bet', bets: MP.chDraft }); } },
+  'ch-unbet'() { mpSend({ t: 'ch-unbet' }); },
+  'ch-rebuy'() { mpSend({ t: 'ch-rebuy' }); },
+  'ch-go'() { chStart(); },
+  'ch-next'() { const H = MP.H; H.players.forEach(p => Object.assign(p, { bets: {}, ready: false, gain: 0 })); Object.assign(H, { step: 'bet', horses: chHorses(), race: null }); MP.chDraft = null; mpPush(); },
+});
+
 /* ---------- Musique : jazz lounge de salle de jeu ---------- */
 // Grille ii-V-I-VI en do : contrebasse qui marche, piano électrique, balais et vibraphone
 const TP_PROG = [[50, [3, 7, 10, 14]], [43, [4, 10, 14, 16]], [48, [4, 7, 11, 14]], [45, [4, 10, 13, 16]]];
@@ -1079,8 +1270,17 @@ MPG.sl.sound = (prev, v) => {
   if (l && (!pl || pl.id !== l.id)) { MP.slAnim = { id: l.id, at: Date.now() }; sfx('reels'); }
   if (v.step === 'end' && prev.step !== 'end') sfx('fanfare');
 };
+MPG.ch.sound = (prev, v) => {
+  if (v.step === 'bet' && readyCount(v) > readyCount(prev)) sfx('chip');
+  if (v.step === 'race' && prev.step !== 'race' && v.race) { sfx('bugle'); setTimeout(() => sfx('gallop', v.race.dur - 1400), 1300); }
+  if (v.step === 'result' && prev.step !== 'result') { sfx('crowd'); const me = tpMe(v); if (me.stake) setTimeout(() => sfx(me.gain > 0 ? 'win' : 'lose'), 600); }
+};
 // Bruitages de la machine à sous
 Object.assign(SFX, {
+  // Course de chevaux : la trompette du départ, les sabots, la foule à l'arrivée
+  bugle(t) { [[67, .14], [72, .14], [76, .14], [79, .28], [76, .14], [79, .5]].reduce((s, [m, d]) => { note(s, m, d, .05, { type: 'sawtooth', cut: 2600, a: .015, rel: .1, fx: .3, bus: 'sfx', detune: 4 }); return s + d + .02; }, t); },
+  gallop(t, ms = 10000) { const T = ms / 1000; for (let s = 0; s < T; s += .19) [0, .045, .09].forEach((d, k) => { const p = s / T, v = .1 * (k === 2 ? .7 : 1) * (p < .1 ? p * 10 : 1); hiss('sfx', t + s + d, .03, v, { type: 'lowpass', f: 420, q: 1.5 }); tone('sfx', t + s + d, 90 + rand(30), .04, v * .5); }); },
+  crowd(t) { hiss('sfx', t, 2.6, .16, { f: 1100, q: .5, a: .25 }); hiss('sfx', t + .2, 2.2, .1, { f: 2400, q: .8, a: .3 }); [0, .35, .7].forEach(d => tone('sfx', t + d, 880 + rand(300), .2, .03, { type: 'triangle' })); },
   lever(t) { hiss('sfx', t, .18, .25, { f: 900, to: 300, q: 2 }); tone('sfx', t + .16, 140, .12, .12, { to: 80 }); },
   // Les rouleaux tournent (cliquetis), puis s'arrêtent un par un avec un « clonk »
   reels(t) {
