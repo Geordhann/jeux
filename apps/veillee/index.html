@@ -145,6 +145,16 @@ body:not([data-scene="day"]) #scene .flies circle { animation: firefly 7s ease-i
 .alerts { display: flex; flex-direction: column; gap: 8px; }
 .alerts .banner { justify-content: space-between; text-align: left; }
 /* Tu préfères et Action ou Vérité */
+.qp-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.qp-p { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 8px; border-radius: 14px; background: var(--paper); color: var(--ink); font-weight: 700; box-shadow: 0 2px 0 var(--paper-edge); }
+.qp-p img.av { width: 44px; height: 44px; margin: 0; }
+.qp-p[aria-pressed="true"] { outline: 4px solid var(--gold); transform: scale(1.02); }
+.qp-p:disabled { opacity: .45; }
+.qp-p small { font-size: .75rem; color: var(--red); font-weight: 600; }
+.pairs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pairs li { display: flex; align-items: center; gap: 8px; }
+.pairs .heart { color: #ff6b8a; }
+.pairs .mini { margin-left: auto; }
 .tp-duel { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
 .tp-opt { padding: 22px 18px; border-radius: 18px; font-family: var(--font-card); font-size: clamp(1.2rem, 5.5vw, 1.45rem); line-height: 1.3; color: var(--ink); box-shadow: 0 4px 0 rgba(0,0,0,.25); transition: transform .12s; }
 .tp-opt.a { background: #ffd27a; } .tp-opt.b { background: #9fd8ff; }
@@ -182,6 +192,7 @@ window.APP = {
     { id: 'tp', name: 'Tu préfères', icon: 'jeu-tp', color: '#7fe0b0', players: '2 à 20 joueurs', when: 'Début de soirée', desc: "Une question, deux choix : chacun vote en secret, la minorité prend un gage." },
     { id: 'lg', name: 'Loup-Garou', icon: 'jeu-lg', color: '#8fb6ff', players: '4 à 47 joueurs + le meneur', when: 'Le grand jeu', desc: "Tu es le maître du jeu : la roue distribue une carte secrète sur le téléphone de chacun." },
     { id: 'gp', name: 'Téléphone dessiné', icon: 'jeu-gp', color: '#ffb36b', players: '3 à 20 joueurs', when: 'Pour rire', desc: "Écris, dessine, devine : la phrase passe de téléphone en téléphone et se déforme." },
+    { id: 'qp', name: 'Qui pourrait…', icon: 'groupe', color: '#ff9fb2', players: '3 à 20 joueurs', when: 'Pour rire', desc: "Chacun désigne en secret qui colle le mieux à la question, le plus désigné prend un gage. Les couples ne votent pas l'un pour l'autre." },
     { id: 'av', name: 'Action ou Vérité', icon: 'jeu-av', color: '#d39cff', players: '2 à 20 joueurs', when: 'Fin de soirée', desc: "Chacun son tour, la carte s'affiche sur tous les téléphones et tout le monde réagit." },
   ],
   legal: {
@@ -1165,8 +1176,31 @@ function vgDraw(H, key, list) {
   return list[i];
 }
 const vgFill = (text, x) => esc(text).replace(/\{x\}/g, x ? `<em>${esc(x)}</em>` : "quelqu'un de ton choix");
-const vgOther = (H, cid) => { const o = H.players.filter(p => p.on && p.cid !== cid); return o.length ? o[rand(o.length)].name : null; };
-const vgLevelBox = (lvl, a) => `<div class="levels two" role="group" aria-label="Niveau">${VG_LEVELS.map(([k, l]) => `<button data-a="${a}" data-v="${k}" aria-pressed="${lvl === k}">${l}</button>`).join('')}</div>`;
+/* Couples (comme dans La Tournée) : l'hôte les déclare dans le salon, ils sont gardés pour les prochaines soirées */
+const vgCouples = H => (H.couples || []).filter(c => c.every(n => H.players.some(p => p.name === n)));
+const vgPartner = (H, name) => { const c = vgCouples(H).find(c => c.includes(name)); return c ? (c[0] === name ? c[1] : c[0]) : null; };
+// {x} d'Action ou Vérité : en Piquant, une personne en couple fait ses défis avec son ou sa partenaire, et personne d'autre ne la vise
+const vgOther = (H, cid) => {
+  const me = mpP(cid), all = H.players.filter(p => p.on && p.cid !== cid);
+  let pool = all;
+  if (me && H.level !== 'soft' && H.coupleMode !== false) {
+    const part = vgPartner(H, me.name);
+    pool = part && all.some(p => p.name === part) ? all.filter(p => p.name === part) : all.filter(p => !vgPartner(H, p.name));
+  }
+  if (!pool.length) pool = all;
+  return pool.length ? pool[rand(pool.length)].name : null;
+};
+function vgCouplePanel(H) {
+  const cps = vgCouples(H), sel = MP.cpSel, free = H.players.filter(p => !vgPartner(H, p.name));
+  return `<section class="panel"><h3><span>Couples</span><span>${cps.length}</span></h3>
+    ${cps.length ? `<ul class="pairs">${cps.map(c => `<li><span>${avatar(c[0])}${esc(c[0])}</span><span class="heart" aria-label="et">♥</span><span>${avatar(c[1])}${esc(c[1])}</span><button class="mini" data-a="vg-cp-rm" data-v="${esc(c[0])}" aria-label="Séparer ${esc(c[0])} et ${esc(c[1])}">✕</button></li>`).join('')}</ul>` : ''}
+    ${free.length >= 2 ? `<p class="hint">${sel ? `Touche le ou la partenaire de <b>${esc(sel)}</b>.` : 'Touche deux prénoms pour former un couple.'}</p>
+    <div class="chips">${free.map(p => `<button class="chip tap ${sel === p.name ? 'on' : ''}" data-a="vg-cp" data-v="${esc(p.name)}" aria-pressed="${sel === p.name}">${avatar(p.name)}${esc(p.name)}</button>`).join('')}</div>` : ''}
+    <div class="toggle"><span><b>Les couples restent entre eux</b><br><span class="hint">Qui pourrait : on ne vote jamais pour soi ni pour son couple. Action ou Vérité en Piquant : les défis avec un autre joueur se font avec son ou sa partenaire.</span></span>
+      <button data-a="vg-cp-mode" aria-pressed="${H.coupleMode !== false}" aria-label="Les couples restent entre eux"></button></div>
+  </section>`;
+}
+const vgLevelBox = (lvl, a, L = VG_LEVELS) => `<div class="levels ${L.length === 3 ? 'three' : 'two'}" role="group" aria-label="Niveau">${L.map(([k, l]) => `<button data-a="${a}" data-v="${k}" aria-pressed="${lvl === k}">${l}</button>`).join('')}</div>`;
 // Salon commun aux deux jeux : l'hôte joue aussi
 function vgLobby(v, start, extra) {
   if (MP.role !== 'host') return `${roomBox(false)}<section class="panel"><h3><span>Dans la partie</span><span>${v.players.length}</span></h3>
@@ -1177,6 +1211,7 @@ function vgLobby(v, start, extra) {
     <ul class="plist">${H.players.map(p => `<li><span class="dot ${p.on ? '' : 'off'}"></span><span class="nm"><b>${avatar(p.name)}${esc(p.name)}</b>${p.cid === MP_CID ? '<small>toi</small>' : p.on ? '' : '<small>déconnecté·e</small>'}</span>${p.cid === MP_CID ? '' : `<button class="mini" data-a="mp-kick" data-v="${esc(p.cid)}" aria-label="Retirer ${esc(p.name)}">✕</button>`}</li>`).join('')}</ul>
     <p class="hint">On peut aussi rejoindre en cours de partie.</p></section>
   ${extra}
+  ${vgCouplePanel(H)}
   <button class="btn big" data-a="${start}" ${n < 2 || MP.status !== 'open' ? 'disabled' : ''}>${n < 2 ? 'Il faut au moins 2 joueurs' : `C'est parti (${n} joueurs)`}</button>`;
 }
 const vgMe = v => v.players.find(p => p.me) || {};
@@ -1190,7 +1225,7 @@ MPG.tp = {
     "Chacun vote en secret sur son téléphone. Dès que tout le monde a voté, les résultats tombent : qui a choisi quoi.",
     "La minorité prend un gage, à faire tout de suite. En cas d'égalité, chaque camp défend son choix en une phrase.",
   ], tips: ['Niveau Soft pour tout le monde, Piquant pour les soirées entre adultes.', "Personne n'est obligé de faire un gage : on peut toujours refuser."] }),
-  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('tpLevel', 'soft'), q: null, votes: {}, n: 0, gage: null }),
+  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('tpLevel', 'soft'), q: null, votes: {}, n: 0, gage: null, couples: store.get('vgCouples', []), coupleMode: store.get('vgCoupleMode', true) }),
   act(cid, d) {
     const H = MP.H;
     if (d.t === 'tp-vote' && H.step === 'vote' && [0, 1].includes(d.c)) {
@@ -1249,7 +1284,7 @@ MPG.av = {
     "La carte s'affiche sur tous les téléphones : tout le monde peut réagir [[rire]] [[feu]] [[peur]] [[bravo]].",
     "Le joueur répond ou fait le défi, puis touche « Fait ». Pas envie ? Joker : il prend un gage à la place.",
   ], tips: ['Niveau Soft pour tout le monde, Piquant pour les soirées entre adultes.', 'Règle d\'or : chacun peut refuser, sans se justifier.'] }),
-  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('avLevel', 'soft'), order: [], turn: 0, card: null, react: {}, n: 0 }),
+  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('avLevel', 'soft'), order: [], turn: 0, card: null, react: {}, n: 0, couples: store.get('vgCouples', []), coupleMode: store.get('vgCoupleMode', true) }),
   act(cid, d) {
     const H = MP.H, cur = avCur(H);
     if (d.t === 'av-pick' && H.step === 'choose' && cur && cur.cid === cid && ['action', 'verite', 'random'].includes(d.k)) avDeal(d.k);
@@ -1305,7 +1340,92 @@ function avScreen(v) {
     ${v.gage ? `<div class="card compact"><p class="kind">Joker ! Gage pour ${esc(v.turn)}</p><p class="text">${esc(v.gage)}</p></div>` : `<div class="banner gold">Bravo ${esc(v.turn)} ! [[bravo]]</div>`}
     ${host ? `<button class="btn big" data-a="av-next">Joueur suivant</button>${vgLevelBox(v.level, 'av-level')}` : `<p class="howto">L'hôte passe au joueur suivant.</p>`}${scores}`;
 }
+
+/* --- Qui pourrait… : chacun désigne quelqu'un en secret, le plus désigné prend un gage --- */
+// Cartes Soft et Piquant reprises de La Tournée, plus un niveau WTF complètement absurde
+const QP_CARDS = {"soft": ["devenir célèbre", "finir en garde à vue", "oublier son téléphone au bar", "se marier en premier", "devenir millionnaire", "partir vivre à l'autre bout du monde sur un coup de tête", "survivre à une apocalypse zombie", "pleurer devant un Disney", "arriver en retard à son propre mariage", "adopter cinq chats", "gagner Koh-Lanta", "rater son avion", "devenir président·e", "ouvrir un bar", "devenir influenceur·se", "s'endormir en premier ce soir", "perdre sa carte bleue", "appeler sa mère en pleine soirée", "se perdre même avec un GPS", "lancer une start-up qui coule"], "wtf": ["se faire adopter par une famille de ratons laveurs", "épouser un fantôme", "se battre avec une oie et perdre", "lancer une secte autour des chaussettes", "se perdre trois jours dans un IKEA", "finir dans un documentaire sur les gens bizarres", "demander conseil à sa plante verte", "se faire kidnapper et être rendu·e au bout d'une heure parce que trop chiant·e", "rentrer de soirée dans un caddie", "avoir un chat plus célèbre que soi sur TikTok", "se réveiller à Amsterdam sans savoir comment", "être élu·e maire d'un village par erreur", "manger la pizza tombée par terre, face garnie", "se battre avec un distributeur automatique", "ouvrir un restaurant de raclette en plein mois d'août", "appeler son prof « maman »", "tomber amoureux·se d'une IA", "installer un château gonflable dans son salon", "faire un procès à un pigeon", "se faire arrêter en trottinette déguisé·e en banane", "survivre trois semaines uniquement aux chips", "devenir le gourou d'une secte de canards", "envoyer un vocal de 8 minutes pour dire oui", "lécher une pile pour voir si elle marche", "créer une religion autour de la raclette", "se faire virer d'un McDo… en tant que client·e", "se marier à Las Vegas avec un sosie d'Elvis", "être retrouvé·e endormi·e dans un rayon de supermarché", "garder son hamster mort au congélateur « en attendant »", "répondre « vous aussi » au serveur qui dit bon appétit", "acheter un lama sur Leboncoin", "pleurer devant une pub pour des yaourts", "se battre contre une mouette pour un sandwich", "porter des chaussettes dans des claquettes à un mariage", "se faire engueuler par sa mère à 45 ans", "construire un bunker anti-zombies dans son jardin", "faire le discours du mariage complètement bourré·e", "s'endormir en plein date", "parler à son GPS comme à un·e ex", "perdre un concours de regard contre un chat", "se faire tatouer le prénom d'un·e inconnu·e", "appeler les pompiers pour une araignée", "tester un saut à l'élastique en tongs", "se casser quelque chose en dansant la macarena", "finir à la télé pour une histoire de poules volées", "demander une réduction à l'église", "adopter une chèvre et l'emmener en vacances", "manger des croquettes pour chien « juste pour goûter »", "se faire refuser l'entrée d'un zoo", "confondre sa belle-mère avec une statue", "lancer un business de câlins payants", "se faire avoir trois fois par la même arnaque", "cacher un poney dans son appart", "rester coincé·e dans un toboggan aquatique"], "piquant": ["se remettre avec son ex", "envoyer un message bourré·e ce soir", "avoir un crush secret dans le groupe", "ghoster quelqu'un", "avoir le plus de matchs sur les applis", "finir la soirée avec quelqu'un", "draguer le/la barman·aid", "tomber amoureux·se en vacances", "avoir un date ce week-end", "avoir le plus d'ex", "mentir sur son body count", "tomber amoureux·se d'un·e pote", "faire le premier pas", "épouser quelqu'un rencontré en soirée", "stalker un crush pendant deux heures", "embrasser quelqu'un ce soir", "avoir un compte Insta secret", "flirter avec tout le monde", "envoyer « tu dors ? » à 2 h du matin", "se faire draguer par quelqu'un de beaucoup plus âgé"]};
+const QP_LEVELS = [['soft', 'Soft'], ['wtf', 'WTF'], ['piquant', 'Piquant']];
+// Pour qui ce joueur peut-il voter ? Jamais pour soi, ni pour son couple
+const qpCan = (H, voter, target) => target !== voter && !(H.coupleMode !== false && vgPartner(H, voter) === target);
+const qpTargets = (H, name) => H.players.filter(p => p.on && qpCan(H, name, p.name)).map(p => p.name);
+MPG.qp = {
+  lateJoin: true,
+  rules: () => ({ title: 'Qui pourrait…', steps: [
+    "L'hôte crée la partie et donne le code, les autres le rejoignent. L'hôte joue aussi. Il faut au moins 3 joueurs.",
+    "Une question « Qui pourrait… » s'affiche sur tous les téléphones : chacun touche en secret le prénom de la personne qui colle le mieux.",
+    "On ne peut pas voter pour soi. Si l'hôte a déclaré des couples, on ne peut pas non plus voter pour son ou sa partenaire.",
+    "Quand tout le monde a voté, le classement tombe. La personne la plus désignée prend un gage. Égalité : pierre-feuille-ciseaux entre les ex æquo !",
+  ], tips: ['Soft pour tout le monde, WTF pour les questions absurdes, Piquant pour les grands.', 'Les couples se règlent dans le salon, avant de lancer la partie.'] }),
+  init: name => ({ step: 'lobby', players: [{ cid: MP_CID, name: mpCleanName(name) || 'Hôte', on: true }], level: store.get('qpLevel', 'wtf'), q: null, votes: {}, n: 0, gage: null, couples: store.get('vgCouples', []), coupleMode: store.get('vgCoupleMode', true) }),
+  act(cid, d) {
+    const H = MP.H, me = mpP(cid);
+    if (d.t === 'qp-vote' && H.step === 'vote' && me && qpCan(H, me.name, String(d.to || '')) && H.players.some(p => p.name === d.to)) {
+      H.votes[cid] = d.to;
+      if (qpVoters(H).every(p => H.votes[p.cid] !== undefined)) qpReveal(); else mpPush();
+    }
+  },
+  view(cid) {
+    const H = MP.H, me = mpP(cid) || {}, part = vgPartner(H, me.name);
+    const v = { game: 'qp', step: H.step, level: H.level, n: H.n, q: H.q, gage: H.gage, top: H.top || [], mine: H.votes[cid] || null,
+      voted: Object.keys(H.votes).length, of: qpVoters(H).length, partner: H.coupleMode !== false ? part : null, can: me.name ? qpTargets(H, me.name) : [],
+      players: H.players.map(p => ({ name: p.name, on: !!p.on, me: p.cid === cid, voted: H.votes[p.cid] !== undefined, gages: p.gages || 0 })) };
+    if (H.step === 'reveal') v.rows = H.rows;
+    return v;
+  },
+  sound(prev, v) {
+    if (v.step === 'vote' && (prev.step !== 'vote' || prev.n !== v.n)) sfx('deal');
+    if (v.step === 'reveal' && prev.step !== 'reveal') sfx('reveal');
+    if (v.step === 'vote' && v.voted > prev.voted) sfx('tick');
+  },
+  screen() { return qpScreen(MP.role === 'host' ? MPG.qp.view(MP_CID) : MP.view); },
+};
+// Votent ceux qui sont là et qui ont au moins une personne pour qui voter
+const qpVoters = H => H.players.filter(p => p.on && qpTargets(H, p.name).length);
+function qpNext() { const H = MP.H; Object.assign(H, { step: 'vote', q: vgDraw(H, 'qp' + H.level, QP_CARDS[H.level]), votes: {}, n: H.n + 1, gage: null, rows: null, top: [] }); mpPush(); }
+function qpReveal() {
+  const H = MP.H, by = {};
+  Object.entries(H.votes).forEach(([cid, to]) => { const p = mpP(cid); if (p) (by[to] = by[to] || []).push(p.name); });
+  H.rows = Object.entries(by).map(([name, l]) => ({ name, votes: l.length, by: l })).sort((a, b) => b.votes - a.votes);
+  const max = H.rows.length ? H.rows[0].votes : 0;
+  H.top = H.rows.filter(r => r.votes === max).map(r => r.name);
+  H.gage = null;
+  if (H.top.length === 1) { const p = H.players.find(x => x.name === H.top[0]); if (p) p.gages = (p.gages || 0) + 1; H.gage = vgDraw(H, 'gage', VG_GAGES); }
+  H.step = 'reveal'; mpPush();
+}
+function qpScreen(v) {
+  const host = MP.role === 'host';
+  if (v.step === 'lobby') return vgLobby(v, 'qp-start', `<section class="panel"><h3><span>Niveau</span></h3>${vgLevelBox(v.level, 'qp-level', QP_LEVELS)}<p class="hint">Soft pour tout le monde, WTF pour les questions absurdes, Piquant pour les grands.</p></section>`);
+  const card = `<div class="card compact"><p class="kind">Qui pourrait…</p><p class="text">${esc(v.q)} ?</p></div>`;
+  if (v.step === 'vote') return `<div class="turn"><small>Question ${v.n}</small><strong>Qui pourrait…</strong></div>${card}
+    ${v.can.length ? `<div class="qp-pick">${v.players.filter(p => !p.me && p.on).map(p => {
+      const no = !v.can.includes(p.name);
+      return `<button class="qp-p" data-a="qp-vote" data-v="${esc(p.name)}" aria-pressed="${v.mine === p.name}" ${no ? 'disabled' : ''}>${avatar(p.name)}<b>${esc(p.name)}</b>${no ? '<small>♥ ton couple</small>' : ''}</button>`;
+    }).join('')}</div>
+    <p class="howto">${v.mine ? `Vote pour <b>${esc(v.mine)}</b> enregistré, tu peux encore changer.` : 'Vote en secret.'} ${v.voted} / ${v.of} ont voté.</p>`
+      : `<p class="howto">Pas de vote pour toi cette fois. ${v.voted} / ${v.of} ont voté.</p>`}
+    ${host ? `<button class="btn ghost" data-a="qp-reveal" ${v.voted ? '' : 'disabled'}>Révéler sans attendre</button>` : ''}`;
+  const max = v.rows.length ? v.rows[0].votes : 1;
+  return `<div class="turn"><small>Question ${v.n}</small><strong>${v.top.length === 1 ? esc(v.top[0]) + ' !' : v.top.length ? 'Égalité !' : 'Personne ?'}</strong></div>${card}
+    ${v.rows.map(r => `<div class="tp-res a ${v.top.includes(r.name) ? 'minor' : ''}"><div class="tp-bar" style="width:${Math.round(100 * r.votes / max)}%"></div><b>${r.votes}</b><span>${avatar(r.name)}${esc(r.name)}</span><small>${esc(r.by.join(', '))}</small></div>`).join('')}
+    ${v.gage ? `<div class="card compact"><p class="kind">Gage pour ${esc(v.top[0])}</p><p class="text">${esc(v.gage)}</p></div>` : v.top.length > 1 ? `<div class="banner gold">${esc(v.top.join(' et '))} : pierre-feuille-ciseaux, le perdant prend un gage !</div>` : ''}
+    ${host ? `<div class="row"><button class="btn big" data-a="qp-next">Question suivante</button></div><div class="row">${vgLevelBox(v.level, 'qp-level', QP_LEVELS)}</div>` : `<p class="howto">L'hôte passe à la question suivante.</p>`}`;
+}
+
 Object.assign(actions, {
+  'qp-level'(k) { MP.H.level = k; store.set('qpLevel', k); mpPush(); },
+  'qp-start'() { MP.H.players = MP.H.players.filter(p => p.on); MP.cpSel = null; qpNext(); },
+  'qp-vote'(n) { sfx('tick'); mpSend({ t: 'qp-vote', to: n }); },
+  'qp-reveal'() { qpReveal(); },
+  'qp-next'() { qpNext(); },
+  // Couples, réglés par l'hôte dans le salon
+  'vg-cp'(n) {
+    const H = MP.H, a = MP.cpSel;
+    if (!a || a === n) { MP.cpSel = a === n ? null : n; render(false); return; }
+    H.couples = (H.couples || []).filter(c => !c.includes(a) && !c.includes(n)).concat([[a, n]]);
+    MP.cpSel = null; store.set('vgCouples', H.couples); mpPush();
+  },
+  'vg-cp-rm'(n) { const H = MP.H; H.couples = (H.couples || []).filter(c => !c.includes(n)); store.set('vgCouples', H.couples); mpPush(); },
+  'vg-cp-mode'() { const H = MP.H; H.coupleMode = H.coupleMode === false; store.set('vgCoupleMode', H.coupleMode); mpPush(); },
   'tp-level'(k) { MP.H.level = k; store.set('tpLevel', k); mpPush(); },
   'tp-start'() { MP.H.players = MP.H.players.filter(p => p.on); tpNext(); },
   'tp-vote'(c) { sfx('tick'); mpSend({ t: 'tp-vote', c: +c }); },

@@ -228,6 +228,28 @@ async function run() {
     t.check(await t.eval(host, () => !!MP.H.gage && MP.H.players[0].gages === 1), 'la minorité (1 contre 3) aurait dû prendre un gage');
   });
 
+  await scenario('qp', 'Qui pourrait : votes secrets, les couples ne votent pas l\'un pour l\'autre', 'veillee', async t => {
+    const [host, code] = await t.host('qp');
+    const names = ['Léa', 'Hugo', 'Inès', 'Tom'], ps = [host];
+    for (let i = 0; i < names.length; i++) ps.push((await t.join(i + 2, code, names[i]))[0]);
+    // L'hôte déclare le couple Léa ♥ Hugo en touchant les deux prénoms
+    await host.click('[data-a=vg-cp][data-v="Léa"]'); await host.click('[data-a=vg-cp][data-v="Hugo"]');
+    t.check(await host.$('.pairs li') !== null, 'couple non affiché');
+    await host.click('[data-a=qp-level][data-v=wtf]');
+    await host.click('[data-a=qp-start]');
+    await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'vote');
+    t.check(await ps[1].$('[data-a=qp-vote][data-v="Hugo"]:disabled') !== null, 'Léa peut voter pour son couple');
+    // Même en forçant, l'hôte refuse le vote pour le partenaire
+    await t.eval(ps[1], () => mpSend({ t: 'qp-vote', to: 'Hugo' }));
+    await ps[1].waitForTimeout(300);
+    t.check(await t.eval(host, () => !Object.keys(MP.H.votes).length), 'vote pour le couple accepté');
+    for (const p of ps) await p.locator('[data-a=qp-vote]:not([disabled])').first().click();
+    await t.until(ps, () => (MP.role === 'host' ? MP.H.step : MP.view.step) === 'reveal');
+    const r = await t.eval(host, () => ({ rows: MP.H.rows, couple: Object.entries(MP.H.votes).some(([c, to]) => { const n = mpP(c).name; return (n === 'Léa' && to === 'Hugo') || (n === 'Hugo' && to === 'Léa'); }) }));
+    t.check(r.rows.reduce((s, x) => s + x.votes, 0) === 5 && !r.couple, 'votes incohérents : ' + JSON.stringify(r));
+    t.check(await t.eval(host, () => QP_CARDS.wtf.length) >= 50, 'pas assez de questions WTF');
+  });
+
   await scenario('av', 'Action ou Vérité : 6 tours, réactions et jokers', 'veillee', async t => {
     const [host, code] = await t.host('av');
     const ps = { 'Hôte': host };
