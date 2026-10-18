@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#08161a">
+<meta name="theme-color" content="#1b120b">
 <meta name="description" content="Loup-Garou et Téléphone dessiné : des jeux de soirée où chacun joue sur son téléphone.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="La Veillée">
@@ -218,6 +218,87 @@ body:not([data-scene="day"]) #scene .flies circle { animation: firefly 7s ease-i
 .howto, .hint, .tag, .sec-title, .foot, .turn small { text-shadow: 0 1px 4px rgba(0, 0, 0, .85); }
 .phase.night { background: rgba(8, 14, 38, .78); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
 .phase.day { background: linear-gradient(135deg, #f6c96a, #ee9a5a); }
+
+/* ================= Style Moyen-Âge pour toute La Veillée =================
+   Parchemin et enluminures pour les cartes, cuir et bois cloutés pour les panneaux,
+   feuille d'or pour les boutons, sceaux de cire rouge, lettres gothiques pour les titres. */
+:root {
+  --font-display: "Pirata One", "UnifrakturCook", "Old English Text MT", Georgia, serif;
+  --font-body: "Alegreya", Georgia, "Times New Roman", serif;
+  --font-card: "IM Fell English", "Alegreya", Georgia, serif;
+  --paper: #efdfb8; --paper-edge: #b8955e; --ink: #2b1a10; --ink-soft: #6b5233;
+  --red: #a8321f; --gold: #d9a441; --fg: #f3e6c8; --muted: #d6c49b;
+  --felt-line: #6b4a2a; --felt-2: #241810;
+  --parch: radial-gradient(130% 100% at 25% 15%, #f6e8c6 0%, #ecd8ac 50%, #dcc08a 100%);
+  --leather: linear-gradient(180deg, rgba(48,31,19,.94), rgba(30,19,11,.94));
+  --r: 12px;
+}
+body { font-size: 17px; }
+/* Titres en lettres gothiques, dorées à la feuille */
+.logo, .turn strong, .topbar h2, .phase strong, .rules-title, .intro-logo { font-family: var(--font-display); letter-spacing: .01em; }
+.logo { color: var(--gold); text-shadow: 0 2px 0 #3a230f, 0 0 18px rgba(217,164,65,.25); }
+.logo span { color: #f3e6c8; }
+.turn strong { color: var(--gold); text-shadow: 0 2px 0 #2b1a10; font-size: clamp(2.2rem, 11vw, 3rem); }
+.turn small, .sec-title, .panel h3 { font-variant: small-caps; text-transform: none; letter-spacing: .12em; font-weight: 800; }
+.sec-title { color: var(--gold); font-size: .95rem; }
+.sec-title span:first-child::before, .panel h3 span:first-child::before { content: "❦ "; color: var(--gold); }
+.tag, .intro-tag { font-style: italic; }
+/* Panneaux : cuir sombre, double filet doré */
+.panel, .plist li, .pr-speak, .son-sheet, .legal-wrap { background: var(--leather); border: 2px solid #5a3a20; box-shadow: inset 0 0 0 1px rgba(217,164,65,.28), 0 8px 18px rgba(0,0,0,.4); }
+.panel { position: relative; }
+.panel::before { content: ""; position: absolute; inset: 5px; border: 1px solid rgba(217,164,65,.22); border-radius: 8px; pointer-events: none; }
+.panel h3 { color: var(--gold); font-size: .95rem; }
+.plist li { border-width: 1px; }
+/* Cartes, salle et tuiles : parchemin enluminé */
+.card, .room, .game, .lg-end, .so-king, .notice, .bub, .step-mj, .mini-card, .qp-p, .tp-opt { background: var(--parch); color: var(--ink); }
+.card, .room, .lg-end, .so-king { box-shadow: inset 0 0 0 2px rgba(107,68,38,.45), inset 0 0 0 6px rgba(239,223,184,.6), inset 0 0 0 7px rgba(168,50,31,.35), 0 4px 0 #8e6a3a, 0 16px 30px rgba(0,0,0,.45); border-radius: 10px; }
+.game { box-shadow: inset 0 0 0 1px rgba(107,68,38,.45), 0 3px 0 #8e6a3a, 0 10px 22px rgba(0,0,0,.35); border-radius: 10px; }
+.card .text, .bub { font-family: var(--font-card); }
+.card .kind, .room small { font-variant: small-caps; text-transform: none; letter-spacing: .14em; font-size: .95rem; color: var(--red); }
+.card .idx { color: var(--red); }
+.card .text em { color: var(--red); }
+/* Dos des cartes : tapisserie rouge à losanges d'or */
+.card.verso { background-color: #6e1c14; background-image: repeating-linear-gradient(45deg, rgba(217,164,65,.28) 0 2px, transparent 2px 18px), repeating-linear-gradient(-45deg, rgba(217,164,65,.28) 0 2px, transparent 2px 18px), radial-gradient(circle at 50% 50%, #8a2a1d, #4f120c); box-shadow: inset 0 0 0 3px #d9a441, inset 0 0 0 7px #6e1c14, inset 0 0 0 8px rgba(217,164,65,.6), 0 16px 30px rgba(0,0,0,.45); }
+.card.verso .text { color: #f3e6c8; font-family: var(--font-display); font-size: 1.8rem; }
+/* Le code de la partie reste bien lisible */
+.room .code, #joinForm .code-in { font-family: var(--font-body); font-weight: 800; }
+.room { border: 0; }
+/* Boutons : feuille d'or, cire rouge, filets gravés */
+.btn { background: linear-gradient(180deg, #ecc66e, #c8902c); color: var(--ink); border: 2px solid #7a5418; border-radius: 8px; box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 3px 0 #5e3f10; font-weight: 800; }
+.btn:active { box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 1px 0 #5e3f10; }
+.btn.big { font-family: var(--font-display); font-size: 1.6rem; padding: 18px; }
+.btn.red { background: radial-gradient(120% 140% at 50% 0%, #c0462f, #8a2419 70%); color: #f6e7c4; border-color: #5e140d; box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 3px 0 #4a0f09; }
+.btn.paper { background: var(--parch); border-color: #8e6a3a; box-shadow: 0 3px 0 #8e6a3a; }
+.btn.ghost { background: rgba(30,19,11,.5); color: #f3e6c8; border: 1px solid rgba(217,164,65,.55); box-shadow: none; }
+.mini { background: var(--parch); border: 1px solid #8e6a3a; }
+.mini.red { background: #8a2419; color: #f6e7c4; border-color: #5e140d; }
+.chip { background: var(--parch); border: 1px solid rgba(107,68,38,.45); }
+.chip.tap.on, .mini.on { background: linear-gradient(180deg, #ecc66e, #c8902c); }
+.levels { background: rgba(20,12,7,.6); border: 1px solid #5a3a20; }
+.levels button[aria-pressed="true"] { background: var(--parch); color: var(--ink); box-shadow: inset 0 0 0 1px #8e6a3a; }
+.toggle button { background: #3a2716; border: 1px solid #6b4a2a; }
+.toggle button[aria-pressed="true"] { background: linear-gradient(180deg, #ecc66e, #c8902c); }
+/* Tuiles de l'accueil : médaillon doré à la place de la pastille de couleur */
+.game .suit.emo { background: radial-gradient(circle at 40% 35%, #fbf1d8, #e2c58c); box-shadow: inset 0 0 0 2px #c8902c, 0 2px 0 #8e6a3a; border-radius: 50%; width: 52px; height: 52px; }
+.game-row .info { background: #8a2419; border-color: #5e140d; color: #f6e7c4; }
+.game small.players, .game b { color: var(--ink); }
+.game b { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; letter-spacing: .01em; }
+.when { background: #8a2419 !important; color: #f6e7c4 !important; font-variant: small-caps; letter-spacing: .08em; }
+.back, .pcount, .info { border-color: rgba(217,164,65,.6); background: rgba(30,19,11,.6); }
+.info { color: var(--gold); }
+#joinForm input, textarea, .gp-in { background: rgba(20,12,7,.75) !important; border: 1px solid #6b4a2a !important; color: #f3e6c8 !important; }
+.phase.night { background: linear-gradient(180deg, #13203d, #0b1328); border: 2px solid #3c4f7a; box-shadow: inset 0 0 0 1px rgba(217,164,65,.25); }
+.phase.day { background: var(--parch); box-shadow: inset 0 0 0 2px rgba(107,68,38,.45); }
+.banner { background: #8a2419; border: 1px solid #5e140d; }
+.banner.gold { background: linear-gradient(180deg, #ecc66e, #c8902c); border-color: #7a5418; }
+.toast { background: var(--parch); border: 1px solid #8e6a3a; font-family: var(--font-body); }
+.son-fab { background: #241810; border-color: var(--gold); }
+.so-band { color: var(--gold); border-color: rgba(217,164,65,.5); background: rgba(30,19,11,.6); font-variant: small-caps; text-transform: none; letter-spacing: .1em; }
+.local-band { font-family: var(--font-body); }
+/* Château du décor */
+#scene .castle { fill: var(--castle); } #scene .flag { fill: #8a2419; }
+body[data-scene="night"], body[data-scene="evening"] { --castle: #091a1f; }
+body[data-scene="day"] { --castle: #3e5552; }
 </style>
 </head>
 <body>
@@ -1816,6 +1897,15 @@ Object.assign(actions, {
     <circle class="moon-glow" cx="312" cy="128" r="60"/><circle class="moon" cx="312" cy="128" r="26"/><circle class="crater" cx="304" cy="120" r="4"/><circle class="crater" cx="320" cy="136" r="3"/>
     <circle class="sun-glow" cx="80" cy="420" r="90"/><circle class="sun" cx="80" cy="420" r="30"/>
     <path class="hill far" d="M0 540 C 70 505 130 528 200 500 C 270 474 330 512 400 490 L400 800 L0 800Z"/>
+    <g class="castle-g">
+      <rect class="castle" x="48" y="470" width="16" height="50"/><polygon class="castle" points="45,470 67,470 56,450"/>
+      <rect class="castle" x="108" y="474" width="16" height="46"/><polygon class="castle" points="105,474 127,474 116,455"/>
+      <rect class="castle" x="74" y="458" width="26" height="62"/>
+      ${[74, 81, 88, 95].map(x => `<rect class="castle" x="${x}" y="452" width="5" height="7"/>`).join('')}
+      <rect class="castle" x="60" y="490" width="52" height="30"/>${[60, 67, 102, 109].map(x => `<rect class="castle" x="${x}" y="485" width="4" height="6"/>`).join('')}
+      <path class="castle" d="M56 450 V440 M116 455 V445" stroke="var(--castle)" stroke-width="1.2"/><polygon class="flag" points="56,440 66,443 56,446"/><polygon class="flag" points="116,445 126,448 116,451"/>
+      <rect class="win" x="84" y="472" width="4" height="6" rx="2"/><rect class="win w2" x="54" y="484" width="3" height="5" rx="1.5"/><rect class="win" x="114" y="488" width="3" height="5" rx="1.5"/><rect class="win w2" x="85" y="498" width="4" height="7" rx="2"/>
+    </g>
     <g>${row(-10, 410, 13, 528, 34, 'p-far', 4)}</g>
     <path class="hill mid" d="M0 600 C 70 578 140 598 210 590 C 290 580 340 598 400 586 L400 800 L0 800Z"/>
     <g>${row(-10, 130, 15, 606, 52, 'p-mid', 4)}${row(310, 410, 15, 600, 52, 'p-mid', 4)}</g>
