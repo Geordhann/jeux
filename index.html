@@ -2685,6 +2685,93 @@ const PLACE_PACK = {
   },
 };
 
+// Gages du joker, de plus en plus durs selon le niveau (jamais de contact physique imposé)
+const PENALTIES = {
+  soft: [
+    "Fais 10 pompes ou 15 squats.",
+    "Chante un refrain choisi par le groupe.",
+    "Parle avec un accent jusqu'à ton prochain tour.",
+    "Laisse le groupe poster une story sur ton compte.",
+    "Fais un compliment à chaque joueur.",
+    "Imite un animal choisi par le groupe pendant 15 secondes.",
+    "Garde les yeux fermés jusqu'à ton prochain tour.",
+    "Parle en rimes jusqu'à ton prochain tour.",
+    "Parle avec la voix de Bob l'éponge jusqu'à ton prochain tour.",
+    "Récite l'alphabet à l'envers. Chaque erreur, 5 squats.",
+    "Garde un glaçon dans la main pendant 30 secondes.",
+    "Laisse le groupe choisir ta photo de profil WhatsApp pour 24 h.",
+    "Raconte ta plus grosse honte d'enfance.",
+    "Fais le poulet pendant 10 secondes, bruitages compris.",
+  ],
+  piquant: [
+    "Lis à voix haute ton dernier message envoyé à ton crush (ou à la dernière personne avec qui tu as flirté).",
+    "Montre les 10 dernières photos de ta galerie.",
+    "Laisse {x} lire tes 3 dernières conversations pendant 30 secondes.",
+    "Envoie « Tu penses à moi parfois ? » à ton ou ta ex, ou à ton dernier crush.",
+    "Révèle au groupe le prénom de ton crush actuel.",
+    "Raconte ton date le plus gênant, en détail.",
+    "Fais 30 squats, le groupe compte.",
+    "Deviens le serviteur ou la servante de {x} jusqu'à ton prochain tour.",
+    "Laisse le groupe changer ta photo de profil pour 48 h.",
+    "Poste une story choisie par le groupe et laisse-la 24 h.",
+    "Appelle un parent et annonce-lui que tu es amoureux·se, sans explication.",
+    "Réponds honnêtement à une question choisie par le groupe.",
+    "Laisse le groupe écrire ta bio d'appli de rencontre ; tu la gardes une semaine.",
+    "Envoie un vocal où tu chantes une chanson d'amour à la 3e personne de tes conversations.",
+  ],
+  hot: [
+    "Laisse le groupe lire tes 5 derniers messages avec une personne choisie par le groupe.",
+    "Envoie un vocal séducteur (rien d'explicite) à ton ex ou à ton crush, devant tout le monde.",
+    "Laisse {x} poster ce qu'{il} veut sur ta story (rien de méchant), pendant 24 h.",
+    "Donne ton téléphone déverrouillé au groupe pendant une minute.",
+    "Révèle ton body count au groupe.",
+    "Raconte ta pire nuit, sans rien censurer.",
+    "Fais 50 squats ou 30 pompes, le groupe compte.",
+    "Sois le serviteur ou la servante de tout le groupe pendant 3 tours : boissons, snacks, compliments.",
+    "Appelle ta mère en haut-parleur et demande-lui ce qu'elle pense de ta vie amoureuse.",
+    "Le groupe choisit une Vérité Hot : tu y réponds sans rien cacher.",
+    "Écris « Je suis fou de toi » (ou folle) à la 3e personne de tes conversations, et ne réponds pas avant la fin de la partie.",
+    "Laisse le groupe choisir ton fond d'écran pour une semaine.",
+    "Mange une cuillère de moutarde (ou un truc fort choisi par le groupe).",
+    "Bois un shot choisi par le groupe.",
+  ],
+  intense: [
+    "Donne ton téléphone déverrouillé au groupe pendant 3 minutes (tu peux cacher un seul dossier).",
+    "Envoie « On pourrait se revoir ? » à ton ex et montre la réponse au groupe.",
+    "Raconte au groupe ton fantasme le plus inavouable, en détail.",
+    "Le groupe rédige un message de déclaration à ton crush : tu l'envoies.",
+    "Avoue un secret que tu n'as jamais dit à personne ici.",
+    "Fais 100 squats (pauses autorisées), le groupe compte.",
+    "Poste une photo de toi choisie par le groupe, en public, pendant 24 h.",
+    "Appelle ton ex en haut-parleur pendant 30 secondes.",
+    "Laisse le groupe lire ta dernière conversation coquine (photos masquées).",
+    "Réponds à 3 Vérités Intense choisies par le groupe.",
+    "Deviens le serviteur ou la servante de {x} jusqu'à la fin de la soirée.",
+    "Le groupe te choisit une tenue ridicule que tu portes jusqu'à la fin de la soirée.",
+    "Bois deux shots choisis par le groupe, coup sur coup.",
+    "Laisse le groupe choisir ta photo de profil sur ton appli de rencontre pour une semaine.",
+  ],
+  sanslimite: [
+    "Le groupe lit à voix haute ta conversation la plus coquine (photos masquées).",
+    "Révèle ton fantasme sur quelqu'un d'ici, avec le nom.",
+    "Envoie à ton ex « Je pense encore à notre dernière nuit » et montre la réponse au groupe.",
+    "Appelle ton crush en haut-parleur et dis-lui qu'il ou elle te plaît.",
+    "Donne ton téléphone déverrouillé au groupe pendant 5 minutes.",
+    "Raconte ta nuit la plus folle, du début à la fin, sans rien censurer.",
+    "Le groupe te choisit un surnom coquin : tout le monde l'utilise jusqu'à la fin de la soirée et tu le mets en pseudo pendant 24 h.",
+    "Deviens le serviteur ou la servante de tout le groupe jusqu'à la fin de la soirée.",
+    "Fais 150 squats ou 60 pompes, le groupe compte.",
+    "À genoux, lis une déclaration d'amour à la personne choisie par le groupe.",
+    "Laisse {x} écrire un message à la personne de son choix dans tes contacts : tu l'envoies (rien qui puisse te faire virer).",
+    "Avoue la recherche la plus honteuse de ton historique, et montre-la.",
+    "Note à voix haute, de 1 à 10, le sex-appeal de chaque joueur.",
+    "Réponds sans filtre à toutes les questions que le groupe te pose pendant 2 minutes.",
+    "Bois un cul sec de ton verre, puis un shot choisi par le groupe.",
+    "Poste en story « Je suis célibataire et désespéré·e », 12 h minimum.",
+  ],
+};
+// Avec alcool, l'alternative au gage : des gorgées selon le niveau
+const PEN_SIPS = { soft: 2, piquant: 3, hot: 4, intense: 5, sanslimite: 6 };
 // Gages quand on joue sans alcool
 const GAGES = [
     "Fais 10 pompes ou 15 squats.",
@@ -2723,7 +2810,7 @@ function adapt(t) {
     .replace(/boire (\d+) gorgées/gi, 'prendre un gage du groupe');
 }
 const W = () => S.alcohol
-  ? { sip: 'gorgée', sips: 'Gorgées', who: 'Qui boit ?', plus: '+1 gorgée', joker: 'Joker (2 gorgées)', top: 'Plus grosse descente' }
+  ? { sip: 'gorgée', sips: 'Gorgées', who: 'Qui boit ?', plus: '+1 gorgée', joker: 'Joker (gage)', top: 'Plus grosse descente' }
   : { sip: 'point', sips: 'Points de gage', who: 'Qui prend un point ?', plus: '+1 point de gage', joker: 'Joker (gage)', top: 'Roi des gages' };
 
 // La Roue : libellé court sur la roue, gage complet sur la carte
@@ -3506,7 +3593,7 @@ function tabPlus() {
     <button class="tool" data-a="open" data-v="rel"><b>Affinités</b><small>Préférences, couples, liste noire</small></button>
   </section>
   <button class="btn ghost" data-a="intro">Revoir l'intro</button>
-  <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte ${S.alcohol ? '2 gorgées' : 'un gage'}. Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>
+  <p class="rule"><strong>Règle d'or :</strong> tout le monde peut refuser un défi, sans se justifier. Le joker coûte un gage du même niveau${S.alcohol ? ' ou des gorgées' : ''}, et le refuser aussi coûte encore plus. Les niveaux Hot, Intense et Sans limite sont réservés aux majeurs consentants : c'est osé, jamais porno.</p>
   <footer class="foot"><button class="link" data-a="open" data-v="legal">Mentions légales</button><span>${LEGAL.year} © La Tournée. Tous droits réservés.</span>${S.alcohol ? '<span>L\'abus d\'alcool est dangereux pour la santé.</span>' : ''}</footer>`;
 }
 function home() {
@@ -4046,7 +4133,7 @@ const RULES = {
     "L'appli désigne à qui c'est le tour.",
     "Le joueur choisit Action ou Vérité, ou laisse le hasard décider.",
     "Vérité : il répond honnêtement. Action : il fait le défi. Quand un défi a une durée, un chrono apparaît.",
-    `Pas envie ? Joker : ${S.alcohol ? '2 gorgées' : 'un gage tiré au hasard'}. Puis « Fait, au suivant ».`,
+    `Pas envie ? Joker : un gage du même niveau, de plus en plus dur${S.alcohol ? ' (ou des gorgées : 2 en Soft, jusqu\'à 6 en Sans limite)' : ''}. Refuser le gage aussi coûte encore plus.`,
   ], tips: [
     "Choisis le niveau en haut : de Soft à Sans limite.",
     "« Défis avec le sexe opposé » ou « avec tout le monde » décide qui peut être visé par les défis.",
@@ -4169,11 +4256,11 @@ const SCREENS = { home, aov, bottle, wheel, para, recap, ucsetup: ucSetup, uc, s
 let lastScreen = null;
 function render(scroll = true) {
   const s = S.screen;
-  app.innerHTML = S.intro ? intro() : S.gate ? gate() : S.info ? rules() : SCREENS[s] ? SCREENS[s]() : deck(s);
+  app.innerHTML = S.intro ? intro() : S.penalty ? penalty() : S.gate ? gate() : S.info ? rules() : SCREENS[s] ? SCREENS[s]() : deck(s);
   document.body.classList.toggle('medieval', S.theme === 'medieval');
   document.body.classList.toggle('on-tabs', !S.intro && !S.gate && !S.info && s === 'home');
   document.body.classList.toggle('on-intro', S.intro);
-  const key = (S.intro && 'intro') || S.gate || (S.info && 'info') || (s === 'home' ? 'home-' + S.tab : s);
+  const key = (S.intro && 'intro') || (S.penalty && 'pen') || S.gate || (S.info && 'info') || (s === 'home' ? 'home-' + S.tab : s);
   if (scroll && key !== lastScreen) window.scrollTo(0, 0);
   lastScreen = key;
   if (s === 'bottle' && S.bottle.spinning && !S.gate && !S.info) spinBottle();
@@ -4208,12 +4295,26 @@ function drawDeck() {
 }
 
 // Sans alcool, le joker donne un gage tiré au hasard (faisable sur place)
-function joker(n) {
+// Joker : un gage du même niveau que la carte refusée, affiché en grand
+function joker(n, level = S.level) {
   bump(n, 'jokers');
-  if (S.alcohol && !isDriver(n)) { bump(n, 'sips', 2); toast(`Joker ! 2 gorgées pour ${n}.`); return; }
-  bump(n, 'sips');
-  const ok = GAGES.filter(okHere);
-  toast(`Joker ! Gage pour ${n} : ${draw('gage', ok.length ? ok : GAGES)}`);
+  const me = byName(n), drinks = S.alcohol && !isDriver(n);
+  const make = () => {
+    const pool = PENALTIES[level].filter(okHere);
+    const raw = draw('pen' + level, pool.length ? pool : PENALTIES.soft);
+    const others = S.players.filter(p => p !== me && !(me && blocked(p.name, me.name)));
+    return fill(raw, others.length ? others[rand(others.length)] : null);
+  };
+  S.penalty = { name: n, level, html: drinks ? make() : dry(make), sips: drinks ? PEN_SIPS[level] : 0 };
+}
+function penalty() {
+  const pe = S.penalty, l = LEVELS.find(x => x.id === pe.level);
+  return `<div class="turn"><small>Joker ! Gage pour</small><strong>${esc(pe.name)}</strong></div>
+  <div class="card">${cardIdx('G', pe.level)}<p class="kind">Gage · ${l.label}</p><p class="text">${pe.html}</p>
+    <p class="sub">${pe.sips ? `Ou bien : ${pe.sips} gorgées.` : 'Refuser aussi le gage coûte 3 points.'}</p></div>
+  <button class="btn big" data-a="pen-done">Gage fait</button>
+  <button class="btn ghost" data-a="pen-alt">${pe.sips ? `Je préfère boire ${pe.sips} gorgées` : 'Je refuse aussi (+3 points)'}</button>
+  <p class="howto">Chacun peut toujours refuser, mais ça se paie.</p>`;
 }
 
 /* ---------- Actions ---------- */
@@ -4239,6 +4340,8 @@ const actions = {
   },
   'gate-ok'() { S.adultOk = true; const v = S.gate; S.gate = null; actions.level(v); },
   'gate-no'() { S.gate = null; render(); },
+  'pen-done'() { S.penalty = null; render(); },
+  'pen-alt'() { const pe = S.penalty; bump(pe.name, 'sips', pe.sips || 3); toast(pe.sips ? `${pe.name} boit ${pe.sips} gorgées.` : `+3 points de gage pour ${pe.name}.`); S.penalty = null; render(); },
   tab(v) { S.tab = v; store.set('tab', v); render(); },
   intro() { S.intro = true; render(); },
   'intro-go'() { if (!S.intro) return; S.intro = false; render(); },
@@ -4489,7 +4592,8 @@ app.addEventListener('submit', e => {
 const capApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
 if (capApp) capApp.addListener('backButton', () => {
   if (S.timer) stopTimer();
-  if (S.info) actions['info-close']();
+  if (S.penalty) actions['pen-done']();
+  else if (S.info) actions['info-close']();
   else if (S.gate) actions['gate-no']();
   else if (S.edit) actions['bl-done']();
   else if (S.intro) actions['intro-go']();

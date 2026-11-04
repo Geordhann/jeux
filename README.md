@@ -21,6 +21,7 @@ Intro animée au lancement, puis 4 onglets en bas de l'écran : **Jeux** (carte 
 - **Je n'ai jamais**, **Qui pourrait…**, **Tu préfères** : paquets de cartes en 5 niveaux, avec « Qui boit ? » pour compter les gorgées.
 
 ## Réglages
+- **Gages du joker par niveau** : refuser une carte donne un gage du même niveau, affiché en grand (14 à 16 gages par niveau, de « chante un refrain » en Soft à « donne ton téléphone déverrouillé 5 minutes » en Sans limite). Jamais de contact physique imposé. Avec alcool, l'alternative coûte 2 à 6 gorgées selon le niveau ; sans alcool, refuser le gage coûte 3 points.
 - **Musique d'ambiance** : Chill, Soirée, Sensuel ou Auto (suit le niveau). Composée en direct par l'appli (synthèse Web Audio) : création originale libre de droits, aucun fichier, fonctionne hors ligne. Bouton flottant en bas à droite pour lancer ou couper.
 - **Qui conduit ?** : le conducteur ne boit jamais. Ses défis et jokers passent en version sans alcool, ses gorgées deviennent des points de gage.
 - **Packs à thème** : Road trip, Halloween, Noël & Nouvel An, Été & vacances, Anniversaire (cartes et mots Undercover en plus).
